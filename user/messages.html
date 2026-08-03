@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的消息 - 学会会员管理系统</title>
+    <link rel="stylesheet" href="../css/web.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0 40px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .navbar-logo-icon {
+            font-size: 32px;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 8px;
+        }
+
+        .navbar-item {
+            padding: 10px 20px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+
+        .navbar-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar-item.active {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: white;
+        }
+
+        .navbar-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .navbar-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .user-dropdown { position: relative; cursor: pointer; }
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            min-width: 180px;
+            padding: 8px 0;
+            display: none;
+            z-index: 1001;
+        }
+        .dropdown-menu.show { display: block; }
+        .dropdown-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .dropdown-item:hover { background: #f5f7fa; color: #667eea; }
+        .dropdown-divider { height: 1px; background: #f0f0f0; margin: 8px 0; }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .page-desc {
+            color: #999;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-default {
+            background: white;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-default:hover {
+            background: #f5f7fa;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);
+            color: white;
+        }
+
+        .message-tabs {
+            background: white;
+            border-radius: 16px;
+            padding: 16px 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            display: flex;
+            gap: 8px;
+        }
+
+        .tab-item {
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 15px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+
+        .tab-item:hover {
+            background: #f5f7fa;
+        }
+
+        .tab-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tab-badge {
+            background: #ff4d4f;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .message-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+
+        .message-card:hover {
+            transform: translateX(8px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .message-card.unread {
+            border-left-color: #667eea;
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.05) 0%, white 100%);
+        }
+
+        .message-card.read {
+            opacity: 0.8;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .message-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .message-type {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .type-notice {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .type-audit {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .type-activity {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .type-system {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #333;
+        }
+
+        .message-time {
+            font-size: 13px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .message-content {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .message-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .message-action-btn {
+            padding: 6px 12px;
+            background: #f5f7fa;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .message-action-btn:hover {
+            background: #e4e7ed;
+        }
+
+        .unread-badge {
+            width: 8px;
+            height: 8px;
+            background: #ff4d4f;
+            border-radius: 50%;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .page-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0 20px;
+            }
+
+            .navbar-menu {
+                display: none;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+
+            .message-tabs {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar">
+            <div class="navbar-logo">
+                <span class="navbar-logo-icon">🌾</span>
+                <span>中国农学会</span>
+            </div>
+
+            <div class="navbar-menu">
+                <a href="personal-center.html" class="navbar-item">首页</a>
+                <a href="data-stats.html" class="navbar-item">数说学会</a>
+                <a href="personal-info.html" class="navbar-item">会员信息</a>
+                <a href="payment.html" class="navbar-item">缴费订单</a>
+                <a href="messages.html" class="navbar-item active">我的消息</a>
+                <a href="growth-trajectory.html" class="navbar-item">成长轨迹</a>
+            </div>
+
+            <div class="navbar-user">
+                <div style="position:relative;">
+                    <div class="navbar-avatar">🔔</div>
+                    <span style="position:absolute;top:-4px;right:-8px;background:#ff4d4f;color:white;padding:2px 6px;border-radius:10px;font-size:11px;">3</span>
+                </div>
+                <div class="user-dropdown" onclick="this.querySelector('.dropdown-menu').classList.toggle('show')">
+                    <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <div class="navbar-avatar">张</div>
+                        <span>张三</span>
+                        <span style="font-size: 12px;">▼</span>
+                    </div>
+                    <div class="dropdown-menu">
+                        <a href="identity-switch.html" class="dropdown-item">
+                            <span>🔄</span>
+                            <span>切换身份</span>
+                        </a>
+                        <a href="account-settings.html" class="dropdown-item">
+                            <span>⚙️</span>
+                            <span>账号设置</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="login.html" class="dropdown-item">
+                            <span>🚪</span>
+                            <span>退出登录</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main-container">
+            <div class="page-header">
+                <div class="page-title-group">
+                    <span style="font-size:28px;">🔔</span>
+                    <div>
+                        <div class="page-title">我的消息</div>
+                        <div class="page-desc">接收系统通知、审核结果、活动邀请等消息</div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-default">✅ 全部已读</button>
+                    <button class="btn btn-danger">🗑 清空消息</button>
+                </div>
+            </div>
+
+            <div class="message-tabs">
+                <div class="tab-item active">📋 全部消息 <span class="tab-badge">3</span></div>
+                <div class="tab-item">📄 系统通知</div>
+                <div class="tab-item">✅ 审核通知</div>
+                <div class="tab-item">🎁 活动通知</div>
+                <div class="tab-item">🔔 系统消息</div>
+            </div>
+
+            <div class="message-list">
+
+                <!-- 消息1：系统通知（未读） -->
+                <a href="message-detail.html" style="text-decoration:none;color:inherit;">
+                <div class="message-card unread">
+                    <div class="message-header">
+                        <div class="message-title">
+                            关于举办 2026 年学术年会的通知
+                            <span class="message-type type-notice">系统通知</span>
+                            <div class="unread-badge"></div>
+                        </div>
+                        <div class="message-time">🕐 2026-05-13 10:30</div>
+                    </div>
+                    <div class="message-content">
+                        尊敬的会员：中国农学会 2026 年学术年会定于 2026 年 6 月 15-17 日在北京召开，本次会议将邀请国内外知名专家学者做主题报告，欢迎广大会员踊跃报名参加。
+                    </div>
+                    <div class="message-footer">
+                        <div style="font-size: 13px; color: #999;">👤 发送人：学会秘书处</div>
+                        <div class="message-actions">
+                            <button class="message-action-btn">📄 详情</button>
+                            <button class="message-action-btn">💬 回复</button>
+                            <button class="message-action-btn">🗑 删除</button>
+                        </div>
+                    </div>
+                </div>
+                </a>
+
+                <!-- 消息2：审核通知（未读） -->
+                <a href="message-detail.html" style="text-decoration:none;color:inherit;">
+                <div class="message-card unread">
+                    <div class="message-header">
+                        <div class="message-title">
+                            您的会员信息变更申请已审核通过
+                            <span class="message-type type-audit">审核通知</span>
+                            <div class="unread-badge"></div>
+                        </div>
+                        <div class="message-time">🕐 2026-05-12 15:20</div>
+                    </div>
+                    <div class="message-content">
+                        您提交的会员信息变更申请（工作单位变更）已经审核通过，新的信息已更新至您的会员档案。
+                    </div>
+                    <div class="message-footer">
+                        <div style="font-size: 13px; color: #999;">👤 发送人：审核委员会</div>
+                        <div class="message-actions">
+                            <button class="message-action-btn">📄 详情</button>
+                            <button class="message-action-btn">💬 回复</button>
+                            <button class="message-action-btn">🗑 删除</button>
+                        </div>
+                    </div>
+                </div>
+                </a>
+
+                <!-- 消息3：活动通知（未读） -->
+                <a href="message-detail.html" style="text-decoration:none;color:inherit;">
+                <div class="message-card unread">
+                    <div class="message-header">
+                        <div class="message-title">
+                            邀请您参加农业科技创新论坛
+                            <span class="message-type type-activity">活动通知</span>
+                            <div class="unread-badge"></div>
+                        </div>
+                        <div class="message-time">🕐 2026-05-11 09:00</div>
+                    </div>
+                    <div class="message-content">
+                        兹定于 2026 年 5 月 25 日举办"农业科技创新与可持续发展"论坛，诚邀您作为嘉宾出席并做主题演讲。
+                    </div>
+                    <div class="message-footer">
+                        <div style="font-size: 13px; color: #999;">👤 发送人：学术部</div>
+                        <div class="message-actions">
+                            <button class="message-action-btn">📄 详情</button>
+                            <button class="message-action-btn">💬 回复</button>
+                            <button class="message-action-btn">🗑 删除</button>
+                        </div>
+                    </div>
+                </div>
+                </a>
+
+                <!-- 消息4：系统消息（已读） -->
+                <a href="message-detail.html" style="text-decoration:none;color:inherit;">
+                <div class="message-card read">
+                    <div class="message-header">
+                        <div class="message-title">
+                            2026 年度会费缴纳提醒
+                            <span class="message-type type-system">系统消息</span>
+                        </div>
+                        <div class="message-time">🕐 2026-05-10 08:00</div>
+                    </div>
+                    <div class="message-content">
+                        尊敬的会员，您的 2026 年度会费尚未缴纳。请在 2026 年 5 月 31 日前完成缴费，以免影响您的会员权益。
+                    </div>
+                    <div class="message-footer">
+                        <div style="font-size: 13px; color: #999;">👤 发送人：系统自动</div>
+                        <div class="message-actions">
+                            <button class="message-action-btn">📄 详情</button>
+                            <button class="message-action-btn">💬 回复</button>
+                            <button class="message-action-btn">🗑 删除</button>
+                        </div>
+                    </div>
+                </div>
+                </a>
+
+                <!-- 消息5：审核通知（已读） -->
+                <a href="message-detail.html" style="text-decoration:none;color:inherit;">
+                <div class="message-card read">
+                    <div class="message-header">
+                        <div class="message-title">
+                            您的入会申请已审核通过
+                            <span class="message-type type-audit">审核通知</span>
+                        </div>
+                        <div class="message-time">🕐 2024-01-15 14:30</div>
+                    </div>
+                    <div class="message-content">
+                        恭喜您！您的入会申请已经审核通过，正式成为中国农学会个人会员。请登录后办理缴费手续。
+                    </div>
+                    <div class="message-footer">
+                        <div style="font-size: 13px; color: #999;">👤 发送人：审核委员会</div>
+                        <div class="message-actions">
+                            <button class="message-action-btn">📄 详情</button>
+                            <button class="message-action-btn">💬 回复</button>
+                            <button class="message-action-btn">🗑 删除</button>
+                        </div>
+                    </div>
+                </div>
+                </a>
+
+            </div>
+
+            <div class="pagination">
+                <div class="page-btn">‹</div>
+                <div class="page-btn active">1</div>
+                <div class="page-btn">2</div>
+                <div class="page-btn">3</div>
+                <div class="page-btn">...</div>
+                <div class="page-btn">10</div>
+                <div class="page-btn">›</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

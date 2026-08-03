@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>批次发送详情 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">批次发送详情</div>
+          <div class="breadcrumb">
+            <a href="sms-log.html">短信发送记录</a> / <span>批次详情</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="stat-cards" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 24px;">
+          <div class="stat-card">
+            <div class="stat-label">批次号</div>
+            <div class="stat-value" style="font-size: 16px;" id="batchCode">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">批次名称</div>
+            <div class="stat-value" style="font-size: 16px;" id="batchName">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">模板名称</div>
+            <div class="stat-value" style="font-size: 16px;" id="templateName">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">发送时间</div>
+            <div class="stat-value" style="font-size: 16px;" id="sendTime">-</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">发送记录列表</span>
+            <div class="card-tools">
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="search-bar">
+              <div class="search-item">
+                <label>接收手机：</label>
+                <input type="text" class="form-input" placeholder="请输入手机号" style="width: 130px;">
+              </div>
+              <div class="search-item">
+                <label>姓名：</label>
+                <input type="text" class="form-input" placeholder="请输入姓名" style="width: 120px;">
+              </div>
+              <div class="search-item">
+                <label>发送状态：</label>
+                <select class="form-select" style="width: 100px;">
+                  <option>全部</option>
+                  <option>发送成功</option>
+                  <option>发送失败</option>
+                </select>
+              </div>
+              <button class="btn btn-default btn-sm">查询</button>
+              <button class="btn btn-default btn-sm">重置</button>
+            </div>
+
+            <table class="table" id="smsDetailTable">
+              <thead>
+                <tr>
+                  <th>接收手机</th>
+                  <th>姓名</th>
+                  <th>发送内容</th>
+                  <th>发送状态</th>
+                  <th>发送时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="smsDetailBody">
+              </tbody>
+            </table>
+
+            <div class="pagination">
+              <div class="pagination-info" id="paginationInfo">共 0 条</div>
+              <div class="pagination-btns">
+                <button class="page-btn" disabled>上一页</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script>
+    var batchData = {
+      'BATCH20240515001': {
+        code: 'BATCH20240515001',
+        name: '会员到期提醒-5月',
+        template: '会员到期续费提醒',
+        time: '2024-05-15 10:00:00',
+        records: [
+          { phone: '138****8001', name: '张三', content: '【农学会】亲爱的张三，您的会员资格将于2024-06-15到期，请及时续费！', status: 'success', statusText: '发送成功', time: '2024-05-15 10:00:15' },
+          { phone: '139****8002', name: '李四', content: '【农学会】亲爱的李四，您的会员资格将于2024-06-15到期，请及时续费！', status: 'success', statusText: '发送成功', time: '2024-05-15 10:00:18' },
+          { phone: '137****8003', name: '王五', content: '【农学会】亲爱的王五，您的会员资格将于2024-06-15到期，请及时续费！', status: 'success', statusText: '发送成功', time: '2024-05-15 10:00:22' },
+          { phone: '136****8004', name: '赵六', content: '【农学会】亲爱的赵六，您的会员资格将于2024-06-15到期，请及时续费！', status: 'fail', statusText: '发送失败', time: '2024-05-15 10:00:25' },
+          { phone: '135****8005', name: '孙七', content: '【农学会】亲爱的孙七，您的会员资格将于2024-06-15到期，请及时续费！', status: 'success', statusText: '发送成功', time: '2024-05-15 10:00:30' },
+          { phone: '134****8006', name: '周八', content: '【农学会】亲爱的周八，您的会员资格将于2024-06-15到期，请及时续费！', status: 'success', statusText: '发送成功', time: '2024-05-15 10:00:35' },
+          { phone: '133****8007', name: '吴九', content: '【农学会】亲爱的吴九，您的会员资格将于2024-06-15到期，请及时续费！', status: 'success', statusText: '发送成功', time: '2024-05-15 10:00:40' },
+          { phone: '132****8008', name: '郑十', content: '【农学会】亲爱的郑十，您的会员资格将于2024-06-15到期，请及时续费！', status: 'fail', statusText: '发送失败', time: '2024-05-15 10:00:45' },
+        ]
+      },
+      'BATCH20240514002': {
+        code: 'BATCH20240514002',
+        name: '缴费成功通知-5月第二批',
+        template: '缴费成功通知',
+        time: '-',
+        records: [
+          { phone: '138****9001', name: '钱一', content: '【农学会】亲爱的钱一，您已成功缴纳会员费用，祝您使用愉快！', status: 'success', statusText: '发送成功', time: '-' },
+          { phone: '139****9002', name: '孙二', content: '【农学会】亲爱的孙二，您已成功缴纳会员费用，祝您使用愉快！', status: 'success', statusText: '发送成功', time: '-' },
+          { phone: '137****9003', name: '李三', content: '【农学会】亲爱的李三，您已成功缴纳会员费用，祝您使用愉快！', status: 'success', statusText: '发送成功', time: '-' },
+        ]
+      },
+      'BATCH20240510003': {
+        code: 'BATCH20240510003',
+        name: '审核结果通知-5月上旬',
+        template: '审核结果通知',
+        time: '2024-05-10 09:00:00',
+        records: [
+          { phone: '138****7001', name: '王一', content: '【农学会】亲爱的王一，您的会员申请已通过审核，感谢您的加入！', status: 'success', statusText: '发送成功', time: '2024-05-10 09:00:10' },
+          { phone: '139****7002', name: '刘二', content: '【农学会】亲爱的刘二，您的会员申请已通过审核，感谢您的加入！', status: 'success', statusText: '发送成功', time: '2024-05-10 09:00:15' },
+          { phone: '137****7003', name: '陈三', content: '【农学会】亲爱的陈三，您的会员申请已通过审核，感谢您的加入！', status: 'success', statusText: '发送成功', time: '2024-05-10 09:00:20' },
+        ]
+      },
+      'BATCH20240508004': {
+        code: 'BATCH20240508004',
+        name: '会员注册成功通知-5月第三批',
+        template: '会员注册成功通知',
+        time: '-',
+        records: [
+          { phone: '138****6001', name: '赵一', content: '【农学会】亲爱的赵一，您的普通个人会员申请已通过审核，成为正式会员！', status: 'success', statusText: '发送成功', time: '-' },
+          { phone: '139****6002', name: '钱二', content: '【农学会】亲爱的钱二，您的普通个人会员申请已通过审核，成为正式会员！', status: 'success', statusText: '发送成功', time: '-' },
+        ]
+      }
+    };
+
+    function getBatchId() {
+      var params = new URLSearchParams(window.location.search);
+      return params.get('batch') || 'BATCH20240515001';
+    }
+
+    function loadBatchData() {
+      var batchId = getBatchId();
+      var data = batchData[batchId] || batchData['BATCH20240515001'];
+
+      document.getElementById('batchCode').textContent = data.code;
+      document.getElementById('batchName').textContent = data.name;
+      document.getElementById('templateName').textContent = data.template;
+      document.getElementById('sendTime').textContent = data.time;
+      document.getElementById('paginationInfo').textContent = '共 ' + data.records.length + ' 条';
+      _currentBatchData = data;
+
+      var tbody = document.getElementById('smsDetailBody');
+      var html = '';
+      data.records.forEach(function(record, idx) {
+        var statusClass = record.status === 'success' ? 'tag-success' : 'tag-danger';
+        var actionBtn = record.status === 'fail'
+          ? '<button class="btn btn-default btn-sm" onclick="confirm(\'确定要重新发送吗？\') && showToast(\'已重新发送\')">重发</button>'
+          : '';
+        html += '<tr>\n          <td>' + record.phone + '</td>\n          <td>' + record.name + '</td>\n          <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + record.content + '</td>\n          <td><span class="tag ' + statusClass + '">' + record.statusText + '</span></td>\n          <td>' + record.time + '</td>\n          <td><button class="btn btn-default btn-sm" onclick="showDetail(' + idx + ')">详情</button> ' + actionBtn + '</td>\n        </tr>';
+      });;
+      tbody.innerHTML = html;
+    }
+
+    var _currentRecord = null;
+    var _currentBatchData = null;
+
+    loadBatchData();
+    function showDetail(idx) { _currentRecord = _currentBatchData.records[idx];
+      document.getElementById('detailPhone').textContent = _currentRecord.phone;
+      document.getElementById('detailName').textContent = _currentRecord.name;
+      document.getElementById('detailStatus').textContent = _currentRecord.statusText;
+      document.getElementById('detailTime').textContent = _currentRecord.time;
+      document.getElementById('detailContent').textContent = _currentRecord.content;
+      openModal('detailModal');
+    }
+  </script>
+  
+  <!-- 短信详情弹窗 -->
+  <div class="modal" id="detailModal">
+    <div class="modal-dialog" style="width: 500px;">
+      <div class="modal-header">
+        <span class="modal-title">短信详情</span>
+        <span class="close-btn" onclick="closeModal('detailModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">接收手机：</label>
+          <span id="detailPhone"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">姓名：</label>
+          <span id="detailName"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">发送状态：</label>
+          <span id="detailStatus"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">发送时间：</label>
+          <span id="detailTime"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="color:#666;">发送内容：</label>
+          <div id="detailContent" style="background:#f5f5f5;padding:12px;border-radius:6px;line-height:1.8;margin-top:4px;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('detailModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../sidebar.js"></script>
+</body>
+</html>

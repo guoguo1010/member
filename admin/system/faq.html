@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>常见问题 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .filter-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+    .filter-item { display: flex; align-items: center; gap: 8px; }
+    .filter-item label { font-size: 13px; color: #666; }
+    .filter-item select { padding: 6px 12px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 13px; }
+    .category-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+    .category-tag.member { background: #e6f7ff; color: #1890ff; }
+    .category-tag.payment { background: #fff7e6; color: #fa8c16; }
+    .category-tag.apply { background: #f6ffed; color: #52c41a; }
+    .category-tag.tech { background: #fff1f0; color: #ff4d4f; }
+    .faq-content { background: #fafafa; padding: 12px; border-radius: 4px; margin-top: 8px; font-size: 13px; color: #666; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">常见问题</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <a href="#">系统管理</a> / <span>常见问题</span></div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">问题列表</span>
+            <div class="card-tools">
+              <button class="btn btn-primary" onclick="openModal('addModal')">+ 新增问题</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="filter-bar">
+              <div class="filter-item">
+                <label>问题分类：</label>
+                <select id="categoryFilter">
+                  <option value="">全部</option>
+                  <option value="member">会员相关</option>
+                  <option value="payment">缴费相关</option>
+                  <option value="apply">申请相关</option>
+                  <option value="tech">技术问题</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label>关键词：</label>
+                <input type="text" id="keywordFilter" placeholder="搜索问题或答案" style="padding:6px 12px;border:1px solid #d9d9d9;border-radius:4px;font-size:13px;width:200px;">
+              </div>
+              <button class="btn btn-default btn-sm" onclick="filterFAQ()">筛选</button>
+              <button class="btn btn-default btn-sm" onclick="resetFilter()">重置</button>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>问题编号</th>
+                  <th>问题分类</th>
+                  <th>问题标题</th>
+                  <th>问题答案</th>
+                  <th>权重</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="faqTable">
+                <tr data-category="member">
+                  <td>FAQ001</td>
+                  <td><span class="category-tag member">会员相关</span></td>
+                  <td>如何修改个人信息？</td>
+                  <td class="text-ellipsis" style="max-width:200px;">在会员信息页面可以修改个人基本资料...</td>
+                  <td><input type="number" class="form-input" style="width:60px;padding:4px 8px;" value="100" onchange="showToast('权重已更新')"></td>
+                  <td><span class="status-switch checked" onclick="toggleStatus(this)"></span></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="viewDetail(this)">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('editModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该问题吗？')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+                <tr data-category="payment">
+                  <td>FAQ002</td>
+                  <td><span class="category-tag payment">缴费相关</span></td>
+                  <td>如何缴纳会费？</td>
+                  <td class="text-ellipsis" style="max-width:200px;">在缴费订单页面选择您需要的会员类型...</td>
+                  <td><input type="number" class="form-input" style="width:60px;padding:4px 8px;" value="90" onchange="showToast('权重已更新')"></td>
+                  <td><span class="status-switch checked" onclick="toggleStatus(this)"></span></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="viewDetail(this)">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('editModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该问题吗？')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+                <tr data-category="member">
+                  <td>FAQ003</td>
+                  <td><span class="category-tag member">会员相关</span></td>
+                  <td>会员证书如何下载？</td>
+                  <td class="text-ellipsis" style="max-width:200px;">在会员信息页面点击"证书下载"按钮...</td>
+                  <td><input type="number" class="form-input" style="width:60px;padding:4px 8px;" value="80" onchange="showToast('权重已更新')"></td>
+                  <td><span class="status-switch checked" onclick="toggleStatus(this)"></span></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="viewDetail(this)">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('editModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该问题吗？')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+                <tr data-category="apply">
+                  <td>FAQ004</td>
+                  <td><span class="category-tag apply">申请相关</span></td>
+                  <td>如何申请单位会员？</td>
+                  <td class="text-ellipsis" style="max-width:200px;">点击首页"申请单位会员"入口...</td>
+                  <td><input type="number" class="form-input" style="width:60px;padding:4px 8px;" value="70" onchange="showToast('权重已更新')"></td>
+                  <td><span class="status-switch checked" onclick="toggleStatus(this)"></span></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="viewDetail(this)">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('editModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该问题吗？')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+                <tr data-category="tech">
+                  <td>FAQ005</td>
+                  <td><span class="category-tag tech">技术问题</span></td>
+                  <td>忘记密码怎么办？</td>
+                  <td class="text-ellipsis" style="max-width:200px;">点击登录页的"忘记密码"...</td>
+                  <td><input type="number" class="form-input" style="width:60px;padding:4px 8px;" value="60" onchange="showToast('权重已更新')"></td>
+                  <td><span class="status-switch" onclick="toggleStatus(this)"></span></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="viewDetail(this)">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('editModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该问题吗？')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="pagination">
+              <span class="page-info">共 5 条记录，第 1/1 页</span>
+              <div class="page-btns">
+                <button class="btn btn-default btn-sm" disabled>上一页</button>
+                <button class="btn btn-default btn-sm" disabled>下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增问题弹窗 -->
+  <div class="modal" id="addModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">新增问题</span>
+        <span class="close-btn" onclick="closeModal('addModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">问题分类 <span class="required">*</span></label>
+          <select class="form-input">
+            <option value="">请选择</option>
+            <option value="member">会员相关</option>
+            <option value="payment">缴费相关</option>
+            <option value="apply">申请相关</option>
+            <option value="tech">技术问题</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">问题标题 <span class="required">*</span></label>
+          <input type="text" class="form-input" placeholder="请输入问题标题">
+        </div>
+        <div class="form-group">
+          <label class="form-label">问题答案 <span class="required">*</span></label>
+          <textarea class="form-textarea" rows="4" placeholder="请输入问题答案"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">权重</label>
+          <input type="number" class="form-input" placeholder="数字越大越靠前" value="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">状态</label>
+          <label class="switch-label">
+            <input type="checkbox" checked> 启用
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('addModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('addModal'); showToast('添加成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑问题弹窗 -->
+  <div class="modal" id="editModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">编辑问题</span>
+        <span class="close-btn" onclick="closeModal('editModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">问题分类 <span class="required">*</span></label>
+          <select class="form-input">
+            <option value="member" selected>会员相关</option>
+            <option value="payment">缴费相关</option>
+            <option value="apply">申请相关</option>
+            <option value="tech">技术问题</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">问题标题 <span class="required">*</span></label>
+          <input type="text" class="form-input" value="如何修改个人信息？">
+        </div>
+        <div class="form-group">
+          <label class="form-label">问题答案 <span class="required">*</span></label>
+          <textarea class="form-textarea" rows="4">在会员信息页面可以修改个人基本资料，包括姓名、手机号、邮箱、工作单位等信息。点击首页导航栏的"会员信息"即可进入修改页面。</textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">权重</label>
+          <input type="number" class="form-input" value="100">
+        </div>
+        <div class="form-group">
+          <label class="form-label">状态</label>
+          <label class="switch-label">
+            <input type="checkbox" checked> 启用
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('editModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('editModal'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 详情弹窗 -->
+  <div class="modal" id="detailModal">
+    <div class="modal-dialog" style="width: 580px;">
+      <div class="modal-header">
+        <span class="modal-title">问题详情</span>
+        <span class="close-btn" onclick="closeModal('detailModal')">✕</span>
+      </div>
+      <div class="modal-body" style="padding: 0;">
+        <div style="background: #f5f7fa; padding: 20px 24px; border-bottom: 1px solid #e8e8e8;">
+          <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 12px;">
+            <span style="font-size: 15px; font-weight: 600; color: #333;" id="detailCode">-</span>
+            <span id="detailCategory">-</span>
+            <span id="detailStatus" style="font-size: 12px; padding: 2px 8px; border-radius: 4px; background: #52c41a; color: #fff;">启用</span>
+          </div>
+          <div style="font-size: 13px; color: #666;">
+            权重：<span id="detailWeight">-</span>
+          </div>
+        </div>
+        <div style="padding: 20px 24px;">
+          <div style="font-size: 13px; color: #999; margin-bottom: 8px;">问题标题</div>
+          <div style="font-size: 14px; color: #333; margin-bottom: 20px;" id="detailTitle">-</div>
+          <div style="font-size: 13px; color: #999; margin-bottom: 8px;">问题答案</div>
+          <div style="font-size: 14px; color: #333; line-height: 1.8; background: #fafafa; padding: 16px; border-radius: 6px; border: 1px solid #f0f0f0;" id="detailAnswer">-</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('detailModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .status-switch { display: inline-block; width: 40px; height: 20px; background: #d9d9d9; border-radius: 10px; cursor: pointer; position: relative; transition: all 0.3s; }
+    .status-switch::after { content: ''; position: absolute; width: 16px; height: 16px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: all 0.3s; }
+    .status-switch.checked { background: #52c41a; }
+    .status-switch.checked::after { left: 22px; }
+    .text-ellipsis { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .switch-label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .switch-label input[type="checkbox"] { width: 16px; height: 16px; }
+  </style>
+
+  <script>
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+    function showToast(msg) {
+      alert(msg);
+    }
+    function filterFAQ() {
+      showToast('筛选成功');
+    }
+    function resetFilter() {
+      document.getElementById('categoryFilter').value = '';
+      document.getElementById('keywordFilter').value = '';
+      showToast('已重置');
+    }
+    function toggleStatus(el) {
+      el.classList.toggle('checked');
+    }
+    function viewDetail(btn) {
+      var row = btn.closest('tr');
+      var cells = row.querySelectorAll('td');
+      document.getElementById('detailCode').textContent = cells[0].textContent;
+      document.getElementById('detailCategory').innerHTML = cells[1].innerHTML;
+      document.getElementById('detailTitle').textContent = cells[2].textContent;
+      document.getElementById('detailAnswer').textContent = cells[3].textContent;
+      var weightInput = cells[4].querySelector('input');
+      document.getElementById('detailWeight').textContent = weightInput ? weightInput.value : '-';
+      var statusEl = row.querySelector('.status-switch');
+      var statusBadge = document.getElementById('detailStatus');
+      if (statusEl && statusEl.classList.contains('checked')) {
+        statusBadge.textContent = '启用';
+        statusBadge.style.background = '#52c41a';
+      } else {
+        statusBadge.textContent = '禁用';
+        statusBadge.style.background = '#d9d9d9';
+      }
+      openModal('detailModal');
+    }
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

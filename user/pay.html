@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单支付 - 学会会员管理系统</title>
+    <link rel="stylesheet" href="../css/web.css">
+    <script src="../js/vue.global.js"></script>
+    <script src="../js/element-plus.js"></script>
+    <script src="../js/icons-vue.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0 40px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-logo { display: flex; align-items: center; gap: 12px; color: white; font-size: 20px; font-weight: 600; }
+        .navbar-logo-icon { font-size: 32px; }
+        .navbar-menu { display: flex; gap: 8px; }
+        .navbar-item { padding: 10px 20px; color: rgba(255, 255, 255, 0.9); text-decoration: none; border-radius: 8px; transition: all 0.3s; font-size: 15px; }
+        .navbar-item:hover { background: rgba(255, 255, 255, 0.2); }
+        .navbar-item.active { background: rgba(255, 255, 255, 0.3); color: white; }
+        .navbar-user { display: flex; align-items: center; gap: 16px; color: white; }
+        .navbar-avatar { width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: all 0.3s; }
+        .navbar-avatar:hover { transform: scale(1.1); }
+
+        .user-dropdown { position: relative; cursor: pointer; }
+        .dropdown-menu { position: absolute; top: 100%; right: 0; margin-top: 8px; background: white; border-radius: 12px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); min-width: 180px; padding: 8px 0; display: none; z-index: 1001; }
+        .dropdown-menu.show { display: block; }
+        .dropdown-item { padding: 12px 20px; display: flex; align-items: center; gap: 10px; color: #666; font-size: 14px; transition: all 0.3s; text-decoration: none; }
+        .dropdown-item:hover { background: #f5f7fa; color: #667eea; }
+        .dropdown-divider { height: 1px; background: #f0f0f0; margin: 8px 0; }
+
+        .main-container { max-width: 900px; margin: 0 auto; padding: 30px; }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #667eea;
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { color: #764ba2; transform: translateX(-4px); }
+
+        .pay-container { display: grid; grid-template-columns: 1fr 360px; gap: 24px; }
+
+        .card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; margin-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+        .card-title { font-size: 18px; font-weight: 600; color: #333; display: flex; align-items: center; gap: 8px; }
+
+        .order-summary { margin-bottom: 0; }
+        .summary-info { display: flex; flex-direction: column; gap: 16px; }
+        .summary-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f5f7fa; }
+        .summary-item:last-child { border-bottom: none; }
+        .summary-label { color: #999; font-size: 14px; }
+        .summary-value { color: #333; font-size: 14px; font-weight: 500; }
+        .summary-amount { font-size: 32px; font-weight: 700; color: #ff4d4f; }
+        .summary-amount-label { font-size: 14px; color: #999; font-weight: normal; }
+
+        .payment-methods { margin-bottom: 0; }
+        .method-list { display: flex; flex-direction: column; gap: 12px; }
+        .method-item { display: flex; align-items: center; padding: 16px 20px; border: 2px solid #e4e7ed; border-radius: 12px; cursor: pointer; transition: all 0.3s; }
+        .method-item:hover { border-color: #667eea; background: #f8f9ff; }
+        .method-item.selected { border-color: #667eea; background: #f8f9ff; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15); }
+        .method-radio { width: 20px; height: 20px; border: 2px solid #dcdfe6; border-radius: 50%; margin-right: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+        .method-item.selected .method-radio { border-color: #667eea; }
+        .method-radio::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: #667eea; opacity: 0; transition: all 0.3s; }
+        .method-item.selected .method-radio::after { opacity: 1; }
+        .method-icon { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 12px; }
+        .method-icon.wechat { background: #e7f7ed; color: #07c160; }
+        .method-icon.alipay { background: #e8f4ff; color: #1677ff; }
+        .method-icon.bank { background: #fff7e6; color: #fa8c16; }
+        .method-icon.unionpay { background: #e6f7ff; color: #1890ff; }
+        .method-icon.offline { background: #fff7e6; color: #fa8c16; }
+        .method-name { font-size: 15px; color: #333; font-weight: 500; flex: 1; }
+        .method-desc { font-size: 12px; color: #999; }
+
+        .bank-info-box {
+            margin-top: 16px;
+            padding: 16px;
+            background: #fff7e6;
+            border: 1px dashed #fa8c16;
+            border-radius: 8px;
+            display: none;
+        }
+        .bank-info-box.show { display: block; }
+        .bank-info-title { font-size: 14px; font-weight: 600; color: #fa8c16; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .bank-info-item { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; border-bottom: 1px dashed #ffe7ba; }
+        .bank-info-item:last-child { border-bottom: none; }
+        .bank-info-label { color: #999; }
+        .bank-info-value { color: #333; font-weight: 500; }
+        .copy-btn { color: #667eea; cursor: pointer; font-size: 13px; }
+        .copy-btn:hover { color: #764ba2; }
+
+        .order-detail-card { margin-bottom: 0; }
+        .detail-list { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .detail-item { }
+        .detail-label { font-size: 13px; color: #999; margin-bottom: 4px; }
+        .detail-value { font-size: 14px; color: #333; font-weight: 500; }
+
+        .btn { padding: 12px 28px; border-radius: 8px; font-size: 15px; cursor: pointer; transition: all 0.3s; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); width: 100%; height: 52px; font-size: 17px; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .btn-default { background: #f5f7fa; color: #666; border: 1px solid #e4e7ed; }
+        .btn-default:hover { background: #e4e7ed; }
+        .btn-sm { padding: 8px 16px; font-size: 13px; }
+
+        .countdown { text-align: center; margin-top: 16px; }
+        .countdown-text { font-size: 13px; color: #999; }
+        .countdown-time { color: #ff4d4f; font-weight: 600; }
+
+        .success-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        .success-overlay.show { opacity: 1; visibility: visible; }
+        .success-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 420px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: all 0.3s;
+        }
+        .success-overlay.show .success-modal { transform: scale(1); }
+        .success-icon { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .success-title { font-size: 22px; font-weight: 600; color: #333; margin-bottom: 12px; }
+        .success-desc { font-size: 14px; color: #666; margin-bottom: 8px; }
+        .success-amount { font-size: 28px; font-weight: 700; color: #52c41a; margin: 16px 0; }
+        .success-info { background: #f5f7fa; border-radius: 12px; padding: 16px; margin: 20px 0; text-align: left; }
+        .success-info-item { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; }
+        .success-info-item .label { color: #999; }
+        .success-info-item .value { color: #333; font-weight: 500; }
+        .success-actions { display: flex; gap: 12px; margin-top: 24px; }
+        .success-actions .btn { flex: 1; padding: 14px; }
+
+        @media (max-width: 768px) {
+            .pay-container { grid-template-columns: 1fr; }
+            .main-container { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="navbar">
+            <div class="navbar-logo">
+                <span class="navbar-logo-icon">🏛️</span>
+                <span>学会会员管理系统</span>
+            </div>
+            <div class="navbar-menu">
+                <a href="personal-center.html" class="navbar-item">首页</a>
+                <a href="personal-info.html" class="navbar-item">会员信息</a>
+                <a href="payment.html" class="navbar-item active">缴费订单</a>
+                <a href="messages.html" class="navbar-item">消息中心</a>
+            </div>
+            <div class="navbar-user">
+                <div class="user-dropdown" @click="showDropdown = !showDropdown">
+                    <div class="navbar-avatar">👤</div>
+                    <div class="dropdown-menu" :class="{ show: showDropdown }">
+                        <a href="personal-info.html" class="dropdown-item"><el-icon><User /></el-icon>个人中心</a>
+                        <a href="account-settings.html" class="dropdown-item"><el-icon><Setting /></el-icon>账号设置</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="login.html" class="dropdown-item"><el-icon><SwitchButton /></el-icon>退出登录</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-container">
+            <div class="back-btn" @click="goBack">
+                <el-icon><ArrowLeft /></el-icon>
+                返回订单列表
+            </div>
+
+            <div class="pay-container">
+                <div class="left-section">
+                    <div class="card order-detail-card">
+                        <div class="card-header">
+                            <div class="card-title"><el-icon><Document /></el-icon>订单信息</div>
+                        </div>
+                        <div class="detail-list">
+                            <div class="detail-item">
+                                <div class="detail-label">订单编号</div>
+                                <div class="detail-value">{{ orderInfo.orderNo }}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">订单时间</div>
+                                <div class="detail-value">{{ orderInfo.orderTime }}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">缴费类型</div>
+                                <div class="detail-value">{{ orderInfo.feeType }}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">缴费年度</div>
+                                <div class="detail-value">{{ orderInfo.feeYear }}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">付款方</div>
+                                <div class="detail-value">{{ orderInfo.payer }}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">有效期至</div>
+                                <div class="detail-value">{{ orderInfo.expireDate }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card payment-methods">
+                        <div class="card-header">
+                            <div class="card-title"><el-icon><Wallet /></el-icon>支付方式</div>
+                        </div>
+                        <div class="method-list">
+                            <div class="method-item" :class="{ selected: selectedMethod === 'wechat' }" @click="selectedMethod = 'wechat'">
+                                <div class="method-radio"></div>
+                                <div class="method-icon wechat">💳</div>
+                                <div class="method-name">微信支付</div>
+                            </div>
+                            <div class="method-item" :class="{ selected: selectedMethod === 'alipay' }" @click="selectedMethod = 'alipay'">
+                                <div class="method-radio"></div>
+                                <div class="method-icon alipay">💰</div>
+                                <div class="method-name">支付宝</div>
+                            </div>
+                            <div class="method-item" :class="{ selected: selectedMethod === 'bank' }" @click="selectedMethod = 'bank'">
+                                <div class="method-radio"></div>
+                                <div class="method-icon bank">🏦</div>
+                                <div class="method-name">网上银行</div>
+                            </div>
+                            <div class="method-item" :class="{ selected: selectedMethod === 'unionpay' }" @click="selectedMethod = 'unionpay'">
+                                <div class="method-radio">💳</div>
+                                <div class="method-icon unionpay">📋</div>
+                                <div class="method-name">银联云闪付</div>
+                            </div>
+                            <div class="method-item" :class="{ selected: selectedMethod === 'offline' }" @click="selectedMethod = 'offline'">
+                                <div class="method-radio"></div>
+                                <div class="method-icon offline">🏧</div>
+                                <div class="method-name">线下转账</div>
+                            </div>
+                        </div>
+                        <div class="bank-info-box" :class="{ show: selectedMethod === 'offline' }">
+                            <div class="bank-info-title">🏦 银行账户信息</div>
+                            <div class="bank-info-item">
+                                <span class="bank-info-label">开户名称</span>
+                                <span class="bank-info-value">中国农学会<input type="text" id="accountName" value="中国农学会" style="position:absolute;opacity:0;width:0;height:0;" readonly></span>
+                            </div>
+                            <div class="bank-info-item">
+                                <span class="bank-info-label">银行账号</span>
+                                <span class="bank-info-value">1105 0101 0900 1234 567<span class="copy-btn" onclick="copyText(document.getElementById('accountNo').value)">复制</span><input type="text" id="accountNo" value="1105 0101 0900 1234 567" style="position:absolute;opacity:0;width:0;height:0;" readonly></span>
+                            </div>
+                            <div class="bank-info-item">
+                                <span class="bank-info-label">开户支行</span>
+                                <span class="bank-info-value">中国工商银行北京和平里支行</span>
+                            </div>
+                            <div class="bank-info-item">
+                                <span class="bank-info-label">汇款备注</span>
+                                <span class="bank-info-value">请备注会员编号：{{ orderInfo.orderNo.replace('ORD', '') }}</span>
+                            </div>
+                            <div style="margin-top: 12px; padding: 10px; background: #fff; border-radius: 6px; font-size: 13px; color: #666;">
+                                💡 温馨提示：汇款后请保留凭证，等待审核确认到账
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-section">
+                    <div class="card order-summary">
+                        <div class="card-header">
+                            <div class="card-title"><el-icon><ShoppingCart /></el-icon>订单摘要</div>
+                        </div>
+                        <div class="summary-info">
+                            <div class="summary-item">
+                                <span class="summary-label">商品名称</span>
+                                <span class="summary-value">{{ orderInfo.feeType }}（{{ orderInfo.feeYear }}年）</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">订单编号</span>
+                                <span class="summary-value">{{ orderInfo.orderNo }}</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">应付金额</span>
+                                <span class="summary-amount">
+                                    <span class="summary-amount-label">¥</span>{{ orderInfo.amount }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" @click="handlePay" :disabled="!selectedMethod">
+                        <el-icon><Check /></el-icon>
+                        确认支付 ¥{{ orderInfo.amount }}
+                    </button>
+
+                    <div class="countdown">
+                        <div class="countdown-text">
+                            剩余支付时间：<span class="countdown-time">{{ countdown }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="success-overlay" :class="{ show: showSuccess }">
+            <div class="success-modal">
+                <div class="success-icon"><el-icon><CircleCheck /></el-icon></div>
+                <div class="success-title">支付成功</div>
+                <div class="success-desc">您的缴费已成功完成</div>
+                <div class="success-amount">¥{{ orderInfo.amount }}</div>
+                <div class="success-info">
+                    <div class="success-info-item">
+                        <span class="label">订单编号</span>
+                        <span class="value">{{ orderInfo.orderNo }}</span>
+                    </div>
+                    <div class="success-info-item">
+                        <span class="label">支付方式</span>
+                        <span class="value">{{ methodName }}</span>
+                    </div>
+                    <div class="success-info-item">
+                        <span class="label">支付时间</span>
+                        <span class="value">{{ successTime }}</span>
+                    </div>
+                </div>
+                <div class="success-actions">
+                    <button class="btn btn-default" @click="goToOrders">查看订单</button>
+                    <button class="btn btn-primary" @click="goToHome">返回首页</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, computed, onMounted, onUnmounted } = Vue;
+
+        const app = createApp({
+            setup() {
+                const showDropdown = ref(false);
+                const selectedMethod = ref('wechat');
+                const showSuccess = ref(false);
+                const successTime = ref('');
+                let countdownTimer = null;
+                let expireTime = 29 * 60 + 45; // 29:45
+
+                const orderInfo = ref({
+                    orderNo: 'ORD20250514001',
+                    orderTime: '2025-05-14 14:30:00',
+                    feeType: '年度会费',
+                    feeYear: '2025',
+                    payer: '张三',
+                    amount: '200.00',
+                    expireDate: '2025-06-13'
+                });
+
+                const countdown = computed(() => {
+                    const minutes = Math.floor(expireTime / 60);
+                    const seconds = expireTime % 60;
+                    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                });
+
+                const methodName = computed(() => {
+                    const names = {
+                        wechat: '微信支付',
+                        alipay: '支付宝',
+                        bank: '网上银行',
+                        unionpay: '银联云闪付',
+                        offline: '线下转账'
+                    };
+                    return names[selectedMethod.value] || '';
+                });
+
+                const goBack = () => {
+                    location.href = 'payment.html';
+                };
+
+                const handlePay = () => {
+                    if (selectedMethod.value === 'offline') {
+                        showToast('您的转账申请已提交，请等待审核确认');
+                        setTimeout(() => {
+                            location.href = 'payment.html';
+                        }, 2000);
+                        return;
+                    }
+                    const now = new Date();
+                    successTime.value = now.toLocaleString('zh-CN', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
+                    showSuccess.value = true;
+                };
+
+                const goToOrders = () => {
+                    location.href = 'payment.html';
+                };
+
+                const goToHome = () => {
+                    location.href = 'personal-center.html';
+                };
+
+                const showToast = (message) => {
+                    ElMessage.success(message);
+                };
+
+                const copyText = (text) => {
+                    navigator.clipboard.writeText(text.replace(/\s/g, '')).then(() => {
+                        ElMessage.success('复制成功');
+                    });
+                };
+
+                onMounted(() => {
+                    countdownTimer = setInterval(() => {
+                        if (expireTime > 0) {
+                            expireTime--;
+                        } else {
+                            clearInterval(countdownTimer);
+                            ElMessage.warning('订单已过期，请重新下单');
+                            setTimeout(() => {
+                                location.href = 'payment.html';
+                            }, 1500);
+                        }
+                    }, 1000);
+
+                    document.addEventListener('click', (e) => {
+                        if (!e.target.closest('.user-dropdown')) {
+                            showDropdown.value = false;
+                        }
+                    });
+                });
+
+                onUnmounted(() => {
+                    if (countdownTimer) {
+                        clearInterval(countdownTimer);
+                    }
+                });
+
+                return {
+                    showDropdown,
+                    selectedMethod,
+                    showSuccess,
+                    orderInfo,
+                    countdown,
+                    methodName,
+                    successTime,
+                    goBack,
+                    handlePay,
+                    goToOrders,
+                    goToHome,
+                    showToast,
+                    copyText
+                };
+            }
+        });
+
+        app.use(ElementPlus);
+        app.mount('#app');
+    </script>
+</body>
+</html>

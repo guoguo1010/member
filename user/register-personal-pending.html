@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>审核进度 - 中国农学会</title>
+  <link rel="stylesheet" href="../css/web.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%); min-height: 100vh; }
+
+    .navbar {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 0 40px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .navbar-logo { display: flex; align-items: center; gap: 12px; color: white; font-size: 20px; font-weight: 600; }
+    .navbar-logo-icon { font-size: 32px; }
+    .navbar-menu { display: flex; gap: 4px; }
+    .navbar-item { padding: 10px 20px; color: rgba(255, 255, 255, 0.9); text-decoration: none; border-radius: 8px; transition: all 0.3s; font-size: 15px; }
+    .navbar-item:hover { background: rgba(255, 255, 255, 0.2); color: white; }
+    .navbar-item.active { background: rgba(255, 255, 255, 0.3); color: white; }
+    .navbar-user { display: flex; align-items: center; gap: 16px; color: white; }
+    .navbar-avatar { width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; transition: all 0.3s; }
+    .navbar-avatar:hover { transform: scale(1.1); }
+
+    .user-dropdown { position: relative; cursor: pointer; }
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      min-width: 180px;
+      padding: 8px 0;
+      display: none;
+      z-index: 1001;
+    }
+    .dropdown-menu.show { display: block; }
+    .dropdown-item {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #666;
+      font-size: 14px;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+    .dropdown-item:hover { background: #f5f7fa; color: #667eea; }
+    .dropdown-divider { height: 1px; background: #f0f0f0; margin: 8px 0; }
+
+    .main-container { max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      margin-bottom: 24px;
+    }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-card {
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .status-card.pending {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .status-card.rejected {
+      background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);
+      color: white;
+    }
+
+    .status-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+
+    .status-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .status-desc {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .status-section {
+      margin-bottom: 24px;
+    }
+
+    .status-section:last-child { margin-bottom: 0; }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-left: 12px;
+      border-left: 3px solid #667eea;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .info-item {
+      padding: 14px 16px;
+      background: #f5f7fa;
+      border-radius: 12px;
+    }
+
+    .info-label {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 15px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .info-value.warning {
+      color: #faad14;
+    }
+
+    .info-value.success {
+      color: #52c41a;
+    }
+
+    .info-value.error {
+      color: #ff4d4f;
+    }
+
+    .reason-box {
+      background: #fff1f0;
+      border: 1px solid #ffccc7;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+
+    .reason-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #ff4d4f;
+      margin-bottom: 8px;
+    }
+
+    .reason-text {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .action-bar {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 24px;
+    }
+
+    .btn {
+      padding: 12px 28px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-default {
+      background: #f5f7fa;
+      color: #666;
+      border: 1px solid #e4e7ed;
+    }
+
+    .btn-default:hover {
+      background: #e4e7ed;
+    }
+
+    .step-progress {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 32px;
+    }
+
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-dot {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .step-item.completed .step-dot {
+      background: linear-gradient(135deg, #52c41a, #73d13d);
+      color: white;
+    }
+
+    .step-item.current .step-dot {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+    }
+
+    .step-item.pending .step-dot {
+      background: #f0f0f0;
+      color: #999;
+    }
+
+    .step-label {
+      font-size: 13px;
+      color: #999;
+    }
+
+    .step-item.completed .step-label { color: #52c41a; }
+    .step-item.current .step-label { color: #667eea; font-weight: 600; }
+
+    .step-line {
+      width: 60px;
+      height: 3px;
+      background: #f0f0f0;
+      margin-top: 18px;
+    }
+
+    .step-line.filled {
+      background: linear-gradient(90deg, #52c41a, #73d13d);
+    }
+
+    .apply-info {
+      background: #f8f9fc;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .apply-info-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 14px;
+    }
+
+    .apply-info-item .label { color: #999; }
+    .apply-info-item .value { color: #333; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <span class="navbar-logo-icon">🌾</span>
+        <span>中国农学会</span>
+      </div>
+      <div class="navbar-menu">
+        <a href="personal-center.html" class="navbar-item">首页</a>
+        <a href="data-stats.html" class="navbar-item">数说学会</a>
+        <a href="personal-info.html" class="navbar-item">会员信息</a>
+        <a href="payment.html" class="navbar-item">缴费订单</a>
+        <a href="messages.html" class="navbar-item">我的消息</a>
+        <a href="growth-trajectory.html" class="navbar-item">成长轨迹</a>
+      </div>
+      <div class="navbar-user">
+        <div class="navbar-avatar" style="cursor: pointer;" onclick="location.href='messages.html'">🔔</div>
+        <div class="user-dropdown" onclick="this.querySelector('.dropdown-menu').classList.toggle('show')">
+          <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <div class="navbar-avatar">张</div>
+            <span>张三</span>
+            <span style="font-size: 12px;">▼</span>
+          </div>
+          <div class="dropdown-menu">
+            <a href="identity-switch.html" class="dropdown-item">
+              <span>🔄</span>
+              <span>切换身份</span>
+            </a>
+            <a href="account-settings.html" class="dropdown-item">
+              <span>⚙️</span>
+              <span>账号设置</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="login.html" class="dropdown-item">
+              <span>🚪</span>
+              <span>退出登录</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="main-container">
+      <div class="card">
+        <div class="page-title">
+          <span>📋</span>
+          <span>注册进度查询</span>
+        </div>
+
+        <!-- 审核状态：待审核 -->
+        <div class="status-card pending" id="statusPending">
+          <div class="status-icon">⏳</div>
+          <div class="status-title" id="statusTitle">您的申请已提交，正在等待审核</div>
+          <div class="status-desc" id="statusDesc">请耐心等待，管理员将在 1-3 个工作日内完成初审</div>
+        </div>
+
+        <!-- 审核状态：不通过（默认隐藏） -->
+        <div class="status-card rejected" id="statusRejected" style="display: none;">
+          <div class="status-icon">❌</div>
+          <div class="status-title">很遗憾，您的申请未通过审核</div>
+          <div class="status-desc">请根据下方原因修改后重新提交</div>
+          <div class="reason-box" style="margin-top: 20px; text-align: left;">
+            <div class="reason-title">不通过原因：</div>
+            <div class="reason-text" id="rejectReason">您提交的身份证明材料不清晰，请重新上传身份证正反面照片。</div>
+          </div>
+          <div class="status-actions" style="margin-top: 24px;">
+            <button class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);" onclick="location.href='register-personal.html'">
+              <span>✏️</span>
+              <span>修改申请</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 进度指示器 -->
+        <div class="step-progress">
+          <div class="step-item completed">
+            <div class="step-dot">✓</div>
+            <div class="step-label">提交申请</div>
+          </div>
+          <div class="step-line filled"></div>
+          <div class="step-item current" id="stepReview">
+            <div class="step-dot">2</div>
+            <div class="step-label">初审中</div>
+          </div>
+          <div class="step-line" id="stepLineReview"></div>
+          <div class="step-item pending" id="stepFinal">
+            <div class="step-dot">3</div>
+            <div class="step-label">审核结果</div>
+          </div>
+        </div>
+
+        <div class="apply-info">
+          <div class="apply-info-item">
+            <span class="label">会员类型</span>
+            <span class="value" id="infoType">普通个人会员</span>
+          </div>
+          <div class="apply-info-item">
+            <span class="label">发展机构</span>
+            <span class="value" id="infoOrg">北京市农学会</span>
+          </div>
+          <div class="apply-info-item">
+            <span class="label">申请时间</span>
+            <span class="value" id="infoDate">2026-05-14 10:30</span>
+          </div>
+          <div class="apply-info-item">
+            <span class="label">申请状态</span>
+            <span class="value" style="color: #667eea;" id="infoStatus">审核中</span>
+          </div>
+        </div>
+
+        <div class="action-bar" id="actionBar">
+          <button class="btn btn-default" onclick="location.href='personal-center.html'">
+            <span>🏠</span>
+            <span>返回首页</span>
+          </button>
+          <button class="btn btn-default" id="withdrawBtn" onclick="handleWithdraw()">
+            <span>↩️</span>
+            <span>撤回申请</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 撤回申请
+    function handleWithdraw() {
+      if (window.confirm('确定要撤回申请吗？撤回后可以重新提交。')) {
+        alert('申请已撤回');
+        location.href = 'personal-center.html';
+      }
+    }
+
+    // 根据URL参数显示不同状态
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status') || 'pending';
+
+    if (status === 'reviewing') {
+      document.getElementById('statusTitle').textContent = '您的申请已提交，正在审核中';
+      document.getElementById('statusDesc').textContent = '请耐心等待，初审结果将在 1-3 个工作日内完成';
+      document.getElementById('stepReview').className = 'step-item current';
+      document.getElementById('infoStatus').textContent = '审核中';
+      document.getElementById('infoStatus').className = 'value warning';
+      document.getElementById('withdrawBtn').style.display = 'none';
+    } else if (status === 'rejected') {
+      document.getElementById('statusPending').style.display = 'none';
+      document.getElementById('statusRejected').style.display = 'block';
+      document.getElementById('stepReview').className = 'step-item completed';
+      document.getElementById('stepReview').querySelector('.step-dot').textContent = '✓';
+      document.getElementById('stepLineReview').className = 'step-line filled';
+      document.getElementById('stepFinal').className = 'step-item current';
+      document.getElementById('stepFinal').querySelector('.step-dot').textContent = '✗';
+      document.getElementById('infoStatus').textContent = '审核不通过';
+      document.getElementById('infoStatus').className = 'value error';
+      document.getElementById('withdrawBtn').style.display = 'none';
+    } else {
+      document.getElementById('infoStatus').textContent = '待审核';
+      document.getElementById('infoStatus').className = 'value warning';
+    }
+  </script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

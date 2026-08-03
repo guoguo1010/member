@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>注册个人会员 - 其他信息 - 中国农学会</title>
+  <link rel="stylesheet" href="../css/web.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%); min-height: 100vh; }
+
+    .navbar {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 0 40px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .navbar-logo { display: flex; align-items: center; gap: 12px; color: white; font-size: 20px; font-weight: 600; }
+    .navbar-logo-icon { font-size: 32px; }
+    .navbar-menu { display: flex; gap: 4px; }
+    .navbar-item { padding: 10px 20px; color: rgba(255, 255, 255, 0.9); text-decoration: none; border-radius: 8px; transition: all 0.3s; font-size: 15px; }
+    .navbar-item:hover { background: rgba(255, 255, 255, 0.2); color: white; }
+    .navbar-item.active { background: rgba(255, 255, 255, 0.3); color: white; }
+    .navbar-user { display: flex; align-items: center; gap: 16px; color: white; }
+    .navbar-avatar { width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; transition: all 0.3s; }
+    .navbar-avatar:hover { transform: scale(1.1); }
+
+    .user-dropdown { position: relative; cursor: pointer; }
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      min-width: 180px;
+      padding: 8px 0;
+      display: none;
+      z-index: 1001;
+    }
+    .dropdown-menu.show { display: block; }
+    .dropdown-item {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #666;
+      font-size: 14px;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+    .dropdown-item:hover { background: #f5f7fa; color: #667eea; }
+    .dropdown-divider { height: 1px; background: #f0f0f0; margin: 8px 0; }
+
+    .register-container { max-width: 1000px; margin: 0 auto; padding: 40px 24px; }
+
+    .step-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 40px;
+      padding: 0 20px;
+    }
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .step-item .step-num {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: rgba(102, 126, 234, 0.1);
+      border: 2px solid rgba(102, 126, 234, 0.2);
+      color: #999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    .step-item.active .step-num {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-color: #667eea;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+    }
+    .step-item.completed .step-num {
+      background: linear-gradient(135deg, #52c41a, #73d13d);
+      border-color: #52c41a;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(82, 196, 26, 0.4);
+    }
+    .step-item .step-label {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #999;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .step-item.active .step-label { color: #667eea; font-weight: 600; }
+    .step-item.completed .step-label { color: #52c41a; }
+    .step-line {
+      flex: 1;
+      height: 3px;
+      background: rgba(102, 126, 234, 0.1);
+      margin: 0 -10px;
+      margin-top: -20px;
+      border-radius: 2px;
+      max-width: 120px;
+    }
+    .step-line.filled { background: linear-gradient(90deg, #52c41a, #73d13d); }
+
+    .form-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .form-section {
+      margin-bottom: 28px;
+    }
+    .form-section:last-child { margin-bottom: 0; }
+
+    .form-section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-section-title::before {
+      content: '';
+      width: 4px;
+      height: 18px;
+      background: linear-gradient(180deg, #667eea, #764ba2);
+      border-radius: 2px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .form-row.single { grid-template-columns: 1fr; }
+    .form-row:last-child { margin-bottom: 0; }
+
+    .form-group { margin-bottom: 0; }
+    .form-group:last-child { margin-bottom: 0; }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #e4e7ed;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #333;
+      background: #fff;
+      transition: all 0.3s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      outline: none;
+    }
+    .form-textarea { resize: vertical; min-height: 80px; }
+
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: #f8f9fc;
+      border: 1px solid #e4e7ed;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .checkbox-item:hover { border-color: #667eea; }
+    .checkbox-item input { width: 14px; height: 14px; accent-color: #667eea; }
+    .checkbox-item input:checked + span { color: #667eea; font-weight: 500; }
+
+    .info-summary {
+      background: rgba(102, 126, 234, 0.04);
+      border: 1px solid rgba(102, 126, 234, 0.1);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+    .info-summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 14px;
+    }
+    .info-summary-item .label { color: #999; }
+    .info-summary-item .value { font-weight: 500; color: #333; }
+
+    .agreement-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #666;
+      cursor: pointer;
+    }
+    .agreement-check input { width: 16px; height: 16px; accent-color: #667eea; }
+    .agreement-check a { color: #667eea; }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 24px;
+      border-top: 1px solid #f0f0f0;
+      margin-top: 8px;
+    }
+
+    .btn {
+      padding: 12px 28px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    }
+    .btn-default {
+      background: #f5f7fa;
+      color: #666;
+      border: 1px solid #e4e7ed;
+    }
+    .btn-default:hover { background: #e4e7ed; }
+    .btn-lg { padding: 14px 32px; font-size: 15px; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <span class="navbar-logo-icon">🌾</span>
+        <span>中国农学会</span>
+      </div>
+      <div class="navbar-menu">
+        <a href="personal-center.html" class="navbar-item">首页</a>
+        <a href="data-stats.html" class="navbar-item">数说学会</a>
+        <a href="personal-info.html" class="navbar-item">会员信息</a>
+        <a href="payment.html" class="navbar-item">缴费订单</a>
+        <a href="messages.html" class="navbar-item">我的消息</a>
+        <a href="growth-trajectory.html" class="navbar-item">成长轨迹</a>
+      </div>
+      <div class="navbar-user">
+        <div class="navbar-avatar" style="cursor: pointer;" onclick="location.href='messages.html'">🔔</div>
+        <div class="user-dropdown" onclick="this.querySelector('.dropdown-menu').classList.toggle('show')">
+          <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <div class="navbar-avatar">张</div>
+            <span>张三</span>
+            <span style="font-size: 12px;">▼</span>
+          </div>
+          <div class="dropdown-menu">
+            <a href="identity-switch.html" class="dropdown-item">
+              <span>🔄</span>
+              <span>切换身份</span>
+            </a>
+            <a href="account-settings.html" class="dropdown-item">
+              <span>⚙️</span>
+              <span>账号设置</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="login.html" class="dropdown-item">
+              <span>🚪</span>
+              <span>退出登录</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="register-container">
+      <div class="step-bar">
+        <div class="step-item completed" id="step1">
+          <div class="step-num">✓</div>
+          <div class="step-label">选择类型</div>
+        </div>
+        <div class="step-line filled"></div>
+        <div class="step-item completed" id="step2">
+          <div class="step-num">✓</div>
+          <div class="step-label">基本信息</div>
+        </div>
+        <div class="step-line filled"></div>
+        <div class="step-item active" id="step3">
+          <div class="step-num">3</div>
+          <div class="step-label">其他信息</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item" id="step4">
+          <div class="step-num">4</div>
+          <div class="step-label">确认提交</div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-section">
+          <div class="form-section-title">其他信息 <span style="font-weight: normal; color: #999; font-size: 12px;">（可选）</span></div>
+          <div class="form-row single">
+            <div class="form-group">
+              <label class="form-label">主要成就</label>
+              <textarea class="form-textarea" id="majorAchievement" rows="3" placeholder="包括但不限于发表论著情况、主要科技成果、获奖情况"></textarea>
+            </div>
+          </div>
+          <div class="form-row single">
+            <div class="form-group">
+              <label class="form-label">研究方向</label>
+              <input type="text" class="form-input" id="researchArea" placeholder="请输入研究方向">
+            </div>
+          </div>
+          <div class="form-row single">
+            <div class="form-group">
+              <label class="form-label">发表论著情况</label>
+              <textarea class="form-textarea" id="publications" rows="3" placeholder="请输入发表的论文、著作等"></textarea>
+            </div>
+          </div>
+          <div class="form-row single">
+            <div class="form-group">
+              <label class="form-label">主要科技成果</label>
+              <textarea class="form-textarea" id="achievements" rows="3" placeholder="请输入主要科技成果"></textarea>
+            </div>
+          </div>
+          <div class="form-row single">
+            <div class="form-group">
+              <label class="form-label">获奖情况</label>
+              <textarea class="form-textarea" id="awards" rows="3" placeholder="请输入获奖情况"></textarea>
+            </div>
+          </div>
+          <div class="form-row single">
+            <div class="form-group">
+              <label class="form-label">国内外工作经历和成就</label>
+              <textarea class="form-textarea" id="workExperienceAchievement" rows="4" placeholder="请输入国内外工作经历和成就"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">荣誉/专家信息 <span style="font-weight: normal; color: #999; font-size: 12px;">（可选）</span></div>
+          <div class="checkbox-group">
+            <label class="checkbox-item"><input type="checkbox" name="honors" value="人大代表"><span>人大代表</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="honors" value="政协委员"><span>政协委员</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="honors" value="突出贡献专家"><span>突出贡献专家</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="honors" value="政府特贴专家"><span>政府特贴专家</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="honors" value="院士"><span>院士</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="honors" value="长江学者"><span>长江学者</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="honors" value="杰青"><span>杰青</span></label>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">学会任职 & 国际交流 <span style="font-weight: normal; color: #999; font-size: 12px;">（可选）</span></div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">何时加入本会</label>
+              <input type="text" class="form-input" id="joinDate" placeholder="请输入时间">
+            </div>
+            <div class="form-group">
+              <label class="form-label">在本会担任的职务</label>
+              <input type="text" class="form-input" id="societyPosition" placeholder="请输入职务">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">掌握外语</label>
+              <select class="form-select" id="foreignLang">
+                <option value="英语">英语</option>
+                <option value="日语">日语</option>
+                <option value="法语">法语</option>
+                <option value="德语">德语</option>
+                <option value="其他">其他</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">外语熟练程度</label>
+              <select class="form-select" id="langLevel">
+                <option value="精通">精通</option>
+                <option value="熟练">熟练</option>
+                <option value="一般">一般</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">社会职务 & 家庭信息</div>
+          <div class="form-row single">
+            <div class="form-group">
+              <label class="form-label">社会职务</label>
+              <input type="text" class="form-input" id="socialPosition" placeholder="请输入社会职务">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">家庭电话号码</label>
+              <input type="text" class="form-input" id="homePhone" placeholder="请输入电话">
+            </div>
+            <div class="form-group">
+              <label class="form-label">家庭通讯地址</label>
+              <input type="text" class="form-input" id="homeAddress" placeholder="请输入地址">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">个人简介</div>
+          <div class="form-group">
+            <textarea class="form-textarea" id="bio" rows="4" placeholder="请输入个人简介（选填）"></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-default btn-lg" onclick="goPrev()"><span style="margin-right: 4px;">←</span> 上一步</button>
+          <div style="display: flex; gap: 12px;">
+            <button class="btn btn-default btn-lg" onclick="saveOnly()">保存</button>
+            <button class="btn btn-primary btn-lg" onclick="goNext()">下一步 <span style="margin-left: 4px;">→</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    var typeNames = {
+      normal: '普通个人会员',
+      student: '学生个人会员',
+      foreign: '外籍会员'
+    };
+
+    var isInternational = localStorage.getItem('reg_type') === 'foreign';
+
+    var i18nLabels = {
+      '其他信息': 'Other Information',
+      '研究方向': 'Research Focus',
+      '发表论著情况': 'Publications',
+      '主要科技成果': 'Major S&T Achievements',
+      '主要成就': 'Major Achievements',
+      '获奖情况': 'Awards',
+      '国内外工作经历和成就': 'Domestic and International Work Experience & Achievements',
+      '荣誉/专家信息': 'Honors & Expert Status',
+      '学会任职 & 国际交流': 'Society Positions & International Exchange',
+      '何时加入本会': 'Year Joined',
+      '在本会担任的职务': 'Position in Society',
+      '掌握外语': 'Foreign Language',
+      '外语熟练程度': 'Language Proficiency',
+      '社会职务 & 家庭信息': 'Social Positions & Family Info',
+      '社会职务': 'Social Position',
+      '家庭电话号码': 'Home Phone',
+      '家庭通讯地址': 'Home Address',
+      '个人简介': 'Personal Bio'
+    };
+
+    var honorI18n = {
+      '人大代表': 'NPC Deputy',
+      '政协委员': 'CPPCC Member',
+      '突出贡献专家': 'Outstanding Contribution Expert',
+      '政府特贴专家': 'Government Special Allowance Expert',
+      '院士': 'Academician',
+      '长江学者': 'Chang Jiang Scholar',
+      '杰青': 'National Science Fund for Distinguished Young Scholars'
+    };
+
+    function switchToInternational() {
+      if (!isInternational) return;
+      document.querySelectorAll('.form-section-title').forEach(function(el) {
+        var text = el.childNodes[el.childNodes.length - 1].textContent.trim();
+        for (var key in i18nLabels) {
+          if (text.indexOf(key) !== -1) {
+            el.childNodes[el.childNodes.length - 1].textContent = ' ' + i18nLabels[key];
+            break;
+          }
+        }
+      });
+      document.querySelectorAll('.form-label').forEach(function(el) {
+        var text = el.textContent.trim();
+        if (i18nLabels[text]) el.textContent = i18nLabels[text];
+      });
+      document.querySelectorAll('input[name="honors"] + span').forEach(function(el) {
+        var val = el.textContent.trim();
+        if (honorI18n[val]) el.textContent = honorI18n[val];
+      });
+      var placeholders = {
+        'researchArea': 'Please enter your research focus',
+        'publications': 'Please list your publications',
+        'achievements': 'Please enter your major S&T achievements'
+      };
+      for (var id in placeholders) {
+        var el = document.getElementById(id);
+        if (el) el.placeholder = placeholders[id];
+      }
+    }
+
+    function init() {
+      switchToInternational();
+      var type = localStorage.getItem('reg_type') || 'normal';
+      var feePeriod = localStorage.getItem('reg_fee_period') || '1';
+      var feeAmount = localStorage.getItem('reg_fee_amount') || '100';
+      var orgName = localStorage.getItem('reg_org_name') || '北京市农学会';
+      var step2 = JSON.parse(localStorage.getItem('reg_step2') || '{}');
+
+      document.getElementById('summaryType').textContent = typeNames[type] || type;
+      document.getElementById('summaryFee').textContent = feePeriod + ' - ¥' + feeAmount;
+      document.getElementById('summaryOrg').textContent = orgName;
+      document.getElementById('summaryName').textContent = step2.realName || '-';
+
+      var data = JSON.parse(localStorage.getItem('reg_step4') || '{}');
+      if (data.researchArea) document.getElementById('researchArea').value = data.researchArea;
+      if (data.publications) document.getElementById('publications').value = data.publications;
+      if (data.achievements) document.getElementById('achievements').value = data.achievements;
+      if (data.majorAchievement) document.getElementById('majorAchievement').value = data.majorAchievement;
+      if (data.awards) document.getElementById('awards').value = data.awards;
+      if (data.workExperienceAchievement) document.getElementById('workExperienceAchievement').value = data.workExperienceAchievement;
+      if (data.honors && data.honors.length > 0) {
+        data.honors.forEach(function(h) {
+          var checkbox = document.querySelector('input[name="honors"][value="' + h + '"]');
+          if (checkbox) checkbox.checked = true;
+        });
+      }
+      if (data.joinDate) document.getElementById('joinDate').value = data.joinDate;
+      if (data.societyPosition) document.getElementById('societyPosition').value = data.societyPosition;
+      if (data.foreignLang) document.getElementById('foreignLang').value = data.foreignLang;
+      if (data.langLevel) document.getElementById('langLevel').value = data.langLevel;
+      if (data.socialPosition) document.getElementById('socialPosition').value = data.socialPosition;
+      if (data.homePhone) document.getElementById('homePhone').value = data.homePhone;
+      if (data.homeAddress) document.getElementById('homeAddress').value = data.homeAddress;
+      if (data.bio) document.getElementById('bio').value = data.bio;
+    }
+
+    function saveData() {
+      var honors = [];
+      document.querySelectorAll('input[name="honors"]:checked').forEach(function(cb) {
+        honors.push(cb.value);
+      });
+      var data = {
+        majorAchievement: document.getElementById('majorAchievement').value,
+        researchArea: document.getElementById('researchArea').value,
+        publications: document.getElementById('publications').value,
+        achievements: document.getElementById('achievements').value,
+        awards: document.getElementById('awards').value,
+        workExperienceAchievement: document.getElementById('workExperienceAchievement').value,
+        honors: honors,
+        joinDate: document.getElementById('joinDate').value,
+        societyPosition: document.getElementById('societyPosition').value,
+        foreignLang: document.getElementById('foreignLang').value,
+        langLevel: document.getElementById('langLevel').value,
+        socialPosition: document.getElementById('socialPosition').value,
+        homePhone: document.getElementById('homePhone').value,
+        homeAddress: document.getElementById('homeAddress').value,
+        bio: document.getElementById('bio').value
+      };
+      localStorage.setItem('reg_step4', JSON.stringify(data));
+    }
+
+    function saveOnly() {
+      saveData();
+      showToast('保存成功');
+    }
+
+    function goPrev() {
+      saveData();
+      location.href = 'register-personal-step2.html';
+    }
+
+    function goNext() {
+      saveData();
+      location.href = 'register-personal-step5.html';
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>申请详情 - 单位会员审核</title>
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">申请详情</div>
+          <div class="breadcrumb">
+            <a href="company-audit.html">单位会员审核</a> / <span>申请详情</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- 审核进度 -->
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-body">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 16px;">
+                <span class="tag tag-success" style="font-size: 14px; padding: 6px 12px;">普通单位会员</span>
+                <span style="color: #666;">申请时间：2024-05-13 10:23:15</span>
+              </div>
+              <a href="company-audit.html" class="btn btn-default btn-sm">返回列表</a>
+            </div>
+            <div style="margin-top: 20px;">
+              <div style="display: flex; align-items: center; justify-content: center;">
+                <div style="display: flex; align-items: center;">
+                  <div style="text-align: center;">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: #52c41a; color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 16px;">✓</div>
+                    <div style="margin-top: 8px; font-size: 13px; color: #52c41a;">提交申请</div>
+                    <div style="font-size: 12px; color: #999;">05-13 10:23</div>
+                  </div>
+                  <div style="width: 100px; height: 3px; background: #52c41a; margin: 0 10px;"></div>
+                  <div style="text-align: center;">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: #52c41a; color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 16px;">✓</div>
+                    <div style="margin-top: 8px; font-size: 13px; color: #52c41a;">机构初审</div>
+                    <div style="font-size: 12px; color: #999;">05-13 14:30</div>
+                  </div>
+                  <div style="width: 100px; height: 3px; background: #1890ff; margin: 0 10px;"></div>
+                  <div style="text-align: center;">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: #1890ff; color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 16px;">3</div>
+                    <div style="margin-top: 8px; font-size: 13px; color: #1890ff;">部门终审</div>
+                    <div style="font-size: 12px; color: #999;">待审核</div>
+                  </div>
+                  <div style="width: 100px; height: 3px; background: #e4e7ed; margin: 0 10px;"></div>
+                  <div style="text-align: center;">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: #e4e7ed; color: #999; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 16px;">4</div>
+                    <div style="margin-top: 8px; font-size: 13px; color: #999;">缴费</div>
+                    <div style="font-size: 12px; color: #999;">-</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 会员信息 -->
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <span class="card-title">会员信息</span>
+          </div>
+          <div class="card-body">
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">申请会员类型</div>
+                <div style="font-weight: 500;">普通单位会员</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">审核确认类型 <span style="color: #ff4d4f;">*</span></div>
+                <select class="form-select" id="confirmMemberType" style="width: 100%;">
+                  <option value="normal" selected>普通单位会员</option>
+                  <option value="director">理事单位会员</option>
+                </select>
+                <div style="font-size: 12px; color: #fa8c16; margin-top: 4px;">⚠️ 审核通过后以此类型为准</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">发展来源</div>
+                <div style="font-weight: 500;">北京市农学会</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">推荐单位</div>
+                <div style="font-weight: 500;">-</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">推荐人</div>
+                <div style="font-weight: 500;">-</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 单位基本信息 -->
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <span class="card-title">单位基本信息</span>
+          </div>
+          <div class="card-body">
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+              <div style="grid-column: span 2;">
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">单位名称</div>
+                <div style="font-weight: 500;">北京科技有限公司</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">单位类别</div>
+                <div style="font-weight: 500;">国有（控股）企业</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">所属行业</div>
+                <div style="font-weight: 500;">农业科技</div>
+              </div>
+              <div style="grid-column: span 2;">
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">所在地区</div>
+                <div style="font-weight: 500;">北京市 / 北京市 / 海淀区</div>
+              </div>
+              <div style="grid-column: span 2;">
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">通讯地址</div>
+                <div style="font-weight: 500;">北京市海淀区中关村南大街12号</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">单位Logo</div>
+                <div style="font-weight: 500;"><span class="tag tag-success">已上传</span></div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">单位网址</div>
+                <div style="font-weight: 500;">www.example.com</div>
+              </div>
+              <div style="grid-column: span 4;">
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">感兴趣的分支机构</div>
+                <div style="font-weight: 500;">作物学专业委员会、园艺学专业委员会</div>
+              </div>
+              <div style="grid-column: span 4;">
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">单位简介</div>
+                <div style="font-weight: 500; line-height: 1.6;">北京科技有限公司成立于2015年，是一家专注于农业科技创新的高新技术企业。公司主要从事农业智能化设备研发、现代农业技术推广等服务。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 单位信息 -->
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <span class="card-title">单位信息（如为高校二级学院，请填写高校本级信息）</span>
+          </div>
+          <div class="card-body">
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">成立时间</div>
+                <div style="font-weight: 500;">2015-06-20</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">注册资金</div>
+                <div style="font-weight: 500;">1000万元</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">法定代表人</div>
+                <div style="font-weight: 500;">张总</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">社会统一信用代码</div>
+                <div style="font-weight: 500;">91110000XXXXXXXX</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">职工人数</div>
+                <div style="font-weight: 500;">500人</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">产业规模（万元）</div>
+                <div style="font-weight: 500;">6800</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">营业执照</div>
+                <div style="font-weight: 500;"><a href="javascript:void(0)" style="color: #1890ff;">查看营业执照</a></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 单位负责人信息 -->
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <span class="card-title">单位负责人信息</span>
+          </div>
+          <div class="card-body">
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">姓名</div>
+                <div style="font-weight: 500;">张总</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">性别</div>
+                <div style="font-weight: 500;">男</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">职务/职称</div>
+                <div style="font-weight: 500;">董事长 / 高级工程师</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">所在部门</div>
+                <div style="font-weight: 500;">董事会</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">办公电话</div>
+                <div style="font-weight: 500;">010-12345678</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">手机号码</div>
+                <div style="font-weight: 500;">13800138001</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">电子邮箱</div>
+                <div style="font-weight: 500;">zhang@example.com</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 联系人信息 -->
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <span class="card-title">联系人信息</span>
+          </div>
+          <div class="card-body">
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">姓名</div>
+                <div style="font-weight: 500;">李联系人</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">性别</div>
+                <div style="font-weight: 500;">女</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">年龄</div>
+                <div style="font-weight: 500;">36</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">职务/职称</div>
+                <div style="font-weight: 500;">行政经理 / 中级工程师</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">所在部门</div>
+                <div style="font-weight: 500;">行政部</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">手机号码</div>
+                <div style="font-weight: 500;">13900139001</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">电子邮箱</div>
+                <div style="font-weight: 500;">li@example.com</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">办公电话</div>
+                <div style="font-weight: 500;">010-11111111</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">传真</div>
+                <div style="font-weight: 500;">010-22222222</div>
+              </div>
+              <div style="grid-column: span 2;">
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">通讯地址</div>
+                <div style="font-weight: 500;">北京市海淀区中关村南大街12号A座8层</div>
+              </div>
+              <div>
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">邮编</div>
+                <div style="font-weight: 500;">100000</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 资质材料 -->
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <span class="card-title">资质材料</span>
+          </div>
+          <div class="card-body">
+            <div style="display: flex; gap: 12px;">
+              <div style="padding: 16px; background: #fafafa; border-radius: 4px; text-align: center; cursor: pointer; min-width: 100px;">
+                <div style="font-size: 40px;">📄</div>
+                <div style="font-size: 12px; margin-top: 8px; color: #333;">营业执照.jpg</div>
+              </div>
+              <div style="padding: 16px; background: #fafafa; border-radius: 4px; text-align: center; cursor: pointer; min-width: 100px;">
+                <div style="font-size: 40px;">📄</div>
+                <div style="font-size: 12px; margin-top: 8px; color: #333;">法人身份证.jpg</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 审核记录 -->
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <span class="card-title">审核记录</span>
+          </div>
+          <div class="card-body">
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="time">2024-05-13 14:30:25</div>
+                <div class="content">
+                  <div style="font-weight: 500;">机构初审通过</div>
+                  <div style="color: #999; font-size: 13px; margin-top: 4px;">审核人：王管理员 | 审核意见：无</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="time">2024-05-13 10:23:15</div>
+                <div class="content">
+                  <div style="font-weight: 500;">提交申请</div>
+                  <div style="color: #999; font-size: 13px; margin-top: 4px;">发展来源：北京市农学会</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="card">
+          <div class="card-body" style="display: flex; justify-content: flex-end; gap: 12px;">
+            <button class="btn btn-default btn-lg" onclick="location.href='company-audit.html'">返回列表</button>
+            <button class="btn btn-danger btn-lg">驳回</button>
+            <button class="btn btn-success btn-lg">通过终审</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>已退会单位会员 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .status-pending-pay::before { background: #faad14; box-shadow: 0 0 8px rgba(250, 173, 20, 0.5); }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">已退会单位会员</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <a href="#">单位会员</a> / <span>已退会</span></div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">已退会单位会员列表</span>
+            <div class="card-tools">
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="search-bar">
+              <div class="search-item">
+                <label>单位名称：</label>
+                <input type="text" class="form-input" placeholder="请输入单位名称" style="width: 150px;">
+              </div>
+              <div class="search-item">
+                <label>联系人手机：</label>
+                <input type="text" class="form-input" placeholder="请输入手机号" style="width: 130px;">
+              </div>
+              <div class="search-item">
+                <label>会员类型：</label>
+                <select class="form-select" style="width: 130px;">
+                  <option>全部</option>
+                  <option>普通单位会员</option>
+                  <option>理事单位会员</option>
+                </select>
+              </div>
+              <div class="search-item">
+                <label>退会时间：</label>
+                <input type="date" class="form-input" style="width: 130px;"> —
+                <input type="date" class="form-input" style="width: 130px;">
+              </div>
+              <button class="btn btn-default btn-sm">查询</button>
+              <button class="btn btn-default btn-sm">重置</button>
+            </div>
+
+            <table class="table" id="withdrawnTable">
+              <thead>
+                <tr>
+                  <th width="50"><input type="checkbox" class="checkbox" onclick="toggleCheckAll(this, 'withdrawnTable')"></th>
+                  <th>会员编号</th>
+                  <th>单位名称</th>
+                  <th>联系人</th>
+                  <th>手机号</th>
+                  <th>会员类型</th>
+                  <th>入会时间</th>
+                  <th>退会时间</th>
+                  <th>退会原因</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox" class="checkbox"></td>
+                  <td>ORG20200100001</td>
+                  <td>北京某某公司</td>
+                  <td>张总</td>
+                  <td>138****8001</td>
+                  <td><span class="tag tag-success">普通单位会员</span></td>
+                  <td>2020-01-15</td>
+                  <td>2024-06-20</td>
+                  <td>超期未缴费</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='company-detail.html'">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="handleRejoin()">重新入会</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="checkbox"></td>
+                  <td>ORG20190300001</td>
+                  <td>上海某某集团</td>
+                  <td>李总</td>
+                  <td>139****8002</td>
+                  <td><span class="tag tag-success">理事单位会员</span></td>
+                  <td>2019-03-10</td>
+                  <td>2024-05-15</td>
+                  <td>主动申请退会</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='company-detail.html'">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="handleRejoin()">重新入会</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="checkbox"></td>
+                  <td>ORG20181200001</td>
+                  <td>深圳某某科技</td>
+                  <td>王总</td>
+                  <td>137****8003</td>
+                  <td><span class="tag tag-success">普通单位会员</span></td>
+                  <td>2018-12-01</td>
+                  <td>2024-04-10</td>
+                  <td>超期未缴费</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='company-detail.html'">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="handleRejoin()">重新入会</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="pagination">
+              <div class="pagination-info">共 386 条</div>
+              <div class="pagination-btns">
+                <button class="page-btn" disabled>上一页</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <style>
+    .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 22px; }
+    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+    input:checked + .slider { background-color: #52c41a; }
+    input:checked + .slider:before { transform: translateX(18px); }
+  </style>
+  <script>
+    function handleRejoin() {
+      if (confirm('确定要重新办理入会吗？')) {
+        showToast('已发起重新入会流程');
+      }
+    }
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

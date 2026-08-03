@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>邮件批次发送详情 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">批次发送详情</div>
+          <div class="breadcrumb">
+            <a href="email-log.html">邮件发送记录</a> / <span>批次详情</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="stat-cards" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 24px;">
+          <div class="stat-card">
+            <div class="stat-label">批次号</div>
+            <div class="stat-value" style="font-size: 16px;" id="batchCode">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">批次名称</div>
+            <div class="stat-value" style="font-size: 16px;" id="batchName">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">模板名称</div>
+            <div class="stat-value" style="font-size: 16px;" id="templateName">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">发送时间</div>
+            <div class="stat-value" style="font-size: 16px;" id="sendTime">-</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">发送记录列表</span>
+          </div>
+          <div class="card-body">
+            <div class="search-bar">
+              <div class="search-item">
+                <label>接收邮箱：</label>
+                <input type="text" class="form-input" placeholder="请输入邮箱" style="width: 180px;">
+              </div>
+              <div class="search-item">
+                <label>姓名：</label>
+                <input type="text" class="form-input" placeholder="请输入姓名" style="width: 120px;">
+              </div>
+              <div class="search-item">
+                <label>发送状态：</label>
+                <select class="form-select" style="width: 100px;">
+                  <option>全部</option>
+                  <option>发送成功</option>
+                  <option>发送失败</option>
+                </select>
+              </div>
+              <button class="btn btn-default btn-sm">查询</button>
+              <button class="btn btn-default btn-sm">重置</button>
+            </div>
+
+            <table class="table" id="emailDetailTable">
+              <thead>
+                <tr>
+                  <th>接收邮箱</th>
+                  <th>姓名</th>
+                  <th>邮件主题</th>
+                  <th>发送状态</th>
+                  <th>发送时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="emailDetailBody"></tbody>
+            </table>
+
+            <div class="pagination">
+              <div class="pagination-info" id="paginationInfo">共 0 条</div>
+              <div class="pagination-btns">
+                <button class="page-btn" disabled>上一页</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="detailModal">
+    <div class="modal-dialog" style="width: 560px;">
+      <div class="modal-header">
+        <span class="modal-title">邮件详情</span>
+        <span class="close-btn" onclick="closeModal('detailModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">接收邮箱：</label>
+          <span id="detailEmail"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">姓名：</label>
+          <span id="detailName"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">邮件主题：</label>
+          <span id="detailSubject"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">发送状态：</label>
+          <span id="detailStatus"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">发送时间：</label>
+          <span id="detailTime"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="color:#666;">邮件内容：</label>
+          <div id="detailContent" style="background:#f5f5f5;padding:12px;border-radius:6px;line-height:1.8;margin-top:4px;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('detailModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="resendConfirmModal">
+    <div class="modal-dialog" style="width: 420px;">
+      <div class="modal-header">
+        <span class="modal-title">确认重发</span>
+        <span class="close-btn" onclick="closeModal('resendConfirmModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="background: #fff7e6; border: 1px solid #ffd591; border-radius: 6px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: #d46b08;">
+          请确认是否重新发送该邮件。
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">接收邮箱：</label>
+          <span id="resendEmail"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">姓名：</label>
+          <span id="resendName"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">邮件主题：</label>
+          <span id="resendSubject"></span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('resendConfirmModal')">取消</button>
+        <button class="btn btn-primary" onclick="submitResend()">确认重发</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script>
+    var batchData = {
+      'EMAIL20240515001': {
+        code: 'EMAIL20240515001',
+        name: '会员到期续费提醒-5月',
+        template: '会员到期续费提醒',
+        time: '2024-05-15 10:00:00',
+        records: [
+          { email: 'zhangsan@example.com', name: '张三', subject: '【农学会】会员续费提醒', content: '亲爱的张三，您的会员资格将于2024-06-15到期，请及时续费！', status: 'success', statusText: '发送成功', time: '2024-05-15 10:00:15' },
+          { email: 'lisi@example.com', name: '李四', subject: '【农学会】会员续费提醒', content: '亲爱的李四，您的会员资格将于2024-06-15到期，请及时续费！', status: 'success', statusText: '发送成功', time: '2024-05-15 10:00:18' },
+          { email: 'wangwu@example.com', name: '王五', subject: '【农学会】会员续费提醒', content: '亲爱的王五，您的会员资格将于2024-06-15到期，请及时续费！', status: 'fail', statusText: '发送失败', time: '2024-05-15 10:00:22' }
+        ]
+      },
+      'EMAIL20240514002': {
+        code: 'EMAIL20240514002',
+        name: '缴费成功通知-5月第二批',
+        template: '缴费成功通知',
+        time: '-',
+        records: [
+          { email: 'qianyi@example.com', name: '钱一', subject: '【农学会】缴费成功确认', content: '亲爱的钱一，您已成功缴纳会员费用，祝您使用愉快！', status: 'success', statusText: '发送成功', time: '-' },
+          { email: 'suner@example.com', name: '孙二', subject: '【农学会】缴费成功确认', content: '亲爱的孙二，您已成功缴纳会员费用，祝您使用愉快！', status: 'success', statusText: '发送成功', time: '-' }
+        ]
+      },
+      'EMAIL20240510003': {
+        code: 'EMAIL20240510003',
+        name: '审核结果通知-5月上旬',
+        template: '审核结果通知',
+        time: '2024-05-10 09:00:00',
+        records: [
+          { email: 'wangyi@example.com', name: '王一', subject: '【农学会】您的申请已通过审核', content: '尊敬的王一，您的会员申请已通过审核，感谢您的加入！', status: 'success', statusText: '发送成功', time: '2024-05-10 09:00:10' },
+          { email: 'liuer@example.com', name: '刘二', subject: '【农学会】您的申请已通过审核', content: '尊敬的刘二，您的会员申请已通过审核，感谢您的加入！', status: 'success', statusText: '发送成功', time: '2024-05-10 09:00:15' }
+        ]
+      },
+      'EMAIL20240508004': {
+        code: 'EMAIL20240508004',
+        name: '会员注册成功通知-5月第三批',
+        template: '会员注册成功通知',
+        time: '-',
+        records: [
+          { email: 'zhaoyi@example.com', name: '赵一', subject: '【农学会】恭喜您成为正式会员', content: '亲爱的赵一，您的普通个人会员申请已通过审核，成为正式会员！', status: 'success', statusText: '发送成功', time: '-' },
+          { email: 'qianer@example.com', name: '钱二', subject: '【农学会】恭喜您成为正式会员', content: '亲爱的钱二，您的普通个人会员申请已通过审核，成为正式会员！', status: 'success', statusText: '发送成功', time: '-' }
+        ]
+      },
+      'EMAIL20240505005': {
+        code: 'EMAIL20240505005',
+        name: '活动通知-5月',
+        template: '活动通知',
+        time: '2024-05-05 10:00:00',
+        records: [
+          { email: 'sunqi@example.com', name: '孙七', subject: '【农学会】关于召开2024年会的通知', content: '亲爱的孙七，本会将于6月25日举办年会活动，届时请准时参加。', status: 'success', statusText: '发送成功', time: '2024-05-05 10:00:12' }
+        ]
+      }
+    };
+
+    var currentBatchData = null;
+    var currentResendRecord = null;
+
+    function getBatchId() {
+      var params = new URLSearchParams(window.location.search);
+      return params.get('batch') || 'EMAIL20240515001';
+    }
+
+    function loadBatchData() {
+      var batchId = getBatchId();
+      var data = batchData[batchId] || batchData['EMAIL20240515001'];
+      currentBatchData = data;
+      document.getElementById('batchCode').textContent = data.code;
+      document.getElementById('batchName').textContent = data.name;
+      document.getElementById('templateName').textContent = data.template;
+      document.getElementById('sendTime').textContent = data.time;
+      document.getElementById('paginationInfo').textContent = '共 ' + data.records.length + ' 条';
+
+      var tbody = document.getElementById('emailDetailBody');
+      var html = '';
+      data.records.forEach(function(record, idx) {
+        var statusClass = record.status === 'success' ? 'tag-success' : 'tag-danger';
+        var actionBtn = record.status === 'fail'
+          ? '<button class="btn btn-default btn-sm" onclick="openResendConfirm(' + idx + ')">重发</button>'
+          : '';
+        html += '<tr><td>' + record.email + '</td><td>' + record.name + '</td><td style="max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + record.subject + '</td><td><span class="tag ' + statusClass + '">' + record.statusText + '</span></td><td>' + record.time + '</td><td><button class="btn btn-default btn-sm" onclick="showDetail(' + idx + ')">详情</button> ' + actionBtn + '</td></tr>';
+      });
+      tbody.innerHTML = html;
+    }
+
+    function showDetail(idx) {
+      var record = currentBatchData.records[idx];
+      document.getElementById('detailEmail').textContent = record.email;
+      document.getElementById('detailName').textContent = record.name;
+      document.getElementById('detailSubject').textContent = record.subject;
+      document.getElementById('detailStatus').textContent = record.statusText;
+      document.getElementById('detailTime').textContent = record.time;
+      document.getElementById('detailContent').textContent = record.content;
+      openModal('detailModal');
+    }
+
+    function openResendConfirm(idx) {
+      currentResendRecord = currentBatchData.records[idx];
+      document.getElementById('resendEmail').textContent = currentResendRecord.email;
+      document.getElementById('resendName').textContent = currentResendRecord.name;
+      document.getElementById('resendSubject').textContent = currentResendRecord.subject;
+      openModal('resendConfirmModal');
+    }
+
+    function submitResend() {
+      closeModal('resendConfirmModal');
+      showToast('已重新发送');
+    }
+
+    loadBatchData();
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

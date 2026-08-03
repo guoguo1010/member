@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>会员类型管理 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    body { overflow-x: hidden; }
+    .type-card { display: flex; gap: 16px; flex-wrap: wrap; }
+    .type-card-item { flex: 1; min-width: 280px; background: #fafafa; border: 1px solid #e8e8e8; border-radius: 8px; padding: 20px; }
+    .type-card-item .type-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .type-card-item .type-name { font-size: 16px; font-weight: 600; }
+    .type-card-item .type-code { font-size: 12px; color: #999; margin-top: 4px; }
+    .type-card-item .type-meta { font-size: 13px; color: #666; margin-bottom: 12px; }
+    .type-card-item .type-fee { font-size: 13px; color: #666; margin-bottom: 16px; padding: 8px 12px; background: #fff; border-radius: 4px; }
+    .type-card-item .type-fee span { color: #52c41a; font-weight: 600; }
+    .type-card-item .type-actions { display: flex; gap: 8px; flex-wrap: wrap; border-top: 1px solid #e8e8e8; padding-top: 12px; }
+    .tag-personal { background: #e6f7ff; color: #1890ff; }
+    .tag-company { background: #f6ffed; color: #52c41a; }
+    .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 22px; }
+    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+    input:checked + .slider { background-color: #52c41a; }
+    input:checked + .slider:before { transform: translateX(18px); }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">会员类型管理</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <a href="#">会员角色</a> / <span>会员类型</span></div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- 个人会员类型 -->
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="card-header">
+            <span class="card-title">个人会员类型</span>
+            <div class="card-tools">
+              <label style="display: flex; align-items: center; gap: 8px; margin-right: 16px; font-size: 14px; color: #666;">
+                <input type="checkbox" id="enableUpgrade" onchange="toggleUpgrade(this)" checked>
+                <span>允许会员类型变更</span>
+              </label>
+              <button class="btn btn-default" onclick="location.href='member-id-rule.html'" style="margin-right: 16px;">会员编号配置</button>
+              <button class="btn btn-primary" onclick="openModal('addTypeModal')">+ 新增个人会员类型</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>类型名称</th>
+                  <th>类型代码</th>
+                  <th>权益说明</th>
+                  <th>是否外籍</th>
+                  <th>状态</th>
+                  <th>前端显示</th>
+                  <th>开启初审</th>
+                  <th>自动续期</th>
+                  <th>权重</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="tag tag-personal">普通个人会员</span></td>
+                  <td>NORMAL_INDIVIDUAL</td>
+                  <td>面向社会公开发行的个人会员</td>
+                  <td><label class="switch"><input type="checkbox" onchange="toggleForeign(this)"><span class="slider"></span></label></td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleStatus(this)"><span class="slider"></span></label></td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleFrontendShow(this)"><span class="slider"></span></label></td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleAudit(this)"><span class="slider"></span></label></td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleAutoRenew(this)"><span class="slider"></span></label></td>
+                  <td><input type="number" class="form-input" value="100" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('editTypeModal1')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('feeModal1')">会费配置</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('templateUploadModal')">申请表模板</button>
+                    <a href="field-config-personal.html" class="btn btn-default btn-sm">字段配置</a>
+                    <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该会员类型吗？删除后不可恢复。')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="tag tag-personal">学生个人会员</span></td>
+                  <td>STUDENT_INDIVIDUAL</td>
+                  <td>在校学生会员</td>
+                  <td><label class="switch"><input type="checkbox" onchange="toggleForeign(this)"><span class="slider"></span></label></td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleStatus(this)"><span class="slider"></span></label></td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleFrontendShow(this)"><span class="slider"></span></label></td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleAudit(this)"><span class="slider"></span></label></td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleAutoRenew(this)"><span class="slider"></span></label></td>
+                  <td><input type="number" class="form-input" value="90" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('editTypeModal2')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('feeModal2')">会费配置</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('templateUploadModal')">申请表模板</button>
+                    <a href="field-config-personal.html" class="btn btn-default btn-sm">字段配置</a>
+                    <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该会员类型吗？删除后不可恢复。')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="tag tag-personal">外籍会员</span></td>
+                  <td>FOREIGN_INDIVIDUAL</td>
+                  <td>外籍人士会员</td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleForeign(this)"><span class="slider"></span></label></td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleStatus(this)"><span class="slider"></span></label></td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleFrontendShow(this)"><span class="slider"></span></label></td>
+                  <td><label class="switch"><input type="checkbox" onchange="toggleAudit(this)"><span class="slider"></span></label></td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleAutoRenew(this)"><span class="slider"></span></label></td>
+                  <td><input type="number" class="form-input" value="80" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('editTypeModal3')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('feeModal3')">会费配置</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('templateUploadModal')">申请表模板</button>
+                    <a href="field-config-personal.html" class="btn btn-default btn-sm">字段配置</a>
+                    <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该会员类型吗？删除后不可恢复。')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 单位会员类型 -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">单位会员类型</span>
+            <div class="card-tools">
+              <button class="btn btn-default" onclick="openModal('expireConfigModal')" style="margin-right: 16px;">超期退会配置</button>
+              <button class="btn btn-primary" onclick="openModal('addCompanyTypeModal')">+ 新增单位会员类型</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>类型名称</th>
+                  <th>类型代码</th>
+                  <th>类型说明</th>
+                  <th>会费标准</th>
+                  <th>状态</th>
+                  <th>开启初审</th>
+                  <th>权重</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="tag tag-company">普通单位会员</span></td>
+                  <td>NORMAL_ORGANIZATION</td>
+                  <td>企业、事业单位、社会组织等</td>
+                  <td>1年 ¥2000 / 2年 ¥3600 / 终生 ¥20000</td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleStatus(this)"><span class="slider"></span></label></td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleAudit(this)"><span class="slider"></span></label></td>
+                  <td><input type="number" class="form-input" value="100" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('editCompanyTypeModal1')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('feeModal4')">会费配置</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('templateUploadModal')">申请表模板</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('dataConfigModal')">资料配置</button>
+                    <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该会员类型吗？删除后不可恢复。')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="tag tag-company">理事单位会员</span></td>
+                  <td>DIRECTOR_ORGANIZATION</td>
+                  <td>理事会成员单位</td>
+                  <td>1年 ¥5000 / 2年 ¥9000 / 终生 ¥50000</td>
+                  <td><label class="switch"><input type="checkbox" onchange="toggleStatus(this)"><span class="slider"></span></label></td>
+                  <td><label class="switch"><input type="checkbox" onchange="toggleAudit(this)"><span class="slider"></span></label></td>
+                  <td><input type="number" class="form-input" value="90" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('editCompanyTypeModal2')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('feeModal5')">会费配置</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('templateUploadModal')">申请表模板</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('dataConfigModal')">资料配置</button>
+                    <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该会员类型吗？删除后不可恢复。')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增个人会员类型弹窗 -->
+  <div class="modal" id="addTypeModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">新增个人会员类型</span>
+        <span class="close-btn" onclick="closeModal('addTypeModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">类型名称 <span class="required">*</span></label>
+          <input type="text" class="form-input" placeholder="如：高级个人会员">
+        </div>
+        <div class="form-group">
+          <label class="form-label">类型代码 <span class="required">*</span></label>
+          <input type="text" class="form-input" placeholder="如：SENIOR_INDIVIDUAL">
+        </div>
+        <div class="form-group">
+          <label class="form-label">权益说明</label>
+          <textarea class="form-textarea" placeholder="请输入权益说明"></textarea>
+        </div>
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px;"> 是否外籍：<label class="switch"><input type="checkbox" id="addIsForeign"><span class="slider"></span></label></label>
+        </div>
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" checked> 启用
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('addTypeModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('addTypeModal'); showToast('添加成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增单位会员类型弹窗 -->
+  <div class="modal" id="addCompanyTypeModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">新增单位会员类型</span>
+        <span class="close-btn" onclick="closeModal('addCompanyTypeModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">类型名称 <span class="required">*</span></label>
+          <input type="text" class="form-input" placeholder="如：高级单位会员">
+        </div>
+        <div class="form-group">
+          <label class="form-label">类型代码 <span class="required">*</span></label>
+          <input type="text" class="form-input" placeholder="如：SENIOR_ORGANIZATION">
+        </div>
+        <div class="form-group">
+          <label class="form-label">类型说明</label>
+          <textarea class="form-textarea" placeholder="请输入类型说明"></textarea>
+        </div>
+        <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+          是否外籍：<label class="switch"><input type="checkbox" id="addCompanyIsForeign"><span class="slider"></span></label>
+        </div>
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" checked> 启用
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('addCompanyTypeModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('addCompanyTypeModal'); showToast('添加成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑普通个人会员弹窗 -->
+  <div class="modal" id="editTypeModal1">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">编辑会员类型</span>
+        <span class="close-btn" onclick="closeModal('editTypeModal1')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">类型名称</label>
+          <input type="text" class="form-input" value="普通个人会员">
+        </div>
+        <div class="form-group">
+          <label class="form-label">类型代码</label>
+          <input type="text" class="form-input" value="NORMAL_INDIVIDUAL" disabled>
+        </div>
+        <div class="form-group">
+          <label class="form-label">权益说明</label>
+          <textarea class="form-textarea">面向社会公开发行的个人会员</textarea>
+        </div>
+        <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+          是否外籍：<label class="switch"><input type="checkbox" id="editIsForeign1"><span class="slider"></span></label>
+        </div>
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" checked> 启用
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('editTypeModal1')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('editTypeModal1'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑学生个人会员弹窗 -->
+  <div class="modal" id="editTypeModal2">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">编辑会员类型</span>
+        <span class="close-btn" onclick="closeModal('editTypeModal2')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">类型名称</label>
+          <input type="text" class="form-input" value="学生个人会员">
+        </div>
+        <div class="form-group">
+          <label class="form-label">类型代码</label>
+          <input type="text" class="form-input" value="STUDENT_INDIVIDUAL" disabled>
+        </div>
+        <div class="form-group">
+          <label class="form-label">权益说明</label>
+          <textarea class="form-textarea">在校学生会员</textarea>
+        </div>
+        <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+          是否外籍：<label class="switch"><input type="checkbox" id="editIsForeign2"><span class="slider"></span></label>
+        </div>
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" checked> 启用
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('editTypeModal2')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('editTypeModal2'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑外籍会员弹窗 -->
+  <div class="modal" id="editTypeModal3">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">编辑会员类型</span>
+        <span class="close-btn" onclick="closeModal('editTypeModal3')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">类型名称</label>
+          <input type="text" class="form-input" value="外籍会员">
+        </div>
+        <div class="form-group">
+          <label class="form-label">类型代码</label>
+          <input type="text" class="form-input" value="FOREIGN_INDIVIDUAL" disabled>
+        </div>
+        <div class="form-group">
+          <label class="form-label">权益说明</label>
+          <textarea class="form-textarea">外籍人士会员</textarea>
+        </div>
+        <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+          是否外籍：<label class="switch"><input type="checkbox" id="editIsForeign3" checked><span class="slider"></span></label>
+        </div>
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" checked> 启用
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('editTypeModal3')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('editTypeModal3'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑普通单位会员弹窗 -->
+  <div class="modal" id="editCompanyTypeModal1">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">编辑会员类型</span>
+        <span class="close-btn" onclick="closeModal('editCompanyTypeModal1')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">类型名称</label>
+          <input type="text" class="form-input" value="普通单位会员">
+        </div>
+        <div class="form-group">
+          <label class="form-label">类型代码</label>
+          <input type="text" class="form-input" value="NORMAL_ORGANIZATION" disabled>
+        </div>
+        <div class="form-group">
+          <label class="form-label">类型说明</label>
+          <textarea class="form-textarea">企业、事业单位、社会组织等</textarea>
+        </div>
+        <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+          是否外籍：<label class="switch"><input type="checkbox" id="editCompanyIsForeign1"><span class="slider"></span></label>
+        </div>
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" checked> 启用
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('editCompanyTypeModal1')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('editCompanyTypeModal1'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑理事单位会员弹窗 -->
+  <div class="modal" id="editCompanyTypeModal2">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">编辑会员类型</span>
+        <span class="close-btn" onclick="closeModal('editCompanyTypeModal2')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">类型名称</label>
+          <input type="text" class="form-input" value="理事单位会员">
+        </div>
+        <div class="form-group">
+          <label class="form-label">类型代码</label>
+          <input type="text" class="form-input" value="DIRECTOR_ORGANIZATION" disabled>
+        </div>
+        <div class="form-group">
+          <label class="form-label">类型说明</label>
+          <textarea class="form-textarea">理事会成员单位</textarea>
+        </div>
+        <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+          是否外籍：<label class="switch"><input type="checkbox" id="editCompanyIsForeign2"><span class="slider"></span></label>
+        </div>
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox"> 启用
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('editCompanyTypeModal2')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('editCompanyTypeModal2'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 会费配置弹窗1 -->
+  <div class="modal" id="feeModal1">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">会费标准配置 - 普通个人会员</span>
+        <span class="close-btn" onclick="closeModal('feeModal1')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 16px;">
+          <span style="font-weight: 500; margin-bottom: 12px; display: block;">有效期类型</span>
+          <input type="text" class="form-input" value="自然年度" style="width: 200px;" disabled>
+          <div style="font-size: 12px; color: #999; margin-top: 4px;">个人会员默认按自然年度计算有效期，不可修改</div>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <span style="font-weight: 500; margin-bottom: 12px; display: block;">缴费方式</span>
+          <div id="feeList1">
+            <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+              <input type="text" class="form-input" value="1年" style="width: 80px;">
+              <span>¥</span>
+              <input type="number" class="form-input" value="100" style="width: 120px;">
+              <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>
+            </div>
+            <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+              <input type="text" class="form-input" value="2年" style="width: 80px;">
+              <span>¥</span>
+              <input type="number" class="form-input" value="180" style="width: 120px;">
+              <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>
+            </div>
+            <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+              <input type="text" class="form-input" value="终生" style="width: 80px;">
+              <span>¥</span>
+              <input type="number" class="form-input" value="1000" style="width: 120px;">
+              <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>
+            </div>
+          </div>
+          <button class="btn btn-default btn-sm" onclick="addFeeItem('feeList1')" style="margin-top: 8px;">+ 添加缴费方式</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('feeModal1')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('feeModal1'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 会费配置弹窗2 -->
+  <div class="modal" id="feeModal2">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">会费标准配置 - 学生个人会员</span>
+        <span class="close-btn" onclick="closeModal('feeModal2')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 16px;">
+          <span style="font-weight: 500; margin-bottom: 12px; display: block;">有效期类型</span>
+          <input type="text" class="form-input" value="自然年度" style="width: 200px;" disabled>
+          <div style="font-size: 12px; color: #999; margin-top: 4px;">个人会员默认按自然年度计算有效期，不可修改</div>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <span style="font-weight: 500; margin-bottom: 12px; display: block;">缴费方式</span>
+          <div id="feeList2">
+            <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+              <input type="text" class="form-input" value="1年" style="width: 80px;">
+              <span>¥</span>
+              <input type="number" class="form-input" value="50" style="width: 120px;">
+              <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>
+            </div>
+            <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+              <input type="text" class="form-input" value="2年" style="width: 80px;">
+              <span>¥</span>
+              <input type="number" class="form-input" value="90" style="width: 120px;">
+              <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>
+            </div>
+            <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+              <input type="text" class="form-input" value="终生" style="width: 80px;">
+              <span>¥</span>
+              <input type="number" class="form-input" value="500" style="width: 120px;">
+              <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>
+            </div>
+          </div>
+          <button class="btn btn-default btn-sm" onclick="addFeeItem('feeList2')" style="margin-top: 8px;">+ 添加缴费方式</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('feeModal2')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('feeModal2'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 会费配置弹窗3 -->
+  <div class="modal" id="feeModal3">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">会费标准配置 - 外籍会员</span>
+        <span class="close-btn" onclick="closeModal('feeModal3')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 16px;">
+          <span style="font-weight: 500; margin-bottom: 12px; display: block;">有效期类型</span>
+          <input type="text" class="form-input" value="自然年度" style="width: 200px;" disabled>
+          <div style="font-size: 12px; color: #999; margin-top: 4px;">个人会员默认按自然年度计算有效期，不可修改</div>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <span style="font-weight: 500; margin-bottom: 12px; display: block;">缴费方式</span>
+          <div id="feeList3">
+            <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+              <input type="text" class="form-input" value="1年" style="width: 80px;">
+              <span>¥</span>
+              <input type="number" class="form-input" value="200" style="width: 120px;">
+              <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>
+            </div>
+            <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+              <input type="text" class="form-input" value="2年" style="width: 80px;">
+              <span>¥</span>
+              <input type="number" class="form-input" value="360" style="width: 120px;">
+              <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>
+            </div>
+            <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+              <input type="text" class="form-input" value="终生" style="width: 80px;">
+              <span>¥</span>
+              <input type="number" class="form-input" value="2000" style="width: 120px;">
+              <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>
+            </div>
+          </div>
+          <button class="btn btn-default btn-sm" onclick="addFeeItem('feeList3')" style="margin-top: 8px;">+ 添加缴费方式</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('feeModal3')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('feeModal3'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 会费配置弹窗4 -->
+  <div class="modal" id="feeModal4">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">会费标准配置 - 普通单位会员</span>
+        <span class="close-btn" onclick="closeModal('feeModal4')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 16px;">
+          <span style="font-weight: 500; margin-bottom: 12px; display: block;">有效期类型</span>
+          <select class="form-select" style="width: 200px;">
+            <option value="natural">自然年度</option>
+            <option value="current">当前年底</option>
+          </select>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <span style="font-weight: 500; margin-bottom: 12px; display: block;">缴费方式</span>
+          <div id="feeList4">
+            <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+              <input type="text" class="form-input" value="1年" style="width: 80px;">
+              <span>¥</span>
+              <input type="number" class="form-input" value="2000" style="width: 120px;">
+              <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>
+            </div>
+            <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+              <input type="text" class="form-input" value="2年" style="width: 80px;">
+              <span>¥</span>
+              <input type="number" class="form-input" value="3600" style="width: 120px;">
+              <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>
+            </div>
+            <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+              <input type="text" class="form-input" value="终生" style="width: 80px;">
+              <span>¥</span>
+              <input type="number" class="form-input" value="20000" style="width: 120px;">
+              <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>
+            </div>
+          </div>
+          <button class="btn btn-default btn-sm" onclick="addFeeItem('feeList4')" style="margin-top: 8px;">+ 添加缴费方式</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('feeModal4')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('feeModal4'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 会费配置弹窗5 -->
+  <div class="modal" id="feeModal5">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">会费标准配置 - 理事单位会员</span>
+        <span class="close-btn" onclick="closeModal('feeModal5')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 16px;">
+          <span style="font-weight: 500; margin-bottom: 12px; display: block;">有效期类型</span>
+          <select class="form-select" style="width: 200px;">
+            <option value="natural">自然年度</option>
+            <option value="current">当前年底</option>
+          </select>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <span style="font-weight: 500; margin-bottom: 12px; display: block;">缴费方式</span>
+          <div id="feeList5">
+            <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+              <input type="text" class="form-input" value="1年" style="width: 80px;">
+              <span>¥</span>
+              <input type="number" class="form-input" value="5000" style="width: 120px;">
+              <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>
+            </div>
+            <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+              <input type="text" class="form-input" value="2年" style="width: 80px;">
+              <span>¥</span>
+              <input type="number" class="form-input" value="9000" style="width: 120px;">
+              <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>
+            </div>
+            <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+              <input type="text" class="form-input" value="终生" style="width: 80px;">
+              <span>¥</span>
+              <input type="number" class="form-input" value="50000" style="width: 120px;">
+              <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>
+            </div>
+          </div>
+          <button class="btn btn-default btn-sm" onclick="addFeeItem('feeList5')" style="margin-top: 8px;">+ 添加缴费方式</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('feeModal5')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('feeModal5'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 申请表模板上传弹窗 -->
+  <div class="modal" id="templateUploadModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">上传申请表模板</span>
+        <span class="close-btn" onclick="closeModal('templateUploadModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">选择文件</label>
+          <div class="file-upload-area" onclick="document.getElementById('templateUploadFile').click()">
+            <input type="file" id="templateUploadFile" style="display: none;" accept=".doc,.docx,.pdf" onchange="handleTemplateUpload(this)">
+            <div class="file-upload-placeholder">
+              <div style="font-size: 24px; margin-bottom: 8px;">📎</div>
+              <div>点击或拖拽上传文件</div>
+              <div style="font-size: 12px; color: #999; margin-top: 4px;">支持 doc、docx、pdf 格式</div>
+            </div>
+          </div>
+          <div id="templateUploadFileName" style="margin-top: 8px; font-size: 13px; color: #52c41a;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('templateUploadModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('templateUploadModal'); showToast('上传成功')">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 超期退会配置弹窗 -->
+  <div class="modal" id="expireConfigModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">超期退会配置</span>
+        <span class="close-btn" onclick="closeModal('expireConfigModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" id="expireSwitch" checked onchange="toggleExpireSwitch(this)">
+            <span>启用自动超期退会</span>
+          </label>
+        </div>
+        <div class="form-group">
+          <label class="form-label">超期天数阈值</label>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <input type="number" class="form-input" id="expireDays" value="90" min="1" style="width: 120px;">
+            <span>天（从应缴费日期起计算）</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" id="expireNotify" checked>
+            <span>发送超期通知</span>
+          </label>
+        </div>
+        <div class="form-group" id="expireNotifyDaysGroup">
+          <label class="form-label">提前通知天数</label>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <input type="number" class="form-input" id="expireNotifyDays" value="7" min="1" style="width: 120px;">
+            <span>天（超期前提醒）</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('expireConfigModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('expireConfigModal'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 资料配置弹窗 -->
+  <div class="modal" id="dataConfigModal">
+    <div class="modal-dialog" style="width: 600px;">
+      <div class="modal-header">
+        <span class="modal-title">资料配置 - 普通单位会员</span>
+        <span class="close-btn" onclick="closeModal('dataConfigModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 16px;">
+          <button class="btn btn-default btn-sm" onclick="addDataItem()">+ 添加资料</button>
+        </div>
+        <div id="dataConfigList">
+          <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; padding: 12px; background: #fafafa; border-radius: 4px;">
+            <div style="flex: 1;">
+              <input type="text" class="form-input" placeholder="资料名称，如：营业执照" style="margin-bottom: 8px;">
+              <div class="file-upload-area" onclick="this.querySelector('input').click()" style="padding: 12px; cursor: pointer;">
+                <input type="file" style="display: none;" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                <div style="font-size: 12px; color: #999;">点击上传文件</div>
+              </div>
+            </div>
+            <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>
+          </div>
+          <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; padding: 12px; background: #fafafa; border-radius: 4px;">
+            <div style="flex: 1;">
+              <input type="text" class="form-input" placeholder="资料名称，如：法人身份证" style="margin-bottom: 8px;">
+              <div class="file-upload-area" onclick="this.querySelector('input').click()" style="padding: 12px; cursor: pointer;">
+                <input type="file" style="display: none;" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                <div style="font-size: 12px; color: #999;">点击上传文件</div>
+              </div>
+            </div>
+            <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('dataConfigModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('dataConfigModal'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <style>
+    .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 22px; }
+    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+    input:checked + .slider { background-color: #52c41a; }
+    input:checked + .slider:before { transform: translateX(18px); }
+    .file-upload-area { border: 2px dashed #d9d9d9; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: border-color 0.3s; }
+    .file-upload-area:hover { border-color: #1890ff; }
+    .file-upload-placeholder { color: #666; }
+  </style>
+  <script>
+    function toggleStatus(el) {
+      var isChecked = el.checked;
+      showToast(isChecked ? '已启用' : '已禁用');
+    }
+    function toggleAudit(el) {
+      var isChecked = el.checked;
+      showToast(isChecked ? '初审已开启' : '初审已关闭');
+    }
+    function toggleUpgrade(el) {
+      var isChecked = el.checked;
+      showToast(isChecked ? '会员类型变更功能已开启' : '会员类型变更功能已关闭');
+    }
+    function toggleFrontendShow(el) {
+      var isChecked = el.checked;
+      showToast(isChecked ? '前端显示已开启' : '前端显示已关闭');
+    }
+    function toggleAutoRenew(el) {
+      var isChecked = el.checked;
+      showToast(isChecked ? '自动续期已开启' : '自动续期已关闭');
+    }
+    function toggleForeign(el) {
+      var isChecked = el.checked;
+      showToast(isChecked ? '已标记为外籍' : '已取消外籍标识');
+    }
+    function toggleExpireSwitch(el) {
+      var isChecked = el.checked;
+      document.getElementById('expireDays').disabled = !isChecked;
+      document.getElementById('expireNotify').disabled = !isChecked;
+      document.getElementById('expireNotifyDays').disabled = !isChecked;
+      showToast(isChecked ? '自动超期退会已开启' : '自动超期退会已关闭');
+    }
+    function addDataItem() {
+      var list = document.getElementById('dataConfigList');
+      var div = document.createElement('div');
+      div.style.cssText = 'display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; padding: 12px; background: #fafafa; border-radius: 4px;';
+      div.innerHTML = '<div style="flex: 1;"><input type="text" class="form-input" placeholder="资料名称" style="margin-bottom: 8px;"><div class="file-upload-area" onclick="this.querySelector(\'input\').click()" style="padding: 12px; cursor: pointer;"><input type="file" style="display: none;" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"><div style="font-size: 12px; color: #999;">点击上传文件</div></div></div><button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>';
+      list.appendChild(div);
+    }
+    function addFeeItem(listId) {
+      var list = document.getElementById(listId);
+      var div = document.createElement('div');
+      div.style.cssText = 'display: flex; gap: 12px; margin-bottom: 12px; align-items: center;';
+      div.innerHTML = '<input type="text" class="form-input" placeholder="如：3年" style="width: 80px;"> <span>¥</span> <input type="number" class="form-input" placeholder="金额" style="width: 120px;"> <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="this.parentElement.remove()">删除</button>';
+      list.appendChild(div);
+    }
+    function handleFileUpload(input, displayId) {
+      var file = input.files[0];
+      if (file) {
+        document.getElementById(displayId).innerHTML = '📄 ' + file.name;
+        showToast('模板已上传：' + file.name);
+      }
+    }
+    function handleTemplateUpload(input) {
+      var file = input.files[0];
+      if (file) {
+        document.getElementById('templateUploadFileName').innerHTML = '📄 ' + file.name;
+      }
+    }
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

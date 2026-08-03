@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>短信审核 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">短信审核</div>
+          <div class="breadcrumb">
+            <a href="sms.html">短信管理</a> / <span>短信审核</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">待审核列表</span>
+            <div class="card-tools">
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="search-bar">
+              <div class="search-item">
+                <label>批次号：</label>
+                <input type="text" class="form-input" placeholder="请输入批次号" style="width: 150px;">
+              </div>
+              <div class="search-item">
+                <label>模板名称：</label>
+                <input type="text" class="form-input" placeholder="请输入模板名称" style="width: 120px;">
+              </div>
+              <div class="search-item">
+                <label>状态：</label>
+                <select class="form-select" style="width: 110px;">
+                  <option>全部</option>
+                  <option>待审核</option>
+                  <option>审核通过</option>
+                  <option>审核拒绝</option>
+                </select>
+              </div>
+              <div class="search-item">
+                <label>申请时间：</label>
+                <input type="date" class="form-input" style="width: 130px;">
+                <span>至</span>
+                <input type="date" class="form-input" style="width: 130px;">
+              </div>
+              <button class="btn btn-default btn-sm">查询</button>
+              <button class="btn btn-default btn-sm">重置</button>
+            </div>
+
+            <table class="table" id="smsAuditTable">
+              <thead>
+                <tr>
+                  <th>批次号</th>
+                  <th>模板名称</th>
+                  <th>发送内容</th>
+                  <th>发送对象</th>
+                  <th>是否定时</th>
+                  <th>定时发送时间</th>
+                  <th>审核人</th>
+                  <th>申请时间</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>BATCH20240618001</td>
+                  <td>会员到期续费提醒</td>
+                  <td style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="【农学会】亲爱的会员，您的会员资格即将到期，请及时续费！">【农学会】亲爱的会员，您的会员资格即将到期...</td>
+                  <td>个人会员组</td>
+                  <td><span class="tag tag-default">否</span></td>
+                  <td>-</td>
+                  <td>待定</td>
+                  <td>2024-06-18 10:00:00</td>
+                  <td><span class="tag tag-warning">待审核</span></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='sms-audit-detail.html?batch=BATCH20240618001'">详情</button>
+                    <button class="btn btn-default btn-sm" style="color: #52c41a;" onclick="approve('BATCH20240618001')">通过</button>
+                    <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="reject('BATCH20240618001')">拒绝</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>BATCH20240618002</td>
+                  <td>审核结果通知</td>
+                  <td style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="【农学会】尊敬的会员，您的申请已通过审核！">【农学会】尊敬的会员，您的申请已通过审核！</td>
+                  <td>单位会员组</td>
+                  <td><span class="tag tag-primary">是</span></td>
+                  <td>2024-06-20 09:00:00</td>
+                  <td>待定</td>
+                  <td>2024-06-18 09:30:00</td>
+                  <td><span class="tag tag-warning">待审核</span></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='sms-audit-detail.html?batch=BATCH20240618002'">详情</button>
+                    <button class="btn btn-default btn-sm" style="color: #52c41a;" onclick="approve('BATCH20240618002')">通过</button>
+                    <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="reject('BATCH20240618002')">拒绝</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>BATCH20240617001</td>
+                  <td>活动通知</td>
+                  <td style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="【农学会】亲爱的会员，本会将于6月25日举办年会活动。">【农学会】亲爱的会员，本会将于6月25日举办年会活动。</td>
+                  <td>专家库会员</td>
+                  <td><span class="tag tag-default">否</span></td>
+                  <td>-</td>
+                  <td>李明</td>
+                  <td>2024-06-17 14:20:00</td>
+                  <td><span class="tag tag-success">审核通过</span></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='sms-audit-detail.html?batch=BATCH20240617001'">详情</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>BATCH20240615001</td>
+                  <td>会员注册成功通知</td>
+                  <td style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="【农学会】恭喜您成为正式会员，感谢您的加入！">【农学会】恭喜您成为正式会员，感谢您的加入！</td>
+                  <td>全部会员</td>
+                  <td><span class="tag tag-default">否</span></td>
+                  <td>-</td>
+                  <td>王芳</td>
+                  <td>2024-06-15 11:00:00</td>
+                  <td><span class="tag tag-danger">审核拒绝</span></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='sms-audit-detail.html?batch=BATCH20240615001'">详情</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="pagination">
+              <div class="pagination-info">共 4 条</div>
+              <div class="pagination-btns">
+                <button class="btn btn-default btn-sm" disabled>上一页</button>
+                <button class="btn btn-default btn-sm" disabled>下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script>
+    function approve(batchNo) {
+      if (confirm('确定要通过该审核吗？')) {
+        showToast('审核已通过');
+      }
+    }
+
+    function reject(batchNo) {
+      document.getElementById('rejectBatchNo').textContent = batchNo;
+      document.getElementById('rejectBatchNoHidden').value = batchNo;
+      document.getElementById('rejectReason').value = '';
+      document.getElementById('rejectModal').style.display = 'flex';
+    }
+
+    function submitReject() {
+      var reason = document.getElementById('rejectReason').value.trim();
+      if (!reason) { showToast('请填写拒绝原因'); return; }
+      document.getElementById('rejectModal').style.display = 'none';
+      showToast('已拒绝');
+    }
+
+    function closeRejectModal() {
+      document.getElementById('rejectModal').style.display = 'none';
+    }
+
+  </script>
+  <script src="../sidebar.js"></script>
+
+  <!-- 拒绝原因弹窗 -->
+  <div id="rejectModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: #fff; border-radius: 12px; width: 420px; overflow: hidden;">
+      <div style="padding: 20px 24px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 16px; font-weight: 600;">拒绝原因</span>
+        <span style="cursor: pointer; font-size: 20px; color: #999;" onclick="closeRejectModal()">&times;</span>
+      </div>
+      <div style="padding: 24px;">
+        <div style="margin-bottom: 8px; font-size: 13px; color: #666;">批次号：<span id="rejectBatchNo" style="font-weight: 500;"></span></div>
+        <input type="hidden" id="rejectBatchNoHidden">
+        <div style="margin-bottom: 8px; font-size: 13px; color: #666;">拒绝原因 <span style="color: #ff4d4f;">*</span></div>
+        <textarea id="rejectReason" class="form-textarea" rows="4" placeholder="请输入拒绝原因" style="width: 100%; resize: none;"></textarea>
+      </div>
+      <div style="padding: 16px 24px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 12px;">
+        <button class="btn btn-default" onclick="closeRejectModal()">取消</button>
+        <button class="btn btn-primary" onclick="submitReject()">确认拒绝</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

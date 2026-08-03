@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>站内信审核详情 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">站内信审核详情</div>
+          <div class="breadcrumb">
+            <a href="notice-audit.html">站内信审核</a> / <span>详情</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="stat-cards" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 24px;">
+          <div class="stat-card">
+            <div class="stat-label">批次号</div>
+            <div class="stat-value" style="font-size: 16px;" id="batchCode">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">模板名称</div>
+            <div class="stat-value" style="font-size: 16px;" id="templateName">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">申请时间</div>
+            <div class="stat-value" style="font-size: 16px;" id="applyTime">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">发送数量</div>
+            <div class="stat-value" style="font-size: 16px;" id="sendCount">-</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <span class="card-title">站内信内容</span>
+          </div>
+          <div class="card-body">
+            <div id="noticeContent" style="background: #f5f5f5; padding: 16px; border-radius: 6px; font-size: 14px; line-height: 1.8;"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">发送对象列表</span>
+            <div class="card-tools">
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="table" id="noticeDetailTable">
+              <thead>
+                <tr>
+                  <th>接收人</th>
+                  <th>姓名</th>
+                  <th>会员类型</th>
+                  <th>发展来源</th>
+                </tr>
+              </thead>
+              <tbody id="noticeDetailBody">
+              </tbody>
+            </table>
+
+            <div class="pagination">
+              <div class="pagination-info" id="paginationInfo">共 0 条</div>
+              <div class="pagination-btns">
+                <button class="btn btn-default btn-sm" disabled>上一页</button>
+                <button class="btn btn-default btn-sm" disabled>下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding: 20px 0; display: flex; justify-content: space-between; border-top: 1px solid #e8e8e8; margin-top: 24px;">
+          <button class="btn btn-default" onclick="location.href='notice-audit.html'">返回列表</button>
+          <div style="display: flex; gap: 12px;">
+            <button class="btn btn-default" style="color: #ff4d4f;" onclick="reject()">拒绝</button>
+            <button class="btn btn-primary" onclick="approve()">通过</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 拒绝原因弹窗 -->
+  <div class="modal" id="rejectModal">
+    <div class="modal-dialog" style="width: 400px;">
+      <div class="modal-header">
+        <span class="modal-title">拒绝原因</span>
+        <span class="close-btn" onclick="closeModal('rejectModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">拒绝原因 <span class="required">*</span></label>
+          <textarea class="form-textarea" id="rejectReason" rows="4" placeholder="请输入拒绝原因"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('rejectModal')">取消</button>
+        <button class="btn btn-primary" onclick="confirmReject()">确认拒绝</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script>
+    var batchData = {
+      'NOTICE20240618001': {
+        code: 'NOTICE20240618001',
+        template: '系统通知',
+        applyTime: '2024-06-18 10:00:00',
+        content: '【系统通知】您的账号已通过审核，感谢您的注册！如有疑问请致电：010-12345678。',
+        records: [
+          { name: '张三', memberName: '张三', memberType: '个人会员', org: '北京市农学会' },
+          { name: '李四', memberName: '李四', memberType: '个人会员', org: '上海市农学会' },
+          { name: '王五', memberName: '王五', memberType: '个人会员', org: '作物学专业委员会' },
+          { name: '赵六', memberName: '赵六', memberType: '个人会员', org: '园艺学专业委员会' },
+          { name: '孙七', memberName: '孙七', memberType: '个人会员', org: '山东省农学会' },
+        ]
+      },
+      'NOTICE20240618002': {
+        code: 'NOTICE20240618002',
+        template: '工作消息',
+        applyTime: '2024-06-18 09:30:00',
+        content: '【工作消息】尊敬的会员，本会将于6月20日召开年会活动，届时请准时参加。',
+        records: [
+          { name: '钱一', memberName: '钱一', memberType: '单位会员', org: '中国农业科学院' },
+          { name: '孙二', memberName: '孙二', memberType: '单位会员', org: '中国农业大学' },
+          { name: '李三', memberName: '李三', memberType: '单位会员', org: '农业农村部规划设计研究院' },
+        ]
+      },
+      'NOTICE20240617001': {
+        code: 'NOTICE20240617001',
+        template: '通知公告',
+        applyTime: '2024-06-17 14:20:00',
+        content: '【通知公告】亲爱的会员，本会将于6月25日举办2024年度会员代表大会。',
+        records: [
+          { name: '王一', memberName: '王一', memberType: '个人会员', org: '专家库会员' },
+          { name: '刘二', memberName: '刘二', memberType: '个人会员', org: '专家库会员' },
+        ]
+      },
+      'NOTICE20240615001': {
+        code: 'NOTICE20240615001',
+        template: '系统通知',
+        applyTime: '2024-06-15 11:00:00',
+        content: '【系统通知】恭喜您成为正式会员，感谢您的加入！',
+        records: [
+          { name: '赵一', memberName: '赵一', memberType: '个人会员', org: '北京市农学会' },
+        ]
+      }
+    };
+
+    function getBatchId() {
+      var params = new URLSearchParams(window.location.search);
+      return params.get('batch') || 'NOTICE20240618001';
+    }
+
+    function loadBatchData() {
+      var batchId = getBatchId();
+      var data = batchData[batchId] || batchData['NOTICE20240618001'];
+
+      document.getElementById('batchCode').textContent = data.code;
+      document.getElementById('templateName').textContent = data.template;
+      document.getElementById('applyTime').textContent = data.applyTime;
+      document.getElementById('sendCount').textContent = data.records.length + ' 人';
+      document.getElementById('noticeContent').textContent = data.content;
+      document.getElementById('paginationInfo').textContent = '共 ' + data.records.length + ' 条';
+
+      var tbody = document.getElementById('noticeDetailBody');
+      var html = '';
+      data.records.forEach(function(record) {
+        html += '<tr>\
+          <td>' + record.name + '</td>\
+          <td>' + record.memberName + '</td>\
+          <td>' + record.memberType + '</td>\
+          <td>' + record.org + '</td>\
+        </tr>';
+      });
+      tbody.innerHTML = html;
+    }
+
+    function approve() {
+      if (confirm('确定要通过该审核吗？')) {
+        showToast('审核已通过');
+        location.href = 'notice-audit.html';
+      }
+    }
+
+    function reject() {
+      openModal('rejectModal');
+    }
+
+    function confirmReject() {
+      var reason = document.getElementById('rejectReason').value.trim();
+      if (!reason) {
+        showToast('请输入拒绝原因');
+        return;
+      }
+      showToast('已拒绝');
+      closeModal('rejectModal');
+      location.href = 'notice-audit.html';
+    }
+
+    loadBatchData();
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

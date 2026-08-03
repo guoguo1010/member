@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>会员编号规则配置 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .rule-preview { background: #fafafa; padding: 16px 20px; border-radius: 8px; margin-bottom: 24px; }
+    .rule-preview .label { font-size: 13px; color: #666; margin-bottom: 8px; }
+    .rule-preview .code { font-size: 20px; font-weight: 600; font-family: monospace; letter-spacing: 2px; }
+    .rule-part { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+    .rule-part:last-child { border-bottom: none; }
+    .rule-part .part-name { width: 120px; font-weight: 500; }
+    .rule-part .part-desc { flex: 1; color: #999; font-size: 13px; }
+    .rule-part .part-value { width: 100px; text-align: center; }
+    .rule-part .part-switch { width: 60px; }
+    .rule-part .part-actions { width: 80px; text-align: center; }
+    .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 22px; }
+    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+    input:checked + .slider { background-color: #52c41a; }
+    input:checked + .slider:before { transform: translateX(18px); }
+    .switch.disabled .slider { background-color: #d9d9d9; cursor: not-allowed; }
+    .switch.disabled input { cursor: not-allowed; }
+    .rule-part .part-actions { display: flex; gap: 4px; justify-content: center; }
+    .rule-part .part-actions button { width: 28px; height: 28px; border: 1px solid #d9d9d9; background: #fff; border-radius: 4px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+    .rule-part .part-actions button:hover { border-color: #1890ff; color: #1890ff; }
+    .rule-part .part-actions button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .rule-part .part-actions button:disabled:hover { border-color: #d9d9d9; color: inherit; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">会员编号规则配置</div>
+          <div class="breadcrumb">
+            <a href="member-type.html">会员类型</a> / <span>会员编号配置</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">编号规则</span>
+            <div class="card-tools">
+              <button class="btn btn-default" onclick="location.href='member-type.html'">返回列表</button>
+              <button class="btn btn-primary" onclick="showToast('保存成功')">保存配置</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- 编号预览 -->
+            <div class="rule-preview" id="rulePreview">
+              <div class="label">编号预览</div>
+              <div class="code" id="previewCode">E32110000100001001</div>
+            </div>
+
+            <!-- 规则配置 -->
+            <div style="border: 1px solid #e8e8e8; border-radius: 8px;" id="ruleContainer">
+              <!-- 农学会编码 -->
+              <div class="rule-part" data-part="society">
+                <div class="part-name">农学会编码 <span style="color: #ff4d4f;">*</span></div>
+                <div class="part-desc">固定前缀，如：E32代表中国农业学会</div>
+                <div class="part-switch">
+                  <label class="switch disabled">
+                    <input type="checkbox" checked disabled>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="part-actions">
+                  <button onclick="moveUp(this)" disabled>↑</button>
+                  <button onclick="moveDown(this)">↓</button>
+                </div>
+              </div>
+
+              <!-- 机构编码 -->
+              <div class="rule-part" data-part="org">
+                <div class="part-name">机构编码</div>
+                <div class="part-desc">学会下属机构编号</div>
+                <div class="part-switch">
+                  <label class="switch">
+                    <input type="checkbox" onchange="togglePart(this, 'org')">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="part-actions">
+                  <button onclick="moveUp(this)">↑</button>
+                  <button onclick="moveDown(this)">↓</button>
+                </div>
+              </div>
+
+              <!-- 省份编号 -->
+              <div class="rule-part" data-part="province">
+                <div class="part-name">省份编号</div>
+                <div class="part-desc">2位数字，如：11=北京，31=上海</div>
+                <div class="part-switch">
+                  <label class="switch">
+                    <input type="checkbox" checked onchange="togglePart(this, 'province')">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="part-actions">
+                  <button onclick="moveUp(this)">↑</button>
+                  <button onclick="moveDown(this)">↓</button>
+                </div>
+              </div>
+
+              <!-- 自然顺序号 -->
+              <div class="rule-part" data-part="sequence">
+                <div class="part-name">自然顺序号 <span style="color: #ff4d4f;">*</span></div>
+                <div class="part-desc">5位数字，从00001开始顺序递增</div>
+                <div class="part-switch">
+                  <label class="switch disabled">
+                    <input type="checkbox" checked disabled>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="part-actions">
+                  <button onclick="moveUp(this)">↑</button>
+                  <button onclick="moveDown(this)">↓</button>
+                </div>
+              </div>
+
+              <!-- 会员类别编号 -->
+              <div class="rule-part" data-part="type">
+                <div class="part-name">会员类别编号</div>
+                <div class="part-desc">对应不同会员类型</div>
+                <div class="part-switch">
+                  <label class="switch">
+                    <input type="checkbox" checked onchange="togglePart(this, 'type')">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="part-actions">
+                  <button onclick="moveUp(this)">↑</button>
+                  <button onclick="moveDown(this)" disabled>↓</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 规则说明 -->
+            <div style="margin-top: 24px; padding: 16px; background: #fafafa; border-radius: 8px;">
+              <div style="font-weight: 500; margin-bottom: 8px;">编号生成规则说明</div>
+              <ul style="margin: 0; padding-left: 20px; color: #666; font-size: 13px; line-height: 1.8;">
+                <li>编号由五部分组成，各部分直接拼接无分隔符（带<span style="color: #ff4d4f;">*</span>的为必选项，不可关闭）</li>
+                <li>农学会编码和自然顺序号为必选项，不可关闭</li>
+                <li>自然顺序号每位会员唯一，系统自动递增，不可重复</li>
+                <li>会员类别编号根据会员申请时的类型自动对应</li>
+                <li>修改编码后，新会员将使用新编号，已生成编号不受影响</li>
+                <li>拖动顺序调整按钮可调整各部分的前后顺序</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script>
+    var parts = {
+      society: true,
+      org: true,
+      province: true,
+      sequence: true,
+      type: true
+    };
+
+    function togglePart(el, partName) {
+      parts[partName] = el.checked;
+      updatePreview();
+    }
+
+    function updatePreview() {
+      var container = document.getElementById('ruleContainer');
+      var rows = container.querySelectorAll('.rule-part');
+      var parts_arr = [];
+
+      rows.forEach(function(row) {
+        var partName = row.getAttribute('data-part');
+        if (parts[partName]) {
+          switch(partName) {
+            case 'society': parts_arr.push('E32'); break;
+            case 'org': parts_arr.push('1100001'); break;
+            case 'province': parts_arr.push('11'); break;
+            case 'sequence': parts_arr.push('00001'); break;
+            case 'type': parts_arr.push('001'); break;
+          }
+        }
+      });
+
+      document.getElementById('previewCode').textContent = parts_arr.join('');
+    }
+
+    function moveUp(btn) {
+      var row = btn.closest('.rule-part');
+      var prev = row.previousElementSibling;
+      if (prev) {
+        row.parentNode.insertBefore(row, prev);
+        updateButtonStates();
+        updatePreview();
+      }
+    }
+
+    function moveDown(btn) {
+      var row = btn.closest('.rule-part');
+      var next = row.nextElementSibling;
+      if (next) {
+        row.parentNode.insertBefore(next, row);
+        updateButtonStates();
+        updatePreview();
+      }
+    }
+
+    function updateButtonStates() {
+      var container = document.getElementById('ruleContainer');
+      var rows = container.querySelectorAll('.rule-part');
+      rows.forEach(function(row, index) {
+        var btns = row.querySelectorAll('.part-actions button');
+        var upBtn = btns[0];
+        var downBtn = btns[1];
+        upBtn.disabled = (index === 0);
+        downBtn.disabled = (index === rows.length - 1);
+      });
+    }
+
+    // 初始化按钮状态
+    updateButtonStates();
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

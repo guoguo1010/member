@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人会员字段配置 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    body { overflow-x: hidden; }
+    .field-table { width: 100%; border-collapse: collapse; }
+    .field-table th { background: #fafafa; text-align: left; padding: 10px 12px; font-size: 13px; color: #666; border-bottom: 1px solid #e8e8e8; }
+    .field-table td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; font-size: 13px; vertical-align: middle; }
+    .field-table tr:hover { background: #fafafa; }
+    .field-table .field-name { font-weight: 500; color: #333; }
+    .field-table .field-code { color: #999; font-size: 12px; }
+    .field-table input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+    .field-table .col-seq { width: 60px; text-align: center; color: #999; cursor: move; }
+    .field-table .col-show { width: 80px; text-align: center; }
+    .field-table .col-required { width: 80px; text-align: center; }
+    .field-table .col-op { width: 80px; text-align: center; }
+    .header-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .header-toolbar .info { font-size: 13px; color: #666; }
+    .tag-section { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 8px; }
+    .tag-base { background: #e6f7ff; color: #1890ff; }
+    .tag-work { background: #fff7e6; color: #fa8c16; }
+    .tag-edu { background: #f6ffed; color: #52c41a; }
+    .tag-identity { background: #fff1f0; color: #ff4d4f; }
+    .tag-society { background: #f9f0ff; color: #722ed1; }
+    .tag-contact { background: #e6f7ff; color: #1890ff; }
+    .tag-unit { background: #fff7e6; color: #fa8c16; }
+    .tag-overseas { background: #f9f0ff; color: #722ed1; }
+    .tag-achievement { background: #fff1f0; color: #ff4d4f; }
+    .summary-bar { display: flex; gap: 24px; padding: 12px 16px; background: #fafafa; border-radius: 8px; margin-bottom: 16px; font-size: 13px; }
+    .summary-bar .item { display: flex; align-items: center; gap: 6px; }
+    .summary-bar .num { font-weight: 600; color: #1890ff; }
+    .custom-section { border: 1px dashed #d9d9d9; border-radius: 8px; padding: 20px; text-align: center; color: #999; cursor: pointer; margin-top: 16px; }
+    .custom-section:hover { border-color: #1890ff; color: #1890ff; }
+    .col-center { text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">个人会员字段配置</div>
+          <div class="breadcrumb">
+            <a href="member-type.html">会员类型</a> / <span>字段配置（个人会员）</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- 页面工具栏 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 15px; font-weight: 600;">普通个人会员</span>
+            <span class="tag tag-personal" style="font-size: 12px; padding: 2px 8px;">个人会员</span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-default" onclick="location.href='member-type.html'">返回列表</button>
+            <button class="btn btn-primary" onclick="showToast('保存成功')">保存配置</button>
+          </div>
+        </div>
+
+        <!-- 汇总信息 -->
+        <div class="summary-bar">
+          <div class="item">字段总数：<span class="num">46</span></div>
+          <div class="item">申请时显示：<span class="num">15</span></div>
+          <div class="item">必填字段：<span class="num">3</span></div>
+        </div>
+
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <span class="card-title">一、基本信息</span>
+          </div>
+          <div class="card-body">
+            <table class="field-table">
+              <thead>
+                <tr>
+                  <th>字段名称</th>
+                  <th style="width: 80px;">权重</th>
+                  <th style="width: 100px;">申请时显示</th>
+                  <th style="width: 80px;">必填</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                                  <td class="field-name">发展来源 <span class="required">*</span></td>
+                                <td class="col-center"><input type="number" class="form-input" value="1" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox" checked disabled></td>
+                                <td class="col-center"><input type="checkbox" checked></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">真实姓名 <span class="required">*</span></td>
+                                <td class="col-center"><input type="number" class="form-input" value="2" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox" checked disabled></td>
+                                <td class="col-center"><input type="checkbox" checked></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">用户性别 <span class="required">*</span></td>
+                                <td class="col-center"><input type="number" class="form-input" value="3" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox" checked></td>
+                                <td class="col-center"><input type="checkbox" checked></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">出生日期</td>
+                                <td class="col-center"><input type="number" class="form-input" value="4" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox" checked></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">国籍</td>
+                                <td class="col-center"><input type="number" class="form-input" value="5" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">护照号</td>
+                                <td class="col-center"><input type="number" class="form-input" value="6" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">籍贯</td>
+                                <td class="col-center"><input type="number" class="form-input" value="7" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">民族</td>
+                                <td class="col-center"><input type="number" class="form-input" value="8" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox" checked></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">政治面貌</td>
+                                <td class="col-center"><input type="number" class="form-input" value="9" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">身份证号 <span class="required">*</span></td>
+                                <td class="col-center"><input type="number" class="form-input" value="10" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox" checked></td>
+                                <td class="col-center"><input type="checkbox" checked></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">最高学历</td>
+                                <td class="col-center"><input type="number" class="form-input" value="11" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox" checked></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">毕业院校</td>
+                                <td class="col-center"><input type="number" class="form-input" value="12" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox" checked></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">专业</td>
+                                <td class="col-center"><input type="number" class="form-input" value="13" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox" checked></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">工作单位</td>
+                                <td class="col-center"><input type="number" class="form-input" value="14" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox" checked></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">职称/身份</td>
+                                <td class="col-center"><input type="number" class="form-input" value="15" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox" checked></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">工作单位电话号码</td>
+                                <td class="col-center"><input type="number" class="form-input" value="16" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">邮箱</td>
+                                <td class="col-center"><input type="number" class="form-input" value="17" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox" checked></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                              </tr>
+                <tr>
+                                <td class="field-name">所在地区</td>
+                                <td class="col-center"><input type="number" class="form-input" value="18" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox" checked disabled></td>
+                                <td class="col-center"><input type="checkbox" checked></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">详细地址</td>
+                                <td class="col-center"><input type="number" class="form-input" value="19" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox" checked></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">照片</td>
+                                <td class="col-center"><input type="number" class="form-input" value="20" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox" checked></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">感兴趣的分支机构</td>
+                                <td class="col-center"><input type="number" class="form-input" value="21" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <span class="card-title">二、学生信息</span>
+          </div>
+          <div class="card-body">
+            <table class="field-table">
+              <thead>
+                <tr>
+                  <th>字段名称</th>
+                  <th style="width: 80px;">权重</th>
+                  <th style="width: 100px;">申请时显示</th>
+                  <th style="width: 80px;">必填</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                                <td class="field-name">在读学校</td>
+                                <td class="col-center"><input type="number" class="form-input" value="1" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">入学时间</td>
+                                <td class="col-center"><input type="number" class="form-input" value="2" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">毕业时间</td>
+                                <td class="col-center"><input type="number" class="form-input" value="3" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">在读专业</td>
+                                <td class="col-center"><input type="number" class="form-input" value="4" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">学生证号</td>
+                                <td class="col-center"><input type="number" class="form-input" value="5" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <span class="card-title">三、其他信息（可选）</span>
+          </div>
+          <div class="card-body">
+            <table class="field-table">
+              <thead>
+                <tr>
+                  <th>字段名称</th>
+                  <th style="width: 80px;">权重</th>
+                  <th style="width: 100px;">申请时显示</th>
+                  <th style="width: 80px;">必填</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                                <td class="field-name">主要成就</td>
+                                <td class="col-center"><input type="number" class="form-input" value="1" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">研究方向</td>
+                                <td class="col-center"><input type="number" class="form-input" value="2" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">发表论著情况</td>
+                                <td class="col-center"><input type="number" class="form-input" value="3" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">主要科技成果</td>
+                                <td class="col-center"><input type="number" class="form-input" value="4" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">获奖情况</td>
+                                <td class="col-center"><input type="number" class="form-input" value="5" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">国内外工作经历和成就</td>
+                                <td class="col-center"><input type="number" class="form-input" value="6" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <span class="card-title">四、荣誉/专家信息（可选）</span>
+          </div>
+          <div class="card-body">
+            <table class="field-table">
+              <thead>
+                <tr>
+                  <th>字段名称</th>
+                  <th style="width: 80px;">权重</th>
+                  <th style="width: 100px;">申请时显示</th>
+                  <th style="width: 80px;">必填</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                                <td class="field-name">是否人大代表</td>
+                                <td class="col-center"><input type="number" class="form-input" value="1" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">是否政协委员</td>
+                                <td class="col-center"><input type="number" class="form-input" value="2" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">是否突出贡献专家</td>
+                                <td class="col-center"><input type="number" class="form-input" value="3" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">是否政府特贴专家</td>
+                                <td class="col-center"><input type="number" class="form-input" value="4" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">是否院士</td>
+                                <td class="col-center"><input type="number" class="form-input" value="5" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">是否长江学者</td>
+                                <td class="col-center"><input type="number" class="form-input" value="6" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">是否杰青</td>
+                                <td class="col-center"><input type="number" class="form-input" value="7" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <span class="card-title">五、学会任职 & 国际交流（可选）</span>
+          </div>
+          <div class="card-body">
+            <table class="field-table">
+              <thead>
+                <tr>
+                  <th>字段名称</th>
+                  <th style="width: 80px;">权重</th>
+                  <th style="width: 100px;">申请时显示</th>
+                  <th style="width: 80px;">必填</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                                <td class="field-name">何时加入本会</td>
+                                <td class="col-center"><input type="number" class="form-input" value="1" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">在本会担任的职务</td>
+                                <td class="col-center"><input type="number" class="form-input" value="2" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">掌握哪种外语</td>
+                                <td class="col-center"><input type="number" class="form-input" value="3" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">外语熟练程度</td>
+                                <td class="col-center"><input type="number" class="form-input" value="4" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <span class="card-title">六、社会职务 & 家庭信息</span>
+          </div>
+          <div class="card-body">
+            <table class="field-table">
+              <thead>
+                <tr>
+                  <th>字段名称</th>
+                  <th style="width: 80px;">权重</th>
+                  <th style="width: 100px;">申请时显示</th>
+                  <th style="width: 80px;">必填</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                                <td class="field-name">社会职务</td>
+                                <td class="col-center"><input type="number" class="form-input" value="1" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">家庭电话号码</td>
+                                <td class="col-center"><input type="number" class="form-input" value="2" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+                <tr>
+                                <td class="field-name">家庭通讯地址</td>
+                                <td class="col-center"><input type="number" class="form-input" value="3" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <span class="card-title">七、个人简介</span>
+          </div>
+          <div class="card-body">
+            <table class="field-table">
+              <thead>
+                <tr>
+                  <th>字段名称</th>
+                  <th style="width: 80px;">权重</th>
+                  <th style="width: 100px;">申请时显示</th>
+                  <th style="width: 80px;">必填</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                                <td class="field-name">简介</td>
+                                <td class="col-center"><input type="number" class="form-input" value="1" style="width: 60px; text-align: center;"></td>
+                                <td class="col-center"><input type="checkbox" checked></td>
+                                <td class="col-center"><input type="checkbox"></td>
+                              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 自定义字段 -->
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="card-title">自定义字段</span>
+              <button class="btn btn-default btn-sm" onclick="openModal('addCustomFieldModal')">+ 添加自定义字段</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="field-table">
+              <thead>
+                <tr>
+                  <th>字段名称</th>
+                  <th style="width: 80px;">权重</th>
+                  <th style="width: 100px;">申请时显示</th>
+                  <th style="width: 80px;">必填</th>
+                  <th style="width: 80px;">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                <td class="field-name">研究方向</td>
+                <td class="col-center"><input type="number" class="form-input" value="22" style="width: 60px; text-align: center;"></td>
+                <td class="col-center"><input type="checkbox" checked></td>
+                <td class="col-center"><input type="checkbox"></td>
+                <td class="col-center"><input type="checkbox" checked></td>
+                <td class="col-center"><button class="btn btn-default btn-sm" onclick="confirm('确定要删除该字段吗？') && showToast('已删除')">删除</button></td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+          <div class="custom-section" onclick="openModal('addCustomFieldModal')">
+            <span style="font-size: 20px;">➕</span><br>
+            <span>点击添加自定义字段</span>
+          </div>
+
+        <!-- 底部保存 -->
+        <div style="padding: 20px 0; border-top: 1px solid #e8e8e8; display: flex; justify-content: space-between; margin-top: 24px;">
+          <button class="btn btn-default" onclick="location.href='member-type.html'">返回列表</button>
+          <button class="btn btn-primary" onclick="showToast('保存成功')">保存配置</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 添加自定义字段弹窗 -->
+  <div class="modal" id="addCustomFieldModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">添加自定义字段</span>
+        <span class="close-btn" onclick="closeModal('addCustomFieldModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">字段名称 <span class="required">*</span></label>
+          <input type="text" class="form-input" placeholder="如：研究方向">
+        </div>
+        <div class="form-group">
+          <label class="form-label">字段编码 <span class="required">*</span></label>
+          <input type="text" class="form-input" placeholder="如：research_direction">
+        </div>
+        <div class="form-group">
+          <label class="form-label">字段类型</label>
+          <select class="form-select">
+            <option>文本</option>
+            <option>数字</option>
+            <option>日期</option>
+            <option>下拉选择</option>
+            <option>多选</option>
+            <option>上传图片</option>
+            <option>文本域</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">选项值</label>
+          <input type="text" class="form-input" placeholder="多个值用逗号分隔">
+        </div>
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" checked> 申请时显示
+          </label>
+        </div>
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox"> 必填
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('addCustomFieldModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('addCustomFieldModal'); showToast('添加成功')">添加</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

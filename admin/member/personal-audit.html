@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人会员审核 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .sub-tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 2px solid #f0f0f0; }
+    .sub-tab-item { padding: 10px 20px; font-size: 14px; color: #666; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.3s; }
+    .sub-tab-item:hover { color: #1890ff; }
+    .sub-tab-item.active { color: #1890ff; border-bottom-color: #1890ff; font-weight: 500; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .sub-tab-content { display: none; }
+    .sub-tab-content.active { display: block; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">个人会员审核</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <a href="#">个人会员</a> / <span>会员审核</span></div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="tabs">
+          <div class="tab-item active" onclick="switchTab(this, 'register')">会员注册审核</div>
+          <div class="tab-item" onclick="switchTab(this, 'change')">会员信息变更审核</div>
+        </div>
+
+        <!-- 会员注册审核 Tab -->
+        <div id="registerTab" class="tab-content active">
+          <div class="sub-tabs">
+            <div class="sub-tab-item active" onclick="switchRegisterSubTab(this, 'pending')">待审核 (5)</div>
+            <div class="sub-tab-item" onclick="switchRegisterSubTab(this, 'passed')">已通过</div>
+            <div class="sub-tab-item" onclick="switchRegisterSubTab(this, 'rejected')">已驳回</div>
+          </div>
+
+          <div id="registerPendingContent" class="sub-tab-content active">
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title">待审核列表</span>
+                <div class="card-tools">
+                  <button class="btn btn-default btn-sm">批量审核</button>
+                </div>
+              </div>
+              <div class="card-body">
+                <table class="table" id="auditTable">
+                <thead>
+                  <tr>
+                    <th width="50"><input type="checkbox" class="checkbox" onclick="toggleCheckAll(this, 'auditTable')"></th>
+                    
+                    <th>申请人</th>
+                    <th>手机号</th>
+                    <th>会员类型</th>
+                    <th>发展来源</th>
+                    <th>申请时间</th>
+                    <th>审核状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input type="checkbox" class="checkbox"></td>
+                    <td>张三</td>
+                    <td>138****8001</td>
+                    <td><span class="tag tag-primary">普通个人会员</span></td>
+                    <td>北京市农学会</td>
+                    <td>2024-05-13 10:23:15</td>
+                    <td><span class="tag tag-warning">待初审</span></td>
+                    <td class="actions">
+                      <button class="btn btn-default btn-sm" onclick="openModal('auditModal')">审核</button>
+                      <button class="btn btn-default btn-sm" onclick="location.href='personal-audit-detail.html'">查看</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" class="checkbox"></td>
+                    <td>李四</td>
+                    <td>138****8002</td>
+                    <td><span class="tag tag-primary">学生会员</span></td>
+                    <td>山东省农学会</td>
+                    <td>2024-05-12 14:35:00</td>
+                    <td><span class="tag tag-warning">待初审</span></td>
+                    <td class="actions">
+                      <button class="btn btn-default btn-sm" onclick="openModal('auditModal')">审核</button>
+                      <button class="btn btn-default btn-sm" onclick="location.href='personal-audit-detail.html'">查看</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" class="checkbox"></td>
+                    <td>王五</td>
+                    <td>138****8003</td>
+                    <td><span class="tag tag-primary">普通个人会员</span></td>
+                    <td>江苏省农学会</td>
+                    <td>2024-05-11 09:18</td>
+                    <td><span class="tag tag-warning">待初审</span></td>
+                    <td class="actions">
+                      <button class="btn btn-default btn-sm" onclick="openModal('auditModal')">审核</button>
+                      <button class="btn btn-default btn-sm" onclick="location.href='personal-audit-detail.html'">查看</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" class="checkbox"></td>
+                    <td>赵六</td>
+                    <td>138****8004</td>
+                    <td><span class="tag tag-primary">普通个人会员</span></td>
+                    <td>作物学专业委员会</td>
+                    <td>2024-05-10 16:42</td>
+                    <td><span class="tag" style="background: #e6f7ff; color: #1890ff;">待终审</span></td>
+                    <td class="actions">
+                      <button class="btn btn-default btn-sm" onclick="openModal('auditModal')">审核</button>
+                      <button class="btn btn-default btn-sm" onclick="location.href='personal-audit-detail.html'">查看</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" class="checkbox"></td>
+                    <td>钱七</td>
+                    <td>138****8005</td>
+                    <td><span class="tag tag-primary">普通个人会员</span></td>
+                    <td>北京市农学会</td>
+                    <td>2024-05-09 11:25</td>
+                    <td><span class="tag" style="background: #e6f7ff; color: #1890ff;">待终审</span></td>
+                    <td class="actions">
+                      <button class="btn btn-default btn-sm" onclick="openModal('auditModal')">审核</button>
+                      <button class="btn btn-default btn-sm" onclick="location.href='personal-audit-detail.html'">查看</button>
+                    </td>
+                  </tr>
+                </tbody>
+                </table>
+
+                <div class="pagination">
+                  <div class="pagination-info">共 5 条</div>
+                  <div class="pagination-btns">
+                    <button class="page-btn" disabled>上一页</button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn" disabled>下一页</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="registerPassedContent" class="sub-tab-content">
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title">已通过列表</span>
+              </div>
+              <div class="card-body">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>申请人</th>
+                      <th>手机号</th>
+                      <th>会员类型</th>
+                      <th>发展来源</th>
+                      <th>申请时间</th>
+                      <th>审核状态</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>孙九</td>
+                      <td>138****9001</td>
+                      <td><span class="tag tag-primary">普通个人会员</span></td>
+                      <td>北京市农学会</td>
+                      <td>2024-05-08 10:23:00</td>
+                      <td><span class="tag tag-success">已通过</span></td>
+                      <td class="actions">
+                        <button class="btn btn-default btn-sm" onclick="location.href='personal-audit-detail.html'">查看</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="registerRejectedContent" class="sub-tab-content">
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title">已驳回列表</span>
+              </div>
+              <div class="card-body">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>申请人</th>
+                      <th>手机号</th>
+                      <th>会员类型</th>
+                      <th>发展来源</th>
+                      <th>申请时间</th>
+                      <th>审核状态</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>周十</td>
+                      <td>138****9010</td>
+                      <td><span class="tag tag-primary">普通个人会员</span></td>
+                      <td>广东省农学会</td>
+                      <td>2024-05-06 09:18:00</td>
+                      <td><span class="tag tag-danger">已驳回</span></td>
+                      <td class="actions">
+                        <button class="btn btn-default btn-sm" onclick="location.href='personal-audit-detail.html'">查看</button>
+                        <button class="btn btn-default btn-sm" onclick="openModal('rejectReasonModal')">查看原因</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="changeTab" class="tab-content">
+          <div class="sub-tabs">
+            <div class="sub-tab-item active" onclick="switchChangeSubTab(this, 'pending')">待审核 (2)</div>
+            <div class="sub-tab-item" onclick="switchChangeSubTab(this, 'passed')">已通过</div>
+            <div class="sub-tab-item" onclick="switchChangeSubTab(this, 'rejected')">已驳回</div>
+          </div>
+
+          <div id="changePendingContent" class="sub-tab-content active">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">待审核列表</span>
+              <div class="card-tools">
+                <button class="btn btn-default btn-sm">批量审核</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th width="50"><input type="checkbox"></th>
+                    
+                    <th>申请人</th>
+                    <th>变更类型</th>
+                    <th>手机号</th>
+                    <th>会员类型</th>
+                    <th>申请时间</th>
+                    <th>审核状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td>张三</td>
+                    <td><span class="tag tag-info">信息变更</span></td>
+                    <td>138****8001</td>
+                    <td><span class="tag tag-primary">普通个人会员</span></td>
+                    <td>2024-05-13 10:23:15</td>
+                    <td><span class="tag tag-warning">待初审</span></td>
+                    <td class="actions">
+                      <button class="btn btn-default btn-sm" onclick="openModal('auditModal')">审核</button>
+                      <button class="btn btn-default btn-sm" onclick="location.href='personal-audit-change-detail.html'">查看</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td>李四</td>
+                    <td><span class="tag tag-info">会员类型变更</span></td>
+                    <td>138****8002</td>
+                    <td><span class="tag tag-primary">学生会员</span></td>
+                    <td>2024-05-12 14:35:00</td>
+                    <td><span class="tag tag-warning">待初审</span></td>
+                    <td class="actions">
+                      <button class="btn btn-default btn-sm" onclick="openModal('auditModal')">审核</button>
+                      <button class="btn btn-default btn-sm" onclick="location.href='personal-audit-change-detail.html'">查看</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pagination">
+                <div class="pagination-info">共 2 条</div>
+                <div class="pagination-btns">
+                  <button class="page-btn" disabled>上一页</button>
+                  <button class="page-btn active">1</button>
+                  <button class="page-btn" disabled>下一页</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div id="changePassedContent" class="sub-tab-content">
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title">已通过列表</span>
+              </div>
+              <div class="card-body">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>申请人</th>
+                      <th>变更类型</th>
+                      <th>手机号</th>
+                      <th>会员类型</th>
+                      <th>申请时间</th>
+                      <th>审核状态</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>王五</td>
+                      <td><span class="tag tag-info">信息变更</span></td>
+                      <td>138****8003</td>
+                      <td><span class="tag tag-primary">普通个人会员</span></td>
+                      <td>2024-05-10 16:42:00</td>
+                      <td><span class="tag tag-success">已通过</span></td>
+                      <td class="actions">
+                        <button class="btn btn-default btn-sm" onclick="location.href='personal-audit-change-detail.html'">查看</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="changeRejectedContent" class="sub-tab-content">
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title">已驳回列表</span>
+              </div>
+              <div class="card-body">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>申请人</th>
+                      <th>变更类型</th>
+                      <th>手机号</th>
+                      <th>会员类型</th>
+                      <th>申请时间</th>
+                      <th>审核状态</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>赵六</td>
+                      <td><span class="tag tag-info">会员类型变更</span></td>
+                      <td>138****8004</td>
+                      <td><span class="tag tag-primary">学生会员</span></td>
+                      <td>2024-05-08 11:15:00</td>
+                      <td><span class="tag tag-danger">已驳回</span></td>
+                      <td class="actions">
+                        <button class="btn btn-default btn-sm" onclick="location.href='personal-audit-change-detail.html'">查看</button>
+                        <button class="btn btn-default btn-sm" onclick="openModal('rejectReasonModal')">查看原因</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 审核弹窗 -->
+  <div class="modal" id="auditModal">
+    <div class="modal-dialog" style="width: 600px;">
+      <div class="modal-header">
+        <span class="modal-title">会员审核 - APP20240513001</span>
+        <span class="close-btn" onclick="closeModal('auditModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 16px;">
+          <div class="steps">
+            <div class="step completed">
+              <div class="step-icon">1</div>
+              <span class="step-label">提交申请</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step active">
+              <div class="step-icon">2</div>
+              <span class="step-label">机构初审</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step">
+              <div class="step-icon">3</div>
+              <span class="step-label">部门终审</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step">
+              <div class="step-icon">4</div>
+              <span class="step-label">缴费</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="background: #fafafa; padding: 16px; border-radius: 4px; margin-bottom: 16px;">
+          <div class="grid-2" style="gap: 12px;">
+            <div><strong>申请人：</strong>张三</div>
+            <div><strong>手机号：</strong>13800138001</div>
+            <div><strong>会员类型：</strong>普通个人会员</div>
+            <div><strong>发展来源：</strong>北京市农学会</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 8px;">审核意见</div>
+          <textarea class="form-textarea" placeholder="请输入审核意见（驳回时必填）"></textarea>
+        </div>
+
+        <div style="padding: 12px; background: #fff7e6; border-radius: 4px; font-size: 13px; color: #666;">
+          <strong>提示：</strong>审核通过后将发送短信和站内信通知申请人进行缴费
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('auditModal')">取消</button>
+        <button class="btn btn-danger" onclick="closeModal('auditModal'); showToast('已驳回')">驳回</button>
+        <button class="btn btn-success" onclick="closeModal('auditModal'); showToast('审核通过')">通过</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 查看详情弹窗 -->
+  <div class="modal" id="viewModal">
+    <div class="modal-dialog" style="width: 700px;">
+      <div class="modal-header">
+        <span class="modal-title">申请详情 - APP20240513001</span>
+        <span class="close-btn" onclick="closeModal('viewModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 20px;">
+          <div class="steps">
+            <div class="step completed">
+              <div class="step-icon">✓</div>
+              <span class="step-label">提交申请</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step active">
+              <div class="step-icon">2</div>
+              <span class="step-label">机构初审</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step">
+              <div class="step-icon">3</div>
+              <span class="step-label">部门终审</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step">
+              <div class="step-icon">4</div>
+              <span class="step-label">缴费</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 12px;">基本信息</div>
+          <div class="grid-3" style="gap: 12px;">
+            <div class="form-group">
+              <label class="form-label">真实姓名</label>
+              <div>张三</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">性别</label>
+              <div>男</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">出生日期</label>
+              <div>1990-01-01</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">身份证号</label>
+              <div>110101199001011234</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">民族</label>
+              <div>汉族</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">政治面貌</label>
+              <div>群众</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">最高学历</label>
+              <div>博士研究生</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">毕业院校</label>
+              <div>某农业大学</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">工作单位</label>
+              <div>某农业科学院</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">职称</label>
+              <div>研究员</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">职务</label>
+              <div>部门主任</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">手机号</label>
+              <div>13800138001</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 12px;">审核记录</div>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="time">2024-05-13 10:23:15</div>
+              <div class="content">提交申请 <span style="color: #999;">北京市农学会</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('viewModal')">关闭</button>
+        <button class="btn btn-danger" onclick="closeModal('viewModal')">驳回</button>
+        <button class="btn btn-success" onclick="closeModal('viewModal'); showToast('审核通过')">通过</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 查看驳回原因弹窗 -->
+  <div class="modal" id="rejectReasonModal">
+    <div class="modal-dialog" style="width: 500px;">
+      <div class="modal-header">
+        <span class="modal-title">驳回原因</span>
+        <span class="close-btn" onclick="closeModal('rejectReasonModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="background: #fff7e6; padding: 16px; border-radius: 4px; border: 1px solid #ffd591; margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 8px; color: #fa8c16;">周十</div>
+          <div style="color: #666; font-size: 13px; line-height: 1.8;">
+            <div><strong>驳回时间：</strong>2024-05-06 11:30:00</div>
+            <div><strong>驳回人：</strong>李管理员</div>
+          </div>
+        </div>
+        <div style="margin-bottom: 8px; font-weight: 500;">驳回原因</div>
+        <div style="background: #fafafa; padding: 16px; border-radius: 4px; color: #333; line-height: 1.8;">
+          学历证明材料不清晰，请重新上传教育部学历认证报告或毕业证书扫描件。
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('rejectReasonModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script>
+    function switchRegisterSubTab(el, tabKey) {
+      var registerTab = document.getElementById('registerTab');
+      registerTab.querySelectorAll('.sub-tabs .sub-tab-item').forEach(function(item) {
+        item.classList.remove('active');
+      });
+      el.classList.add('active');
+
+      ['pending', 'passed', 'rejected'].forEach(function(key) {
+        var content = document.getElementById('register' + key.charAt(0).toUpperCase() + key.slice(1) + 'Content');
+        if (content) content.classList.remove('active');
+      });
+      var activeContent = document.getElementById('register' + tabKey.charAt(0).toUpperCase() + tabKey.slice(1) + 'Content');
+      if (activeContent) activeContent.classList.add('active');
+    }
+
+    function switchTab(el, tabId) {
+      document.querySelectorAll('.tabs .tab-item').forEach(function(item) {
+        item.classList.remove('active');
+      });
+      el.classList.add('active');
+
+      document.querySelectorAll('.tab-content').forEach(function(content) {
+        content.classList.remove('active');
+      });
+      document.getElementById(tabId + 'Tab').classList.add('active');
+    }
+
+    function switchChangeSubTab(el, tabKey) {
+      var changeTab = document.getElementById('changeTab');
+      changeTab.querySelectorAll('.sub-tabs .sub-tab-item').forEach(function(item) {
+        item.classList.remove('active');
+      });
+      el.classList.add('active');
+
+      ['pending', 'passed', 'rejected'].forEach(function(key) {
+        var content = document.getElementById('change' + key.charAt(0).toUpperCase() + key.slice(1) + 'Content');
+        if (content) content.classList.remove('active');
+      });
+      var activeContent = document.getElementById('change' + tabKey.charAt(0).toUpperCase() + tabKey.slice(1) + 'Content');
+      if (activeContent) activeContent.classList.add('active');
+    }
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

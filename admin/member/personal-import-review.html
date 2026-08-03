@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>批量导入审核 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .filter-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+    .filter-item { display: flex; align-items: center; gap: 8px; }
+    .filter-item label { font-size: 13px; color: #666; white-space: nowrap; }
+    .filter-item select, .filter-item input { padding: 6px 12px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 13px; }
+    .status-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+    .status-pending { background: #fff7e6; color: #fa8c16; }
+    .status-approved { background: #f6ffed; color: #52c41a; }
+    .status-rejected { background: #fff1f0; color: #ff4d4f; }
+    .stat-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+    .stat-card { background: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .stat-card .stat-label { font-size: 13px; color: #666; margin-bottom: 8px; }
+    .stat-card .stat-value { font-size: 24px; font-weight: 600; color: #333; }
+    .stat-card .stat-change { font-size: 12px; color: #999; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">批量导入审核</div>
+          <div class="breadcrumb">
+            <a href="#">首页</a> / <a href="#">个人会员</a> / <span>批量导入审核</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- 统计卡片 -->
+        <div class="stat-cards">
+          <div class="stat-card">
+            <div class="stat-label">待审核</div>
+            <div class="stat-value" style="color: #fa8c16;">12</div>
+            <div class="stat-change">批次</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">本周导入</div>
+            <div class="stat-value">1,286</div>
+            <div class="stat-change">条数据</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">本月通过</div>
+            <div class="stat-value" style="color: #52c41a;">3,542</div>
+            <div class="stat-change">条数据</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">本月驳回</div>
+            <div class="stat-value" style="color: #ff4d4f;">128</div>
+            <div class="stat-change">条数据</div>
+          </div>
+        </div>
+
+        <!-- 筛选栏 -->
+        <div class="filter-bar">
+          <div class="filter-item">
+            <label>导入时间：</label>
+            <input type="date" id="startDate">
+            <span>-</span>
+            <input type="date" id="endDate">
+          </div>
+          <div class="filter-item">
+            <label>状态：</label>
+            <select id="statusFilter">
+              <option value="">全部</option>
+              <option value="pending">待审核</option>
+              <option value="approved">已通过</option>
+              <option value="rejected">已驳回</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label>批次号：</label>
+            <input type="text" id="batchNo" placeholder="请输入批次号" style="width: 160px;">
+          </div>
+          <button class="btn btn-default btn-sm" onclick="filterData()">查询</button>
+          <button class="btn btn-default btn-sm" onclick="resetFilter()">重置</button>
+        </div>
+
+        <!-- 列表 -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">导入批次列表</span>
+          </div>
+          <div class="card-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>批次号</th>
+                  <th>导入时间</th>
+                  <th>导入人</th>
+                  <th>数据条数</th>
+                  <th>通过条数</th>
+                  <th>驳回条数</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>BATCH20260610001</td>
+                  <td>2026-06-10 10:30:00</td>
+                  <td>王管理</td>
+                  <td>45</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td><span class="status-tag status-pending">待审核</span></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='personal-import-review-detail.html'">查看详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openAuditModal('BATCH20260610001')">审核</button>
+                    <button class="btn btn-default btn-sm" style="color: #ff4d4f;" onclick="deleteBatch('BATCH20260610001')">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>BATCH20260609003</td>
+                  <td>2026-06-09 15:20:00</td>
+                  <td>李管理员</td>
+                  <td>120</td>
+                  <td>115</td>
+                  <td>5</td>
+                  <td><span class="status-tag status-approved">已通过</span></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='personal-import-review-detail.html'">查看详情</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>BATCH20260609002</td>
+                  <td>2026-06-09 11:15:00</td>
+                  <td>张管理</td>
+                  <td>86</td>
+                  <td>80</td>
+                  <td>6</td>
+                  <td><span class="status-tag status-approved">已通过</span></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='personal-import-review-detail.html'">查看详情</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>BATCH20260608001</td>
+                  <td>2026-06-08 09:00:00</td>
+                  <td>王管理</td>
+                  <td>200</td>
+                  <td>195</td>
+                  <td>5</td>
+                  <td><span class="status-tag status-rejected">已驳回</span></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='personal-import-review-detail.html'">查看详情</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="pagination">
+              <div class="pagination-info">共 4 条</div>
+              <div class="pagination-btns">
+                <button class="btn btn-default btn-sm" disabled>上一页</button>
+                <button class="btn btn-default btn-sm" disabled>下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 审核弹窗 -->
+  <div class="modal" id="auditModal">
+    <div class="modal-dialog" style="width: 500px;">
+      <div class="modal-header">
+        <span class="modal-title">批量审核</span>
+        <span class="close-btn" onclick="closeModal('auditModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 16px;">
+          <div style="padding: 12px; background: #fafafa; border-radius: 4px;">
+            <div style="font-size: 14px; color: #333; margin-bottom: 8px;"><strong>批次号：</strong><span id="auditBatchNo">-</span></div>
+            <div style="font-size: 14px; color: #333;"><strong>数据条数：</strong><span id="auditDataCount">-</span> 条</div>
+          </div>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 8px;">审核结果</div>
+          <div style="display: flex; gap: 16px;">
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="radio" name="auditResult" value="approve" checked onchange="toggleAuditOpinion()">
+              <span>通过</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="radio" name="auditResult" value="reject" onchange="toggleAuditOpinion()">
+              <span>驳回</span>
+            </label>
+          </div>
+        </div>
+        <div id="auditOpinionBox" style="display: none; margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 8px;">驳回意见 <span style="color: #ff4d4f;">*</span></div>
+          <textarea id="auditOpinion" class="form-textarea" placeholder="请输入驳回意见" style="width: 100%; min-height: 80px;"></textarea>
+        </div>
+        <div style="padding: 12px; background: #fff7e6; border-radius: 4px; font-size: 13px; color: #666;">
+          <strong>提示：</strong>审核通过后，该批次所有数据将标记为通过
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('auditModal')">取消</button>
+        <button class="btn btn-success" onclick="submitAudit()">提交</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script>
+    function filterData() {
+      showToast('筛选成功');
+    }
+    function resetFilter() {
+      document.getElementById('startDate').value = '';
+      document.getElementById('endDate').value = '';
+      document.getElementById('statusFilter').value = '';
+      document.getElementById('batchNo').value = '';
+      showToast('已重置');
+    }
+    function openAuditModal(batchNo) {
+      document.getElementById('auditBatchNo').textContent = batchNo;
+      var row = event.target.closest('tr');
+      var dataCount = row.cells[3].textContent;
+      document.getElementById('auditDataCount').textContent = dataCount;
+      document.querySelector('input[name="auditResult"][value="approve"]').checked = true;
+      document.getElementById('auditOpinion').value = '';
+      document.getElementById('auditOpinionBox').style.display = 'none';
+      openModal('auditModal');
+    }
+    function toggleAuditOpinion() {
+      var result = document.querySelector('input[name="auditResult"]:checked').value;
+      document.getElementById('auditOpinionBox').style.display = result === 'reject' ? 'block' : 'none';
+    }
+    function submitAudit() {
+      var result = document.querySelector('input[name="auditResult"]:checked').value;
+      var opinion = document.getElementById('auditOpinion').value.trim();
+      if (result === 'reject' && !opinion) {
+        showToast('请输入驳回意见', 'error');
+        return;
+      }
+      closeModal('auditModal');
+      if (result === 'approve') {
+        showToast('审核通过');
+      } else {
+        showToast('已驳回');
+      }
+      location.reload();
+    }
+    function deleteBatch(batchNo) {
+      if (confirm('确定要删除该批次吗？删除后数据将无法恢复。')) {
+        showToast('删除成功');
+        location.reload();
+      }
+    }
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

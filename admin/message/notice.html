@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>站内信管理 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">站内信管理</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <a href="#">消息中心</a> / <span>站内信管理</span></div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">站内信模板列表</span>
+            <div class="card-tools">
+              <button class="btn btn-primary" onclick="openModal('addTemplateModal')">+ 新增模板</button>
+            </div>
+          </div>
+          <div class="card-body">
+                        <div class="search-bar">
+              <div class="search-item">
+                <label>模板名称：</label>
+                <input type="text" class="form-input" placeholder="请输入模板名称" style="width: 120px;">
+              </div>
+              <div class="search-item">
+                <label>模板类型：</label>
+                <select class="form-select" style="width: 110px;">
+                  <option>全部</option>
+                  <option>普通模板</option>
+                  <option>参数模板</option>
+                </select>
+              </div>
+              <div class="search-item">
+                <label>状态：</label>
+                <select class="form-select" style="width: 90px;">
+                  <option>全部</option>
+                  <option>启用</option>
+                  <option>禁用</option>
+                </select>
+              </div>
+              <button class="btn btn-default btn-sm">查询</button>
+              <button class="btn btn-default btn-sm">重置</button>
+            </div>
+
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>模板名称</th>
+                  <th>模板类型</th>
+                  <th>站内信类型</th>
+                  <th>信件主题</th>
+                  <th>是否回复</th>
+                  <th>回复截止日期</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>系统通知</td>
+                  <td><span class="tag tag-primary">参数模板</span></td>
+                  <td><span class="tag tag-primary">系统通知</span></td>
+                  <td>【系统通知】{标题}（{姓名}）</td>                  <td><span class="tag tag-default">否</span></td>                  <td>-</td>                  <td><label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="editNoticeTemplate({
+                      name: '系统通知',
+                      type: 'param',
+                      category: '系统通知',
+                      subject: '【系统通知】{标题}（{姓名}）',
+                      content: '尊敬的{姓名}，您好！\\n\\n您收到一条系统通知，相关标题为：{标题}。\\n\\n中国农业学会',
+                      params: ['姓名', '标题']
+                    })">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('sendModal')">发送</button>
+                    <button class="btn btn-default btn-sm" onclick="confirm('确定要删除该模板吗？') && showToast('已删除')">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>工作消息</td>
+                  <td><span class="tag tag-primary">参数模板</span></td>
+                  <td><span class="tag tag-warning">工作消息</span></td>
+                  <td>【工作消息】{标题}（{姓名}）</td>                  <td><span class="tag tag-success">是</span></td>
+                  <td>2024-06-30</td>
+                  <td><label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="editNoticeTemplate({
+                      name: '工作消息',
+                      type: 'param',
+                      category: '工作消息',
+                      subject: '【工作消息】{标题}（{姓名}）',
+                      content: '尊敬的{姓名}，您好！\\n\\n{标题}\\n\\n请在{会员到期日}前完成处理。',
+                      params: ['姓名', '标题', '会员到期日']
+                    })">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('sendModal')">发送</button>
+                    <button class="btn btn-default btn-sm" onclick="confirm('确定要删除该模板吗？') && showToast('已删除')">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>通知公告</td>
+                  <td><span class="tag tag-primary">参数模板</span></td>
+                  <td><span class="tag tag-success">通知公告</span></td>
+                  <td>【通知公告】{标题}（{会员类型}）</td>                  <td><span class="tag tag-success">是</span></td>
+                  <td>2024-05-31</td>
+                  <td><label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="editNoticeTemplate({
+                      name: '通知公告',
+                      type: 'param',
+                      category: '通知公告',
+                      subject: '【通知公告】{标题}（{会员类型}）',
+                      content: '尊敬的{姓名}，您好！\\n\\n现将{标题}公告通知您。\\n\\n中国农业学会',
+                      params: ['姓名', '标题', '会员类型']
+                    })">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('sendModal')">发送</button>
+                    <button class="btn btn-default btn-sm" onclick="confirm('确定要删除该模板吗？') && showToast('已删除')">删除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增模板弹窗 -->
+  <div class="modal" id="addTemplateModal">
+    <div class="modal-dialog" style="max-height: 85vh; display: flex; flex-direction: column; overflow: hidden;">
+      <div class="modal-header">
+        <span class="modal-title">新增站内信模板</span>
+        <span class="close-btn" onclick="closeModal('addTemplateModal')">✕</span>
+      </div>
+      <div class="modal-body" style="flex: 1; overflow-y: auto; padding: 20px 24px;">
+        <div class="form-group">
+          <label class="form-label">模板名称 <span class="required">*</span></label>
+          <input type="text" class="form-input" id="addNoticeName" placeholder="请输入模板名称">
+        </div>
+        <div class="form-group">
+          <label class="form-label">模板类型 <span class="required">*</span></label>
+          <div class="template-type-group">
+            <label class="template-type-item"><input type="radio" name="addNoticeType" value="normal" checked onchange="toggleNoticeType('add', this.value)"> <span>普通模板</span></label>
+            <label class="template-type-item"><input type="radio" name="addNoticeType" value="param" onchange="toggleNoticeType('add', this.value)"> <span>参数模板</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">站内信类型 <span class="required">*</span></label>
+          <select class="form-select">
+            <option>请选择类型</option>
+            <option>系统通知</option>
+            <option>工作消息</option>
+            <option>通知公告</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">信件主题 <span class="required">*</span></label>
+          <input type="text" class="form-input" id="addNoticeSubject" placeholder="如：【系统通知】{标题}" oninput="updateNoticePreview('add')">
+        </div>
+        <div class="form-group">
+          <label class="form-label">信件内容 <span class="required">*</span></label>
+          <textarea class="form-textarea" rows="6" id="addNoticeContent" placeholder="请输入信件内容，支持变量：{姓名}、{标题}、{会员类型}、{会员到期日}" oninput="updateNoticePreview('add')"></textarea>
+        </div>
+        <div id="addNoticeParamSection" class="param-section" style="display: none;">
+          <div class="param-tip">勾选参数后会自动插入到信件主题或内容中。</div>
+          <div id="addNoticeParamList" class="param-list simple-param-list"></div>
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label class="form-label">上传附件</label>
+          <div style="border: 2px dashed #d9d9d9; border-radius: 6px; padding: 20px; text-align: center; cursor: pointer;" onclick="document.getElementById('noticeAddAttachment').click()">
+            <div style="color: #666; font-size: 14px;">点击上传附件</div>
+            <div style="color: #c0c4cc; font-size: 12px; margin-top: 4px;">支持 jpg、png、pdf、word、excel 等格式，单个文件不超过10MB</div>
+            <input type="file" id="noticeAddAttachment" style="display: none;" multiple onchange="handleNoticeAttachmentAdd(this)">
+          </div>
+          <div id="noticeAddAttachmentList" style="margin-top: 8px;"></div>
+        </div>
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" onchange="document.getElementById('replyDeadline').style.display = this.checked ? '' : 'none'"> 是否允许回复
+          </label>
+        </div>
+        <div class="form-group" id="replyDeadline" style="display: none;">
+          <label class="form-label">回复截止日期</label>
+          <input type="date" class="form-input">
+        </div>
+        <div class="template-preview-box">
+          <div class="template-preview-title">预览</div>
+          <div class="template-preview-content" id="addNoticePreviewBox">站内信预览会显示在这里</div>
+        </div>
+        <div style="font-size: 12px; color: #999; margin-top: 8px;">
+          普通模板可直接填写固定文案；参数模板变量格式为 {变量名}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('addTemplateModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('addTemplateModal'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑模板弹窗 -->
+  <div class="modal" id="editTemplateModal">
+    <div class="modal-dialog" style="max-height: 85vh; display: flex; flex-direction: column; overflow: hidden;">
+      <div class="modal-header">
+        <span class="modal-title">编辑站内信模板</span>
+        <span class="close-btn" onclick="closeModal('editTemplateModal')">✕</span>
+      </div>
+      <div class="modal-body" style="flex: 1; overflow-y: auto; padding: 20px 24px;">
+        <div class="form-group">
+          <label class="form-label">模板名称 <span class="required">*</span></label>
+          <input type="text" class="form-input" id="editNoticeName" value="系统通知">
+        </div>
+        <div class="form-group">
+          <label class="form-label">模板类型 <span class="required">*</span></label>
+          <div class="template-type-group">
+            <label class="template-type-item"><input type="radio" name="editNoticeType" value="normal" onchange="toggleNoticeType('edit', this.value)"> <span>普通模板</span></label>
+            <label class="template-type-item"><input type="radio" name="editNoticeType" value="param" onchange="toggleNoticeType('edit', this.value)"> <span>参数模板</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">站内信类型 <span class="required">*</span></label>
+          <select class="form-select">
+            <option selected>系统通知</option>
+            <option>工作消息</option>
+            <option>通知公告</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">信件主题 <span class="required">*</span></label>
+          <input type="text" class="form-input" id="editNoticeSubject" value="【系统通知】{标题}" oninput="updateNoticePreview('edit')">
+        </div>
+        <div class="form-group">
+          <label class="form-label">信件内容 <span class="required">*</span></label>
+          <textarea class="form-textarea" rows="6" id="editNoticeContent" oninput="updateNoticePreview('edit')">尊敬的用户 {姓名}，您好！{内容}</textarea>
+        </div>
+        <div id="editNoticeParamSection" class="param-section" style="display: none;">
+          <div class="param-tip">勾选参数后会自动插入到信件主题或内容中。</div>
+          <div id="editNoticeParamList" class="param-list simple-param-list"></div>
+        </div>
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" onchange="document.getElementById('editReplyDeadline').style.display = this.checked ? '' : 'none'"> 是否允许回复
+          </label>
+        </div>
+        <div class="form-group" id="editReplyDeadline" style="display: none;">
+          <label class="form-label">回复截止日期</label>
+          <input type="date" class="form-input">
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label class="form-label">上传附件</label>
+          <div style="border: 2px dashed #d9d9d9; border-radius: 6px; padding: 20px; text-align: center; cursor: pointer;" onclick="document.getElementById('noticeEditAttachment').click()">
+            <div style="color: #52c41a; font-size: 14px;">✓ 已上传 1 个附件</div>
+            <div style="color: #999; font-size: 12px; margin-top: 4px;">点击修改附件</div>
+            <input type="file" id="noticeEditAttachment" style="display: none;" multiple onchange="handleNoticeAttachmentEdit(this)">
+          </div>
+          <div id="noticeEditAttachmentList" style="margin-top: 8px;">
+            <div style="background: #f5f5f5; padding: 8px 12px; border-radius: 4px; margin-top: 8px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
+              <span>📎 通知文档.pdf</span>
+              <button class="btn btn-default btn-sm" onclick="removeAttachment(this)" style="padding: 2px 8px;">移除</button>
+            </div>
+          </div>
+        </div>
+        <div class="template-preview-box">
+          <div class="template-preview-title">预览</div>
+          <div class="template-preview-content" id="editNoticePreviewBox">站内信预览会显示在这里</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('editTemplateModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('editTemplateModal'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 发送弹窗 -->
+  <div class="modal" id="sendModal">
+    <div class="modal-dialog" style="max-height: 85vh; display: flex; flex-direction: column; overflow: hidden;">
+      <div class="modal-header">
+        <span class="modal-title">发送站内信</span>
+        <span class="close-btn" onclick="closeModal('sendModal')">✕</span>
+      </div>
+      <div class="modal-body" style="flex: 1; overflow-y: auto;">
+        <div class="form-group">
+          <label class="form-label">选择模板</label>
+          <select class="form-select">
+            <option>系统通知</option>
+            <option>工作消息</option>
+            <option>通知公告</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">发送对象</label>
+          <select class="form-select" id="noticeSendTargetType" onchange="toggleNoticeSendTarget(this.value)">
+            <option value="group">分组用户</option>
+            <option value="custom">自定义用户</option>
+          </select>
+        </div>
+        <div class="form-group" id="noticeGroupTargetSection">
+          <label class="form-label">选择分组</label>
+          <select class="form-select">
+            <option>个人会员组</option>
+            <option>单位会员组</option>
+            <option>到期会员组</option>
+          </select>
+        </div>
+        <div class="form-group" id="noticeCustomTargetSection" style="display: none;">
+          <label class="form-label">添加手机号 <span class="required">*</span></label>
+          <div style="display: flex; gap: 10px; margin-bottom: 12px; align-items: center;">
+            <input type="text" class="form-input" id="customNoticePhoneInput" placeholder="输入手机号后回车" style="flex: 1;" onkeydown="handleCustomNoticePhoneEnter(event)">
+            <button class="btn btn-default btn-sm" type="button" onclick="downloadNoticePhoneTemplate()">📥 下载模板</button>
+            <button class="btn btn-default btn-sm" type="button" onclick="document.getElementById('customNoticePhoneFile').click()">📤 批量上传</button>
+            <input type="file" id="customNoticePhoneFile" accept=".xlsx,.xls,.csv,.txt" style="display: none;" onchange="handleCustomNoticePhoneUpload(this)">
+          </div>
+          <div id="customNoticePhoneSearchResult" style="display: none; background: #f8f9fc; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-weight: 500;">自定义手机号用户</div>
+                <div id="customNoticePhoneSearchText" style="font-size: 12px; color: #999;"></div>
+              </div>
+              <button class="btn btn-primary btn-sm" type="button" onclick="addCustomNoticePhone()">添加</button>
+            </div>
+          </div>
+          <div id="customNoticePhoneUploadResult" style="display: none; background: #f6ffed; border: 1px solid #b7eb8f; padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 13px; color: #52c41a;"></div>
+          <div id="customNoticePhoneListWrap" style="display: none;">
+            <div style="font-size: 12px; color: #666; margin-bottom: 6px;">已添加手机号（<span id="customNoticePhoneCount">0</span>）：</div>
+            <div id="customNoticePhoneList"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">审核人 <span class="required">*</span></label>
+          <select class="form-select">
+            <option value="">请选择审核人</option>
+            <option>李明（站内信审核人）</option>
+            <option>王芳（站内信审核人）</option>
+            <option>张强</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">定时发送</label>
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox"> 启用定时发送
+          </label>
+          <input type="datetime-local" class="form-input" style="margin-top: 8px;">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('sendModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('sendModal'); showToast('发送成功')">发送</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <style>
+    .template-type-group { display: flex; gap: 16px; flex-wrap: wrap; }
+    .template-type-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
+      background: #fafafa;
+      cursor: pointer;
+    }
+    .template-type-item input { accent-color: #4f46e5; }
+    .param-section {
+      margin-top: 16px;
+      padding: 16px;
+      border: 1px solid #e8e8e8;
+      border-radius: 8px;
+      background: #fafafa;
+    }
+    .param-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      gap: 12px;
+    }
+    .param-title { font-size: 14px; font-weight: 600; color: #333; }
+    .param-tip { font-size: 12px; color: #999; margin-bottom: 12px; }
+    .param-list { display: flex; flex-direction: column; gap: 10px; }
+    .simple-param-list { gap: 10px; }
+    .param-item {
+      padding: 12px;
+      border: 1px solid #e8e8e8;
+      border-radius: 8px;
+      background: #fff;
+    }
+    .param-inline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .param-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #4f46e5;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .template-preview-box {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #fafafa;
+      border: 1px solid #f0f0f0;
+    }
+    .template-preview-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    .template-preview-content {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.7;
+      min-height: 44px;
+      white-space: pre-wrap;
+    }
+  </style>
+  <script>
+    var noticeParams = ['姓名', '标题', '会员类型', '会员到期日'];
+    var customNoticePhoneUsers = [];
+    var pendingCustomNoticePhone = '';
+
+    function toggleNoticeType(prefix, type) {
+      var section = document.getElementById(prefix + 'NoticeParamSection');
+      if (section) section.style.display = type === 'param' ? 'block' : 'none';
+      updateNoticePreview(prefix);
+    }
+
+    function renderNoticeParams(prefix, selected) {
+      var list = document.getElementById(prefix + 'NoticeParamList');
+      if (!list) return;
+      list.innerHTML = '';
+      noticeParams.forEach(function(name) {
+        var item = document.createElement('div');
+        item.className = 'param-item';
+        item.innerHTML = '<div class="param-inline"><label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" class="notice-param" data-name="' + name + '"' + (selected.indexOf(name) !== -1 ? ' checked' : '') + ' onchange="toggleNoticeParam(this, \'' + prefix + '\')"><span>' + name + '</span></label><span class="param-chip">{' + name + '}</span></div>';
+        list.appendChild(item);
+      });
+    }
+
+    function insertNoticeParam(prefix, name) {
+      var subject = document.getElementById(prefix + 'NoticeSubject');
+      var content = document.getElementById(prefix + 'NoticeContent');
+      var target = content;
+      if (subject && document.activeElement === subject) target = subject;
+      if (target.selectionStart === undefined) return;
+      var text = '{' + name + '}';
+      var start = target.selectionStart || 0;
+      var end = target.selectionEnd || 0;
+      target.value = target.value.slice(0, start) + text + target.value.slice(end);
+      target.focus();
+      target.setSelectionRange(start + text.length, start + text.length);
+      updateNoticePreview(prefix);
+    }
+
+    function toggleNoticeParam(cb, prefix) {
+      if (cb.checked) insertNoticeParam(prefix, cb.dataset.name);
+      updateNoticePreview(prefix);
+    }
+
+    function updateNoticePreview(prefix) {
+      var subject = document.getElementById(prefix + 'NoticeSubject').value || '';
+      var content = document.getElementById(prefix + 'NoticeContent').value || '';
+      var type = document.querySelector('input[name="' + prefix + 'NoticeType"]:checked');
+      var preview = subject + '<br>' + content;
+      if (type && type.value === 'param') {
+        preview = preview
+          .replace(/\{姓名\}/g, '张三')
+          .replace(/\{标题\}/g, '示例标题')
+          .replace(/\{会员类型\}/g, '普通个人会员')
+          .replace(/\{会员到期日\}/g, '2026-12-31');
+      }
+      var box = document.getElementById(prefix + 'NoticePreviewBox');
+      if (box) {
+        box.innerHTML = preview.replace(/\n/g, '<br>') + '<br><br><strong>附件：</strong><span style="color: #52c41a;">通知文档.pdf</span>';
+      }
+    }
+
+    function editNoticeTemplate(data) {
+      document.getElementById('editNoticeName').value = data.name || '';
+      document.getElementById('editNoticeSubject').value = data.subject || '';
+      document.getElementById('editNoticeContent').value = data.content || '';
+      var radio = document.querySelector('input[name="editNoticeType"][value="' + (data.type || 'normal') + '"]');
+      if (radio) radio.checked = true;
+      renderNoticeParams('edit', data.params || []);
+      toggleNoticeType('edit', data.type || 'normal');
+      openModal('editTemplateModal');
+    }
+
+    function toggleNoticeSendTarget(value) {
+      var groupSection = document.getElementById('noticeGroupTargetSection');
+      var customSection = document.getElementById('noticeCustomTargetSection');
+      if (groupSection) groupSection.style.display = value === 'group' ? 'block' : 'none';
+      if (customSection) customSection.style.display = value === 'custom' ? 'block' : 'none';
+    }
+
+    function validateNoticePhone(phone) {
+      return /^1\d{10}$/.test(phone);
+    }
+
+    function handleCustomNoticePhoneEnter(event) {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      var input = document.getElementById('customNoticePhoneInput');
+      var phone = (input.value || '').trim();
+      if (!phone) {
+        showToast('请输入手机号');
+        return;
+      }
+      if (!validateNoticePhone(phone)) {
+        showToast('手机号格式不正确');
+        return;
+      }
+      pendingCustomNoticePhone = phone;
+      var result = document.getElementById('customNoticePhoneSearchResult');
+      var text = document.getElementById('customNoticePhoneSearchText');
+      if (text) text.textContent = phone;
+      if (result) result.style.display = 'block';
+    }
+
+    function addCustomNoticePhone() {
+      if (!pendingCustomNoticePhone) return;
+      if (customNoticePhoneUsers.indexOf(pendingCustomNoticePhone) !== -1) {
+        showToast('该手机号已添加');
+        return;
+      }
+      customNoticePhoneUsers.push(pendingCustomNoticePhone);
+      pendingCustomNoticePhone = '';
+      document.getElementById('customNoticePhoneInput').value = '';
+      document.getElementById('customNoticePhoneSearchResult').style.display = 'none';
+      renderCustomNoticePhoneList();
+    }
+
+    function removeCustomNoticePhone(index) {
+      customNoticePhoneUsers.splice(index, 1);
+      renderCustomNoticePhoneList();
+    }
+
+    function renderCustomNoticePhoneList() {
+      var wrap = document.getElementById('customNoticePhoneListWrap');
+      var list = document.getElementById('customNoticePhoneList');
+      var count = document.getElementById('customNoticePhoneCount');
+      if (!wrap || !list || !count) return;
+      count.textContent = customNoticePhoneUsers.length;
+      list.innerHTML = '';
+      wrap.style.display = customNoticePhoneUsers.length ? 'block' : 'none';
+      customNoticePhoneUsers.forEach(function(phone, index) {
+        var div = document.createElement('div');
+        div.style = 'background: #f8f9fc; padding: 8px 12px; border-radius: 6px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;';
+        div.innerHTML = '<div><span style="font-weight: 500;">手机号用户</span><span style="font-size: 12px; color: #999; margin-left: 8px;">' + phone + '</span></div><button class="btn btn-default btn-sm" type="button" onclick="removeCustomNoticePhone(' + index + ')" style="padding: 2px 8px;">移除</button>';
+        list.appendChild(div);
+      });
+    }
+
+    function downloadNoticePhoneTemplate() {
+      var templateContent = '手机号\\n13800138001\\n13800138002\\n13800138003';
+      var blob = new Blob([templateContent], { type: 'text/plain;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = '手机号导入模板.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function handleCustomNoticePhoneUpload(input) {
+      var file = input.files && input.files[0];
+      if (!file) return;
+      var uploadCount = Math.floor(Math.random() * 5) + 2;
+      for (var i = 0; i < uploadCount; i++) {
+        var phone = '138' + String(Math.floor(Math.random() * 100000000)).padStart(8, '0');
+        if (customNoticePhoneUsers.indexOf(phone) === -1) {
+          customNoticePhoneUsers.push(phone);
+        }
+      }
+      var result = document.getElementById('customNoticePhoneUploadResult');
+      if (result) {
+        result.style.display = 'block';
+        result.textContent = '✓ 已成功上传 ' + uploadCount + ' 个手机号';
+      }
+      renderCustomNoticePhoneList();
+      input.value = '';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      renderNoticeParams('add', []);
+      renderNoticeParams('edit', []);
+      toggleNoticeType('add', 'normal');
+      toggleNoticeType('edit', 'normal');
+      updateNoticePreview('add');
+      updateNoticePreview('edit');
+      toggleNoticeSendTarget('group');
+    });
+
+    function handleNoticeAttachmentAdd(input) {
+      var list = document.getElementById('noticeAddAttachmentList');
+      list.innerHTML = '';
+      for (var i = 0; i < input.files.length; i++) {
+        var file = input.files[i];
+        var div = document.createElement('div');
+        div.style = 'background: #f5f5f5; padding: 8px 12px; border-radius: 4px; margin-top: 8px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;';
+        div.innerHTML = '<span>📎 ' + file.name + '</span><button class="btn btn-default btn-sm" onclick="removeAttachment(this)" style="padding: 2px 8px;">移除</button>';
+        list.appendChild(div);
+      }
+    }
+    function handleNoticeAttachmentEdit(input) {
+      var list = document.getElementById('noticeEditAttachmentList');
+      list.innerHTML = '';
+      for (var i = 0; i < input.files.length; i++) {
+        var file = input.files[i];
+        var div = document.createElement('div');
+        div.style = 'background: #f5f5f5; padding: 8px 12px; border-radius: 4px; margin-top: 8px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;';
+        div.innerHTML = '<span>📎 ' + file.name + '</span><button class="btn btn-default btn-sm" onclick="removeAttachment(this)" style="padding: 2px 8px;">移除</button>';
+        list.appendChild(div);
+      }
+    }
+    function removeAttachment(btn) {
+      btn.parentElement.remove();
+    }
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

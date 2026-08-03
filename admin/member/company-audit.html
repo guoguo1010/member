@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>单位会员审核 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .sub-tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 2px solid #f0f0f0; }
+    .sub-tab-item { padding: 10px 20px; font-size: 14px; color: #666; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.3s; }
+    .sub-tab-item:hover { color: #1890ff; }
+    .sub-tab-item.active { color: #1890ff; border-bottom-color: #1890ff; font-weight: 500; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .sub-tab-content { display: none; }
+    .sub-tab-content.active { display: block; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">单位会员审核</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <a href="#">单位会员</a> / <span>会员审核</span></div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="tabs">
+          <div class="tab-item active" onclick="switchTab(this, 'register')">会员注册审核</div>
+          <div class="tab-item" onclick="switchTab(this, 'change')">会员信息变更审核</div>
+          <div class="tab-item" onclick="switchTab(this, 'contact')">变更联系人审核</div>
+        </div>
+
+        <!-- 会员注册审核 Tab -->
+        <div id="registerTab" class="tab-content active">
+          <div class="sub-tabs">
+            <div class="sub-tab-item active" onclick="switchRegisterSubTab(this, 'pending')">待审核 (3)</div>
+            <div class="sub-tab-item" onclick="switchRegisterSubTab(this, 'passed')">已通过</div>
+            <div class="sub-tab-item" onclick="switchRegisterSubTab(this, 'rejected')">已驳回</div>
+          </div>
+
+          <div id="registerPendingContent" class="sub-tab-content active">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">待审核列表</span>
+              <div class="card-tools">
+                <button class="btn btn-default btn-sm">批量审核</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <table class="table" id="auditTable">
+                <thead>
+                  <tr>
+                    <th width="50"><input type="checkbox" class="checkbox" onclick="toggleCheckAll(this, 'auditTable')"></th>
+                    
+                    <th>单位名称</th>
+                    <th>联系人</th>
+                    <th>手机号</th>
+                    <th>会员类型</th>
+                    <th>发展来源</th>
+                    <th>申请时间</th>
+                    <th>审核状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input type="checkbox" class="checkbox"></td>
+                    <td>北京科技有限公司</td>
+                    <td>张总</td>
+                    <td>138****8001</td>
+                    <td><span class="tag tag-success">普通单位会员</span></td>
+                    <td>北京市农学会</td>
+                    <td>2024-05-13 10:23:15</td>
+                    <td><span class="tag tag-warning">待初审</span></td>
+                    <td class="actions">
+                      <button class="btn btn-default btn-sm" onclick="openModal('auditModal')">审核</button>
+                      <button class="btn btn-default btn-sm" onclick="location.href='company-audit-detail.html'">查看</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" class="checkbox"></td>
+                    <td>上海农业集团</td>
+                    <td>李总</td>
+                    <td>139****8002</td>
+                    <td><span class="tag tag-success">理事单位会员</span></td>
+                    <td>上海市农学会</td>
+                    <td>2024-05-12 14:35:00</td>
+                    <td><span class="tag tag-warning">待终审</span></td>
+                    <td class="actions">
+                      <button class="btn btn-default btn-sm" onclick="openModal('auditModal')">审核</button>
+                      <button class="btn btn-default btn-sm" onclick="location.href='company-audit-detail.html'">查看</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" class="checkbox"></td>
+                    <td>深圳生态农业公司</td>
+                    <td>王总</td>
+                    <td>137****8003</td>
+                    <td><span class="tag tag-success">普通单位会员</span></td>
+                    <td>广东省农学会</td>
+                    <td>2024-05-11 09:18:00</td>
+                    <td><span class="tag tag-warning">待初审</span></td>
+                    <td class="actions">
+                      <button class="btn btn-default btn-sm" onclick="openModal('auditModal')">审核</button>
+                      <button class="btn btn-default btn-sm" onclick="location.href='company-audit-detail.html'">查看</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          </div>
+
+          <div id="registerPassedContent" class="sub-tab-content">
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title">已通过列表</span>
+                <div class="card-tools">
+                  <button class="btn btn-default btn-sm" onclick="showToast('导出成功')">导出</button>
+                  <button class="btn btn-default btn-sm" onclick="showToast('已批量通过常务理事会')">批量通过常务理事会</button>
+                  <button class="btn btn-default btn-sm" onclick="showToast('已批量不通过常务理事会')">批量不通过常务理事会</button>
+                </div>
+              </div>
+              <div class="card-body">
+                <table class="table" id="registerPassedTable">
+                  <thead>
+                    <tr>
+                      <th width="50"><input type="checkbox" class="checkbox" onclick="toggleCheckAll(this, 'registerPassedTable')"></th>
+                      
+                      <th>单位名称</th>
+                      <th>联系人</th>
+                      <th>手机号</th>
+                      <th>会员类型</th>
+                      <th>发展来源</th>
+                      <th>申请时间</th>
+                      <th>是否通过常务理事会</th>
+                      <th>审核状态</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><input type="checkbox" class="checkbox"></td>
+                      <td>北京科技有限公司</td>
+                      <td>张总</td>
+                      <td>138****8001</td>
+                      <td><span class="tag tag-success">普通单位会员</span></td>
+                      <td>北京市农学会</td>
+                      <td>2024-05-08 10:23:00</td>
+                      <td><span class="tag tag-success">已通过</span></td>
+                      <td><span class="tag tag-success">已通过</span></td>
+                      <td class="actions">
+                        <button class="btn btn-default btn-sm" onclick="location.href='company-audit-detail.html'">查看</button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><input type="checkbox" class="checkbox"></td>
+                      <td>上海农业集团</td>
+                      <td>李总</td>
+                      <td>139****8002</td>
+                      <td><span class="tag tag-success">理事单位会员</span></td>
+                      <td>上海市农学会</td>
+                      <td>2024-05-07 14:35:00</td>
+                      <td><span class="tag tag-default">未通过</span></td>
+                      <td><span class="tag tag-success">已通过</span></td>
+                      <td class="actions">
+                        <button class="btn btn-default btn-sm" onclick="location.href='company-audit-detail.html'">查看</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="pagination">
+                  <div class="pagination-info">共 2 条</div>
+                  <div class="pagination-btns">
+                    <button class="page-btn" disabled>上一页</button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn" disabled>下一页</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="registerRejectedContent" class="sub-tab-content">
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title">已驳回列表</span>
+              </div>
+              <div class="card-body">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      
+                      <th>单位名称</th>
+                      <th>联系人</th>
+                      <th>手机号</th>
+                      <th>会员类型</th>
+                      <th>发展来源</th>
+                      <th>申请时间</th>
+                      <th>审核状态</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>深圳生态农业公司</td>
+                      <td>王总</td>
+                      <td>137****8003</td>
+                      <td><span class="tag tag-success">普通单位会员</span></td>
+                      <td>广东省农学会</td>
+                      <td>2024-05-06 09:18:00</td>
+                      <td><span class="tag tag-danger">已驳回</span></td>
+                      <td class="actions">
+                        <button class="btn btn-default btn-sm" onclick="location.href='company-audit-detail.html'">查看</button>
+                        <button class="btn btn-default btn-sm" onclick="openModal('rejectReasonModal')">查看原因</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 会员信息变更审核 Tab -->
+        <div id="changeTab" class="tab-content">
+          <div class="sub-tabs">
+            <div class="sub-tab-item active">待审核 (1)</div>
+            <div class="sub-tab-item">已通过</div>
+            <div class="sub-tab-item">已驳回</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">待审核列表</span>
+              <div class="card-tools">
+                <button class="btn btn-default btn-sm">批量审核</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th width="50"><input type="checkbox"></th>
+                    
+                    <th>单位名称</th>
+                    <th>联系人</th>
+                    <th>手机号</th>
+                    <th>会员类型</th>
+                    <th>申请时间</th>
+                    <th>审核状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td>北京科技有限公司</td>
+                    <td>张总</td>
+                    <td>138****8001</td>
+                    <td><span class="tag tag-success">普通单位会员</span></td>
+                    <td>2024-05-13 10:23:15</td>
+                    <td><span class="tag tag-warning">待初审</span></td>
+                    <td class="actions">
+                      <button class="btn btn-default btn-sm" onclick="openModal('auditModal')">审核</button>
+                      <button class="btn btn-default btn-sm" onclick="location.href='company-audit-change-detail.html'">查看</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pagination">
+                <div class="pagination-info">共 1 条</div>
+                <div class="pagination-btns">
+                  <button class="page-btn" disabled>上一页</button>
+                  <button class="page-btn active">1</button>
+                  <button class="page-btn" disabled>下一页</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 变更联系人审核 Tab -->
+      <div id="contactTab" class="tab-content">
+        <div class="sub-tabs">
+          <div class="sub-tab-item active">待审核 (2)</div>
+          <div class="sub-tab-item">已通过</div>
+          <div class="sub-tab-item">已驳回</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">待审核列表</span>
+            <div class="card-tools">
+              <button class="btn btn-default btn-sm">批量审核</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th width="50"><input type="checkbox"></th>
+                  
+                  <th>单位名称</th>
+                  <th>原联系人</th>
+                  <th>原联系人手机号</th>
+                  <th>新联系人</th>
+                  <th>新联系人手机号</th>
+                  <th>会员类型</th>
+                  <th>申请时间</th>
+                  <th>审核状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox"></td>
+                  <td>北京科技有限公司</td>
+                  <td>王芳</td>
+                  <td>138****8002</td>
+                  <td>李明</td>
+                  <td>139****8001</td>
+                  <td>2024-05-20 10:23:00</td>
+                  <td><span class="tag tag-warning">待初审</span></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('contactAuditModal')">审核</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('contactViewModal')">查看</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"></td>
+                  <td>上海农业集团</td>
+                  <td>赵总</td>
+                  <td>138****8003</td>
+                  <td>钱总</td>
+                  <td>138****8002</td>
+                  <td><span class="tag tag-success">理事单位会员</span></td>
+                  <td>2024-05-19 14:35:00</td>
+                  <td><span class="tag tag-warning">待初审</span></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('contactAuditModal')">审核</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('contactViewModal')">查看</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="pagination">
+              <div class="pagination-info">共 2 条</div>
+              <div class="pagination-btns">
+                <button class="page-btn" disabled>上一页</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn" disabled>下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 变更联系人审核弹窗 -->
+  <div class="modal" id="contactAuditModal">
+    <div class="modal-dialog" style="width: 700px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden;">
+      <div class="modal-header">
+        <span class="modal-title">变更联系人审核 - CON20240520001</span>
+        <span class="close-btn" onclick="closeModal('contactAuditModal')">✕</span>
+      </div>
+      <div class="modal-body" style="flex: 1; overflow-y: auto; padding: 20px 24px;">
+        <div style="background: #fafafa; padding: 16px; border-radius: 4px; margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 12px; color: #333;">单位信息</div>
+          <div class="grid-2" style="gap: 12px;">
+            <div><strong>单位名称：</strong>北京科技有限公司</div>
+            <div><strong>会员类型：</strong>普通单位会员</div>
+            <div><strong>统一社会信用代码：</strong>91110000XXXXXXXX</div>
+            <div><strong>申请时间：</strong>2024-05-20 10:23:00</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+          <div style="flex: 1; background: #fafafa; padding: 16px; border-radius: 4px;">
+            <div style="font-weight: 500; margin-bottom: 12px; color: #999;">原联系人</div>
+            <div style="margin-bottom: 8px;"><strong>姓名：</strong>王芳</div>
+            <div style="margin-bottom: 8px;"><strong>职务：</strong>行政主管</div>
+            <div style="margin-bottom: 8px;"><strong>手机号：</strong>138****8002</div>
+            <div><strong>邮箱：</strong>wangfang@example.com</div>
+          </div>
+          <div style="flex: 1; background: #e6f7ff; padding: 16px; border-radius: 4px; border: 1px solid #91d5ff;">
+            <div style="font-weight: 500; margin-bottom: 12px; color: #1890ff;">新联系人</div>
+            <div style="margin-bottom: 8px;"><strong>姓名：</strong>李明</div>
+            <div style="margin-bottom: 8px;"><strong>职务：</strong>行政经理</div>
+            <div style="margin-bottom: 8px;"><strong>手机号：</strong>139****8001</div>
+            <div><strong>邮箱：</strong>liming@example.com</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 8px;">新联系人资质材料</div>
+          <div style="display: flex; gap: 12px;">
+            <div style="padding: 12px; background: #fafafa; border-radius: 4px; text-align: center; cursor: pointer;">
+              <div style="font-size: 32px;">📄</div>
+              <div style="font-size: 12px; margin-top: 4px;">身份证.jpg</div>
+            </div>
+            <div style="padding: 12px; background: #fafafa; border-radius: 4px; text-align: center; cursor: pointer;">
+              <div style="font-size: 32px;">📄</div>
+              <div style="font-size: 12px; margin-top: 4px;">工作证明.jpg</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 8px;">审核意见</div>
+          <textarea class="form-textarea" placeholder="请输入审核意见（驳回时必填）"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer" style="gap: 16px;">
+        <button type="button" class="btn btn-default" onclick="closeModal('contactAuditModal')">取消</button>
+        <button type="button" class="btn btn-danger" style="min-width: 100px;" onclick="closeModal('contactAuditModal'); showToast('已驳回')">驳回</button>
+        <button type="button" class="btn btn-success" style="min-width: 100px;" onclick="closeModal('contactAuditModal'); showToast('审核通过')">通过</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 变更联系人查看详情弹窗 -->
+  <div class="modal" id="contactViewModal">
+    <div class="modal-dialog" style="width: 700px;">
+      <div class="modal-header">
+        <span class="modal-title">变更联系人详情 - CON20240520001</span>
+        <span class="close-btn" onclick="closeModal('contactViewModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="background: #fafafa; padding: 16px; border-radius: 4px; margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 12px; color: #333;">单位信息</div>
+          <div class="grid-2" style="gap: 12px;">
+            <div><strong>单位名称：</strong>北京科技有限公司</div>
+            <div><strong>会员类型：</strong>普通单位会员</div>
+            <div><strong>统一社会信用代码：</strong>91110000XXXXXXXX</div>
+            <div><strong>申请时间：</strong>2024-05-20 10:23:00</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+          <div style="flex: 1; background: #fafafa; padding: 16px; border-radius: 4px;">
+            <div style="font-weight: 500; margin-bottom: 12px; color: #999;">原联系人</div>
+            <div style="margin-bottom: 8px;"><strong>姓名：</strong>王芳</div>
+            <div style="margin-bottom: 8px;"><strong>职务：</strong>行政主管</div>
+            <div style="margin-bottom: 8px;"><strong>手机号：</strong>138****8002</div>
+            <div><strong>邮箱：</strong>wangfang@example.com</div>
+          </div>
+          <div style="flex: 1; background: #e6f7ff; padding: 16px; border-radius: 4px; border: 1px solid #91d5ff;">
+            <div style="font-weight: 500; margin-bottom: 12px; color: #1890ff;">新联系人</div>
+            <div style="margin-bottom: 8px;"><strong>姓名：</strong>李明</div>
+            <div style="margin-bottom: 8px;"><strong>职务：</strong>行政经理</div>
+            <div style="margin-bottom: 8px;"><strong>手机号：</strong>139****8001</div>
+            <div><strong>邮箱：</strong>liming@example.com</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 8px;">新联系人资质材料</div>
+          <div style="display: flex; gap: 12px;">
+            <div style="padding: 12px; background: #fafafa; border-radius: 4px; text-align: center; cursor: pointer;">
+              <div style="font-size: 32px;">📄</div>
+              <div style="font-size: 12px; margin-top: 4px;">身份证.jpg</div>
+            </div>
+            <div style="padding: 12px; background: #fafafa; border-radius: 4px; text-align: center; cursor: pointer;">
+              <div style="font-size: 32px;">📄</div>
+              <div style="font-size: 12px; margin-top: 4px;">工作证明.jpg</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('contactViewModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 审核弹窗 -->
+  <div class="modal" id="auditModal">
+    <div class="modal-dialog" style="width: 700px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden;">
+      <div class="modal-header">
+        <span class="modal-title">单位会员审核 - ORG20240513001</span>
+        <span class="close-btn" onclick="closeModal('auditModal')">✕</span>
+      </div>
+      <div class="modal-body" style="flex: 1; overflow-y: auto; padding: 20px 24px;">
+        <div style="margin-bottom: 16px;">
+          <div class="steps">
+            <div class="step completed"><div class="step-icon">1</div><span class="step-label">提交申请</span></div>
+            <div class="step-line"></div>
+            <div class="step active"><div class="step-icon">2</div><span class="step-label">机构初审</span></div>
+            <div class="step-line"></div>
+            <div class="step"><div class="step-icon">3</div><span class="step-label">部门终审</span></div>
+            <div class="step-line"></div>
+            <div class="step"><div class="step-icon">4</div><span class="step-label">缴费</span></div>
+          </div>
+        </div>
+
+        <!-- 基本信息区 -->
+        <div style="background: #fafafa; padding: 16px; border-radius: 4px; margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 12px; color: #333;">基本信息</div>
+          <div class="grid-2" style="gap: 12px;">
+            <div><strong>单位名称：</strong>北京科技有限公司</div>
+            <div><strong>联系人：</strong>张总</div>
+            <div><strong>手机号：</strong>13800138001</div>
+            <div><strong>统一社会信用代码：</strong>91110000XXXXXXXX</div>
+            <div><strong>发展来源：</strong>北京市农学会</div>
+          </div>
+        </div>
+
+        <!-- 会员类型区 -->
+        <div style="background: #e6f7ff; padding: 16px; border-radius: 4px; margin-bottom: 16px; border: 1px solid #91d5ff;">
+          <div style="font-weight: 500; margin-bottom: 12px; color: #1890ff;">会员类型</div>
+          <div style="display: flex; gap: 24px; align-items: flex-start;">
+            <div style="flex: 1;">
+              <div style="font-size: 12px; color: #666; margin-bottom: 4px;">申请会员类型</div>
+              <div style="font-size: 14px; color: #333;">普通单位会员</div>
+            </div>
+            <div style="width: 1px; height: 40px; background: #91d5ff;"></div>
+            <div style="flex: 1;">
+              <div style="font-size: 12px; color: #666; margin-bottom: 4px;">审核确认类型 <span style="color: #ff4d4f;">*</span></div>
+              <select class="form-select" id="auditConfirmType" style="width: 100%;">
+                <option value="normal" selected>普通单位会员</option>
+                <option value="director">理事单位会员</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 资质材料区 -->
+        <div style="margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 8px;">资质材料</div>
+          <div style="display: flex; gap: 12px;">
+            <div style="padding: 12px; background: #fafafa; border-radius: 4px; text-align: center; cursor: pointer;">
+              <div style="font-size: 32px;">📄</div>
+              <div style="font-size: 12px; margin-top: 4px;">营业执照.jpg</div>
+            </div>
+            <div style="padding: 12px; background: #fafafa; border-radius: 4px; text-align: center; cursor: pointer;">
+              <div style="font-size: 32px;">📄</div>
+              <div style="font-size: 12px; margin-top: 4px;">法人身份证.jpg</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 审核意见区 -->
+        <div style="margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 8px;">审核意见</div>
+          <textarea class="form-textarea" placeholder="请输入审核意见（驳回时必填）"></textarea>
+        </div>
+
+        <div style="padding: 12px; background: #fff7e6; border-radius: 4px; font-size: 13px; color: #666;">
+          <strong>提示：</strong>审核通过后将自动创建单位管理员账号，发送登录信息给联系人
+        </div>
+      </div>
+      <div class="modal-footer" style="gap: 16px;">
+        <button type="button" class="btn btn-default" onclick="closeModal('auditModal')">取消</button>
+        <button type="button" class="btn btn-danger" style="min-width: 100px;" onclick="closeModal('auditModal'); showToast('已驳回')">驳回</button>
+        <button type="button" class="btn btn-success" style="min-width: 100px;" onclick="closeModal('auditModal'); showToast('审核通过')">通过</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 查看详情弹窗 -->
+  <div class="modal" id="viewModal">
+    <div class="modal-dialog" style="width: 700px;">
+      <div class="modal-header">
+        <span class="modal-title">单位详情 - ORG20240513001</span>
+        <span class="close-btn" onclick="closeModal('viewModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 20px;">
+          <div class="steps">
+            <div class="step completed"><div class="step-icon">✓</div><span class="step-label">提交申请</span></div>
+            <div class="step-line"></div>
+            <div class="step active"><div class="step-icon">2</div><span class="step-label">机构初审</span></div>
+            <div class="step-line"></div>
+            <div class="step"><div class="step-icon">3</div><span class="step-label">部门终审</span></div>
+            <div class="step-line"></div>
+            <div class="step"><div class="step-icon">4</div><span class="step-label">缴费</span></div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 12px;">单位信息</div>
+          <div class="grid-2" style="gap: 12px;">
+            <div class="form-group">
+              <label class="form-label">单位名称</label>
+              <div>北京科技有限公司</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">统一社会信用代码</label>
+              <div>91110000XXXXXXXX</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">法定代表人</label>
+              <div>张总</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">注册资金</label>
+              <div>1000万元</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">成立时间</label>
+              <div>2015-06-20</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">所属行业</label>
+              <div>农业科技</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">单位类别</label>
+              <div>企业</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">职工人数</label>
+              <div>500人</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 12px;">联系人信息</div>
+          <div class="grid-3" style="gap: 12px;">
+            <div class="form-group">
+              <label class="form-label">姓名</label>
+              <div>张总</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">职务</label>
+              <div>董事长</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">手机号</label>
+              <div>13800138001</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">邮箱</label>
+              <div>zhang@company.com</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">办公电话</label>
+              <div>010-12345678</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('viewModal')">关闭</button>
+        <button class="btn btn-danger" onclick="closeModal('viewModal')">驳回</button>
+        <button class="btn btn-success" onclick="closeModal('viewModal'); showToast('审核通过')">通过</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 查看驳回原因弹窗 -->
+  <div class="modal" id="rejectReasonModal">
+    <div class="modal-dialog" style="width: 500px;">
+      <div class="modal-header">
+        <span class="modal-title">驳回原因</span>
+        <span class="close-btn" onclick="closeModal('rejectReasonModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="background: #fff7e6; padding: 16px; border-radius: 4px; border: 1px solid #ffd591; margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 8px; color: #fa8c16;">深圳生态农业公司</div>
+          <div style="color: #666; font-size: 13px; line-height: 1.8;">
+            <div><strong>驳回时间：</strong>2024-05-06 11:30:00</div>
+            <div><strong>驳回人：</strong>李管理员</div>
+          </div>
+        </div>
+        <div style="margin-bottom: 8px; font-weight: 500;">驳回原因</div>
+        <div style="background: #fafafa; padding: 16px; border-radius: 4px; color: #333; line-height: 1.8;">
+          资质材料不清晰，请重新上传营业执照及法人身份证正反面扫描件，确保文字清晰可辨。
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('rejectReasonModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script>
+    function switchRegisterSubTab(el, tabKey) {
+      var registerTab = document.getElementById('registerTab');
+      registerTab.querySelectorAll('.sub-tabs .sub-tab-item').forEach(function(item) {
+        item.classList.remove('active');
+      });
+      el.classList.add('active');
+
+      ['pending', 'passed', 'rejected'].forEach(function(key) {
+        var content = document.getElementById('register' + key.charAt(0).toUpperCase() + key.slice(1) + 'Content');
+        if (content) content.classList.remove('active');
+      });
+      var activeContent = document.getElementById('register' + tabKey.charAt(0).toUpperCase() + tabKey.slice(1) + 'Content');
+      if (activeContent) activeContent.classList.add('active');
+    }
+
+    function switchTab(el, tabId) {
+      document.querySelectorAll('.tabs .tab-item').forEach(function(item) {
+        item.classList.remove('active');
+      });
+      el.classList.add('active');
+
+      document.querySelectorAll('.tab-content').forEach(function(content) {
+        content.classList.remove('active');
+      });
+      document.getElementById(tabId + 'Tab').classList.add('active');
+    }
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

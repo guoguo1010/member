@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>单位会员信息 - 中国农学会</title>
+  <link rel="stylesheet" href="../css/web.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%); min-height: 100vh; }
+
+    .navbar {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 0 40px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .navbar-logo { display: flex; align-items: center; gap: 12px; color: white; font-size: 20px; font-weight: 600; }
+    .navbar-logo-icon { font-size: 32px; }
+    .navbar-menu { display: flex; gap: 4px; }
+    .navbar-item { padding: 10px 20px; color: rgba(255, 255, 255, 0.9); text-decoration: none; border-radius: 8px; transition: all 0.3s; font-size: 15px; }
+    .navbar-item:hover { background: rgba(255, 255, 255, 0.2); color: white; }
+    .navbar-item.active { background: rgba(255, 255, 255, 0.3); color: white; }
+    .navbar-user { display: flex; align-items: center; gap: 16px; color: white; }
+    .navbar-avatar { width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; transition: all 0.3s; }
+    .navbar-avatar:hover { transform: scale(1.1); }
+
+    .user-dropdown { position: relative; cursor: pointer; }
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      min-width: 180px;
+      padding: 8px 0;
+      display: none;
+      z-index: 1001;
+    }
+    .dropdown-menu.show { display: block; }
+    .dropdown-item {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #666;
+      font-size: 14px;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+    .dropdown-item:hover { background: #f5f7fa; color: #667eea; }
+    .dropdown-divider { height: 1px; background: #f0f0f0; margin: 8px 0; }
+
+    .main-container { max-width: 1000px; margin: 0 auto; padding: 30px; }
+
+    .breadcrumb { margin-bottom: 16px; font-size: 14px; color: #999; }
+    .breadcrumb a { color: #667eea; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb span { margin: 0 6px; }
+
+    .card { background: white; border-radius: 16px; padding: 28px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06); margin-bottom: 24px; }
+    .card-title { font-size: 18px; font-weight: 600; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 8px; }
+    .card-title::before { content: ''; width: 4px; height: 20px; background: linear-gradient(180deg, #667eea, #764ba2); border-radius: 2px; }
+
+    .info-section { margin-bottom: 28px; }
+    .info-section:last-child { margin-bottom: 0; }
+    .info-section-title { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 16px; padding-left: 12px; border-left: 3px solid #667eea; }
+
+    .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .info-item { display: flex; flex-direction: column; gap: 4px; }
+    .info-item .label { font-size: 12px; color: #999; }
+    .info-item .value { font-size: 14px; font-weight: 500; }
+    .info-item .value.editable { color: #667eea; cursor: pointer; }
+    .info-item .value.success { color: #52c41a; }
+
+    .license-card { display: flex; align-items: center; gap: 16px; padding: 16px; background: #f8f9fc; border-radius: 10px; }
+    .license-preview { width: 48px; height: 48px; background: white; border: 1px solid #e4e7ed; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+    .license-info { flex: 1; }
+    .license-name { font-size: 14px; font-weight: 500; color: #333; margin-bottom: 4px; }
+    .license-meta { display: flex; gap: 16px; font-size: 12px; color: #999; }
+
+    @media (max-width: 1024px) { .info-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="navbar-logo">
+      <span class="navbar-logo-icon">🌾</span>
+      <span>中国农学会</span>
+    </div>
+    <div class="navbar-menu">
+      <a href="company-home.html" class="navbar-item">单位主页</a>
+      <a href="company-payment.html" class="navbar-item">缴费订单</a>
+      <a href="company-notifications.html" class="navbar-item">站内通知</a>
+    </div>
+    <div class="navbar-user">
+      <div class="user-dropdown">
+        <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <div class="navbar-avatar">北</div>
+          <span>北京智慧农业科技有限公司</span>
+          <span style="font-size: 12px;">▼</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="breadcrumb">
+      <a href="company-home.html">单位会员主页</a><span>/</span>单位会员信息
+    </div>
+
+    <div class="card">
+      <div class="card-title">基本信息</div>
+
+      <div class="info-section">
+        <div class="info-section-title">单位信息</div>
+        <div class="info-grid">
+          <div class="info-item"><span class="label">单位名称</span><span class="value">北京智慧农业科技有限公司</span></div>
+          <div class="info-item"><span class="label">统一社会信用代码</span><span class="value">91110108MA01234X1</span></div>
+          <div class="info-item"><span class="label">法定代表人</span><span class="value">李明</span></div>
+          <div class="info-item"><span class="label">注册资金</span><span class="value">500万元</span></div>
+          <div class="info-item"><span class="label">所属行业</span><span class="value">农业科技</span></div>
+          <div class="info-item"><span class="label">单位类别</span><span class="value">企业</span></div>
+          <div class="info-item"><span class="label">所在地区</span><span class="value">北京市海淀区</span></div>
+          <div class="info-item"><span class="label">通讯地址</span><span class="value">中关村科技园A座1001</span></div>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <div class="info-section-title">联系人信息</div>
+        <div class="info-grid">
+          <div class="info-item"><span class="label">联系人姓名</span><span class="value">王芳</span></div>
+          <div class="info-item"><span class="label">职务</span><span class="value">行政主管</span></div>
+          <div class="info-item"><span class="label">手机号码</span><span class="value editable">138****8001</span></div>
+          <div class="info-item"><span class="label">电子邮箱</span><span class="value editable">wangfang@example.com</span></div>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <div class="info-section-title">会员信息</div>
+        <div class="info-grid">
+          <div class="info-item"><span class="label">会员编号</span><span class="value">CU20230086</span></div>
+          <div class="info-item"><span class="label">会员类型</span><span class="value">单位会员 - 理事单位</span></div>
+          <div class="info-item"><span class="label">入会日期</span><span class="value">2023-05-15</span></div>
+          <div class="info-item"><span class="label">会员状态</span><span class="value success">正常</span></div>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <div class="info-section-title">证照信息</div>
+        <div class="license-card">
+          <div class="license-preview">📄</div>
+          <div class="license-info">
+            <div class="license-name">营业执照_北京智慧农业科技有限公司.jpg</div>
+            <div class="license-meta">
+              <span>上传时间：2023-05-10 10:30</span>
+              <span>文件大小：2.3MB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

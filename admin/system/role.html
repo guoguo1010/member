@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>角色管理 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">角色管理</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <a href="#">系统管理</a> / <span>角色管理</span></div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">角色列表</span>
+            <div class="card-tools">
+              <button class="btn btn-primary" onclick="openModal('addRoleModal')">+ 新增角色</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="table" id="roleTable">
+              <thead>
+                <tr>
+                  <th>角色名称</th>
+                  <th>角色编码</th>
+                  <th>数据权限</th>
+                  <th>状态</th>
+                  <th>创建时间</th>
+                  <th>更新时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>超级管理员</td>
+                  <td>SUPER_ADMIN</td>
+                  <td>全部数据</td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleStatus(this)"><span class="slider"></span></label></td>
+                  <td>2024-01-01 08:30:00</td>
+                  <td>2024-06-15 14:20:00</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('editRoleModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('permModal')">权限配置</button>
+                    <button class="btn btn-default btn-sm" disabled>删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>农学会管理员</td>
+                  <td>ASSOC_ADMIN</td>
+                  <td>本级及下级数据</td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleStatus(this)"><span class="slider"></span></label></td>
+                  <td>2024-01-15 10:15:30</td>
+                  <td>2024-05-20 09:10:15</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('editRoleModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('permModal')">权限配置</button>
+                    <button class="btn btn-danger btn-sm">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>分支机构管理员</td>
+                  <td>BRANCH_ADMIN</td>
+                  <td>本级数据</td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleStatus(this)"><span class="slider"></span></label></td>
+                  <td>2024-02-01 14:20:45</td>
+                  <td>2024-07-01 16:30:22</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('editRoleModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('permModal')">权限配置</button>
+                    <button class="btn btn-danger btn-sm">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>高级管理员（领导）</td>
+                  <td>SENIOR_ADMIN</td>
+                  <td>全部数据</td>
+                  <td><label class="switch"><input type="checkbox" onchange="toggleStatus(this)"><span class="slider"></span></label></td>
+                  <td>2024-03-01 09:05:20</td>
+                  <td>2024-06-28 11:45:00</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('editRoleModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('permModal')">权限配置</button>
+                    <button class="btn btn-danger btn-sm">删除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="pagination">
+              <div class="pagination-info">共 4 条</div>
+              <div class="pagination-btns">
+                <button class="page-btn" disabled>上一页</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn" disabled>下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增角色弹窗 -->
+  <div class="modal" id="addRoleModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">新增角色</span>
+        <span class="close-btn" onclick="closeModal('addRoleModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">角色名称 <span class="required">*</span></label>
+          <input type="text" class="form-input" placeholder="请输入角色名称">
+        </div>
+        <div class="form-group">
+          <label class="form-label">角色编码 <span class="required">*</span></label>
+          <input type="text" class="form-input" placeholder="请输入角色编码">
+        </div>
+        <div class="form-group">
+          <label class="form-label">数据权限</label>
+          <select class="form-select">
+            <option>本级数据</option>
+            <option>本级+下级数据</option>
+            <option>全部数据</option>
+            <option selected>自己创建的数据</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">描述</label>
+          <textarea class="form-textarea" placeholder="请输入角色描述"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">状态</label>
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" checked> 启用
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('addRoleModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('addRoleModal'); showToast('添加成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑角色弹窗 -->
+  <div class="modal" id="editRoleModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">编辑角色</span>
+        <span class="close-btn" onclick="closeModal('editRoleModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">角色名称 <span class="required">*</span></label>
+          <input type="text" class="form-input" value="农学会管理员">
+        </div>
+        <div class="form-group">
+          <label class="form-label">角色编码</label>
+          <input type="text" class="form-input" value="ASSOC_ADMIN" disabled>
+        </div>
+        <div class="form-group">
+          <label class="form-label">数据权限</label>
+          <select class="form-select">
+            <option>本级数据</option>
+            <option selected>本级+下级数据</option>
+            <option>全部数据</option>
+            <option>个人数据</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">描述</label>
+          <textarea class="form-textarea">管理农学会本级及下级机构的会员数据</textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">状态</label>
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" checked> 启用
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('editRoleModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('editRoleModal'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 权限配置弹窗 -->
+  <div class="modal" id="permModal">
+    <div class="modal-dialog" style="width: 800px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <span class="modal-title">权限配置 - 农学会管理员</span>
+        <span class="close-btn" onclick="closeModal('permModal')">✕</span>
+      </div>
+      <div class="modal-body" style="padding-bottom: 8px;">
+        <div style="margin-bottom: 16px; padding: 12px; background: #fafafa; border-radius: 6px; font-size: 13px; color: #666;">
+          <strong style="color: #333;">说明：</strong>勾选菜单项授予页面访问权限，展开菜单后可单独配置该页面的按钮操作权限（查看、新增、编辑、删除等）。数据权限控制管理员可查看的数据范围。
+        </div>
+
+        <!-- 菜单权限树（带按钮权限） -->
+        <div class="perm-tree" style="max-height: 480px; overflow-y: auto;">
+
+          <!-- 数据看板 -->
+          <div class="perm-group">
+            <div class="perm-item perm-parent">
+              <label><input type="checkbox" class="perm-menu" checked onchange="togglePermGroup(this)"> <span>📊 数据看板</span></label>
+            </div>
+            <div class="perm-children" style="padding-left: 28px;">
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>数据看板</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看数据</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 系统管理 -->
+          <div class="perm-group">
+            <div class="perm-item perm-parent">
+              <label><input type="checkbox" class="perm-menu" checked onchange="togglePermGroup(this)"> <span>⚙️ 系统管理</span></label>
+            </div>
+            <div class="perm-children" style="padding-left: 28px;">
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>角色管理</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 新增</label>
+                  <label><input type="checkbox" checked> 编辑</label>
+                  <label><input type="checkbox"> 删除</label>
+                  <label><input type="checkbox" checked> 启用/禁用</label>
+                </div>
+              </div>
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>字典管理</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 新增</label>
+                  <label><input type="checkbox" checked> 编辑</label>
+                  <label><input type="checkbox"> 删除</label>
+                </div>
+              </div>
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>管理员管理</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 新增</label>
+                  <label><input type="checkbox" checked> 编辑</label>
+                  <label><input type="checkbox"> 删除</label>
+                  <label><input type="checkbox" checked> 重置密码</label>
+                </div>
+              </div>
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>操作日志</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 导出</label>
+                  <label><input type="checkbox"> 删除</label>
+                </div>
+              </div>
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>登录日志</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 导出</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 用户管理 -->
+          <div class="perm-group">
+            <div class="perm-item perm-parent">
+              <label><input type="checkbox" class="perm-menu" checked onchange="togglePermGroup(this)"> <span>👥 用户管理</span></label>
+            </div>
+            <div class="perm-children" style="padding-left: 28px;">
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>注册用户管理</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 编辑</label>
+                  <label><input type="checkbox"> 删除</label>
+                  <label><input type="checkbox" checked> 导出</label>
+                  <label><input type="checkbox" checked> 禁用/启用</label>
+                </div>
+              </div>
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>用户分组管理</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 新增</label>
+                  <label><input type="checkbox" checked> 编辑</label>
+                  <label><input type="checkbox"> 删除</label>
+                </div>
+              </div>
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>会员人才库</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 新增</label>
+                  <label><input type="checkbox" checked> 编辑</label>
+                  <label><input type="checkbox"> 删除</label>
+                  <label><input type="checkbox" checked> 转入正式会员</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 会员角色 -->
+          <div class="perm-group">
+            <div class="perm-item perm-parent">
+              <label><input type="checkbox" class="perm-menu" checked onchange="togglePermGroup(this)"> <span>🏷️ 会员角色</span></label>
+            </div>
+            <div class="perm-children" style="padding-left: 28px;">
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>会员类型</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 新增</label>
+                  <label><input type="checkbox" checked> 编辑</label>
+                  <label><input type="checkbox"> 删除</label>
+                  <label><input type="checkbox" checked> 字段配置</label>
+                  <label><input type="checkbox" checked> 会费配置</label>
+                </div>
+              </div>
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>会员标签</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 新增</label>
+                  <label><input type="checkbox" checked> 编辑</label>
+                  <label><input type="checkbox"> 删除</label>
+                </div>
+              </div>
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>会员证书</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 新增</label>
+                  <label><input type="checkbox" checked> 编辑</label>
+                  <label><input type="checkbox"> 删除</label>
+                  <label><input type="checkbox" checked> 下载证书</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 组织机构 -->
+          <div class="perm-group">
+            <div class="perm-item perm-parent">
+              <label><input type="checkbox" class="perm-menu" checked onchange="togglePermGroup(this)"> <span>🏢 组织机构</span></label>
+            </div>
+            <div class="perm-children" style="padding-left: 28px;">
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>机构类型管理</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 新增</label>
+                  <label><input type="checkbox" checked> 编辑</label>
+                  <label><input type="checkbox"> 删除</label>
+                </div>
+              </div>
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>机构列表</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 新增</label>
+                  <label><input type="checkbox" checked> 编辑</label>
+                  <label><input type="checkbox"> 删除</label>
+                  <label><input type="checkbox" checked> 禁用/启用</label>
+                </div>
+              </div>
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>机构任职</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 新增</label>
+                  <label><input type="checkbox" checked> 编辑</label>
+                  <label><input type="checkbox"> 删除</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 个人会员 -->
+          <div class="perm-group">
+            <div class="perm-item perm-parent">
+              <label><input type="checkbox" class="perm-menu" checked onchange="togglePermGroup(this)"> <span>👤 个人会员</span></label>
+            </div>
+            <div class="perm-children" style="padding-left: 28px;">
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>会员审核</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 初审通过</label>
+                  <label><input type="checkbox" checked> 初审拒绝</label>
+                  <label><input type="checkbox" checked> 终审通过</label>
+                  <label><input type="checkbox" checked> 终审拒绝</label>
+                  <label><input type="checkbox" checked> 批量审核</label>
+                </div>
+              </div>
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>现任会员</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 编辑</label>
+                  <label><input type="checkbox" checked> 冻结/解冻</label>
+                  <label><input type="checkbox" checked> 升降级</label>
+                  <label><input type="checkbox" checked> 续费</label>
+                  <label><input type="checkbox" checked> 导出</label>
+                </div>
+              </div>
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>到期会员</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 发送续费提醒</label>
+                  <label><input type="checkbox" checked> 一键续费</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 单位会员 -->
+          <div class="perm-group">
+            <div class="perm-item perm-parent">
+              <label><input type="checkbox" class="perm-menu" checked onchange="togglePermGroup(this)"> <span>🏛️ 单位会员</span></label>
+            </div>
+            <div class="perm-children" style="padding-left: 28px;">
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>会员审核</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 初审通过</label>
+                  <label><input type="checkbox" checked> 初审拒绝</label>
+                  <label><input type="checkbox" checked> 终审通过</label>
+                  <label><input type="checkbox" checked> 终审拒绝</label>
+                  <label><input type="checkbox" checked> 批量审核</label>
+                </div>
+              </div>
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>现任会员</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 编辑</label>
+                  <label><input type="checkbox" checked> 冻结/解冻</label>
+                  <label><input type="checkbox" checked> 升降级</label>
+                  <label><input type="checkbox" checked> 续费</label>
+                  <label><input type="checkbox" checked> 导出</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 订单管理 -->
+          <div class="perm-group">
+            <div class="perm-item perm-parent">
+              <label><input type="checkbox" class="perm-menu" checked onchange="togglePermGroup(this)"> <span>📃 订单管理</span></label>
+            </div>
+            <div class="perm-children" style="padding-left: 28px;">
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>订单列表</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 查看详情</label>
+                  <label><input type="checkbox" checked> 发送通知</label>
+                  <label><input type="checkbox"> 退款</label>
+                  <label><input type="checkbox" checked> 导出</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 消息中心 -->
+          <div class="perm-group">
+            <div class="perm-item perm-parent">
+              <label><input type="checkbox" class="perm-menu" checked onchange="togglePermGroup(this)"> <span>📨 消息中心</span></label>
+            </div>
+            <div class="perm-children" style="padding-left: 28px;">
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>短信管理</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 新增模板</label>
+                  <label><input type="checkbox" checked> 编辑模板</label>
+                  <label><input type="checkbox"> 删除模板</label>
+                  <label><input type="checkbox" checked> 审核模板</label>
+                  <label><input type="checkbox" checked> 发送短信</label>
+                </div>
+              </div>
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>邮件管理</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 新增模板</label>
+                  <label><input type="checkbox" checked> 编辑模板</label>
+                  <label><input type="checkbox"> 删除模板</label>
+                  <label><input type="checkbox" checked> 审核模板</label>
+                  <label><input type="checkbox" checked> 发送邮件</label>
+                </div>
+              </div>
+              <div class="perm-item">
+                <label><input type="checkbox" class="perm-page" checked onchange="togglePermBtns(this)"> <span>站内信管理</span></label>
+                <div class="perm-btns">
+                  <label><input type="checkbox" checked> 查看</label>
+                  <label><input type="checkbox" checked> 新增模板</label>
+                  <label><input type="checkbox" checked> 编辑模板</label>
+                  <label><input type="checkbox"> 删除模板</label>
+                  <label><input type="checkbox" checked> 审核模板</label>
+                  <label><input type="checkbox" checked> 发送站内信</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('permModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('permModal'); showToast('权限配置保存成功')">保存配置</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .perm-tree { border: 1px solid #e8e8e8; border-radius: 6px; padding: 8px 16px; background: #fff; }
+    .perm-group { border-bottom: 1px solid #f0f0f0; padding: 8px 0; }
+    .perm-group:last-child { border-bottom: none; }
+    .perm-item { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 4px; padding: 6px 0; }
+    .perm-parent { font-weight: 600; font-size: 14px; padding: 8px 0; }
+    .perm-children { border-left: 2px solid #e8e8e8; margin-left: 8px; padding-left: 16px; }
+    .perm-page { margin-top: 2px; }
+    .perm-btns { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 4px 0 4px 24px; width: 100%; }
+    .perm-btns label { display: flex; align-items: center; gap: 4px; font-size: 12px; color: #555; cursor: pointer; }
+    .perm-btns label:hover { color: #1890ff; }
+    .perm-btns label::before { content: ''; display: inline-block; width: 12px; height: 12px; border: 1px solid #d9d9d9; border-radius: 2px; vertical-align: middle; }
+    .perm-btns label:has(input:checked)::before { background: #1890ff; border-color: #1890ff; }
+    .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 22px; }
+    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+    input:checked + .slider { background-color: #52c41a; }
+    input:checked + .slider:before { transform: translateX(18px); }
+  </style>
+
+  <script>
+    function toggleStatus(el) {
+      var isChecked = el.checked;
+      showToast(isChecked ? '已启用' : '已禁用');
+    }
+    function togglePermGroup(el) {
+      var group = el.closest('.perm-group');
+      var children = group.querySelector('.perm-children');
+      if (children) {
+        children.style.display = el.checked ? '' : 'none';
+        var pageCheckboxes = children.querySelectorAll('.perm-page');
+        pageCheckboxes.forEach(function(cb) { cb.checked = el.checked; });
+        var btnCheckboxes = children.querySelectorAll('.perm-btns input');
+        btnCheckboxes.forEach(function(cb) { cb.checked = el.checked; });
+      }
+    }
+    function togglePermBtns(el) {
+      var item = el.closest('.perm-item');
+      var btns = item.querySelector('.perm-btns');
+      if (btns) {
+        btns.style.display = el.checked ? '' : 'none';
+        if (!el.checked) {
+          var checkboxes = btns.querySelectorAll('input[type="checkbox"]');
+          checkboxes.forEach(function(cb) { cb.checked = false; });
+        }
+      }
+    }
+  </script>
+
+  <script src="../../js/main.js"></script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

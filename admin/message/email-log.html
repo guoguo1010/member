@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>邮件发送记录 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">邮件发送记录</div>
+          <div class="breadcrumb">
+            <a href="email.html">邮件管理</a> / <span>发送记录</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="tabs">
+          <div class="tab-item active" onclick="switchTab(0)">系统推荐</div>
+          <div class="tab-item" onclick="switchTab(1)">批次发送</div>
+        </div>
+
+        <!-- 系统推荐 -->
+        <div id="systemPushContent">
+          <div class="stat-cards" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 24px;">
+            <div class="stat-card">
+              <div class="stat-label">本月发送</div>
+              <div class="stat-value">856</div>
+              <div class="stat-change">较上月 +8.2%</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">发送成功</div>
+              <div class="stat-value" style="color: #52c41a;">842</div>
+              <div class="stat-change">成功率 98.4%</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">发送失败</div>
+              <div class="stat-value" style="color: #ff4d4f;">14</div>
+              <div class="stat-change">已自动重发</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">系统推荐列表</span>
+              <div class="card-tools">
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="search-bar">
+                <div class="search-item">
+                  <label>接收邮箱：</label>
+                  <input type="text" class="form-input" placeholder="请输入邮箱" style="width: 160px;">
+                </div>
+                <div class="search-item">
+                  <label>模板名称：</label>
+                  <input type="text" class="form-input" placeholder="请输入模板名称" style="width: 120px;">
+                </div>
+                <div class="search-item">
+                  <label>发送状态：</label>
+                  <select class="form-select" style="width: 100px;">
+                    <option>全部</option>
+                    <option>发送成功</option>
+                    <option>发送失败</option>
+                  </select>
+                </div>
+                <div class="search-item">
+                  <label>发送时间：</label>
+                  <input type="date" class="form-input" style="width: 130px;">
+                  <span>至</span>
+                  <input type="date" class="form-input" style="width: 130px;">
+                </div>
+                <button class="btn btn-default btn-sm">查询</button>
+                <button class="btn btn-default btn-sm">重置</button>
+              </div>
+
+              <table class="table" id="emailLogTable">
+                <thead>
+                  <tr>
+<th>接收邮箱</th>
+                    <th>会员名称</th>
+                    <th>模板名称</th>
+                    <th>邮件主题</th>
+                    <th>发送状态</th>
+                    <th>发送时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>zhangsan@example.com</td>
+                    <td>张三</td>
+                    <td>会员注册成功通知</td>
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">【农学会】恭喜您成为正式会员</td>
+                    <td><span class="tag tag-success">发送成功</span></td>
+                    <td>2024-05-15 10:23:15</td>
+                    <td><button class="btn btn-default btn-sm" onclick="showSystemDetail(0)">详情</button></td>
+                  </tr>
+                  <tr>
+                    <td>lisi@example.com</td>
+                    <td>李四</td>
+                    <td>会员到期续费提醒</td>
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">【农学会】会员续费提醒</td>
+                    <td><span class="tag tag-success">发送成功</span></td>
+                    <td>2024-05-15 09:18:32</td>
+                    <td><button class="btn btn-default btn-sm" onclick="showSystemDetail(1)">详情</button></td>
+                  </tr>
+                  <tr>
+                    <td>wangwu@example.com</td>
+                    <td>王五</td>
+                    <td>缴费成功通知</td>
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">【农学会】缴费成功确认</td>
+                    <td><span class="tag tag-success">发送成功</span></td>
+                    <td>2024-05-14 16:45:08</td>
+                    <td><button class="btn btn-default btn-sm" onclick="showSystemDetail(2)">详情</button></td>
+                  </tr>
+                  <tr>
+                    <td>zhaoliu@example.com</td>
+                    <td>赵六</td>
+                    <td>审核结果通知</td>
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">【农学会】您的申请已通过审核</td>
+                    <td><span class="tag tag-danger">发送失败</span></td>
+                    <td>2024-05-14 14:22:41</td>
+                    <td><button class="btn btn-default btn-sm" onclick="showSystemDetail(3)">详情</button> <button class="btn btn-default btn-sm" onclick="openResendModal(3)">重发</button></td>
+                  </tr>
+                  <tr>
+                    <td>sunqi@example.com</td>
+                    <td>孙七</td>
+                    <td>活动通知</td>
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">【农学会】关于召开2024年会的通知</td>
+                    <td><span class="tag tag-success">发送成功</span></td>
+                    <td>2024-05-13 11:30:55</td>
+                    <td><button class="btn btn-default btn-sm" onclick="showSystemDetail(4)">详情</button></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pagination">
+                <div class="pagination-info">共 856 条</div>
+                <div class="pagination-btns">
+                  <button class="page-btn" disabled>上一页</button>
+                  <button class="page-btn active">1</button>
+                  <button class="page-btn">2</button>
+                  <button class="page-btn">下一页</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 批次发送 -->
+        <div id="batchPushContent" style="display: none;">
+          <div class="stat-cards" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 24px;">
+            <div class="stat-card">
+              <div class="stat-label">本月批次</div>
+              <div class="stat-value">5</div>
+              <div class="stat-change">发送会员 2,568 人</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">发送成功</div>
+              <div class="stat-value" style="color: #52c41a;">2,498</div>
+              <div class="stat-change">成功率 97.3%</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">发送失败</div>
+              <div class="stat-value" style="color: #ff4d4f;">70</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">批次发送列表</span>
+              <div class="card-tools">
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="search-bar">
+                <div class="search-item">
+                  <label>批次名称：</label>
+                  <input type="text" class="form-input" placeholder="请输入批次名称" style="width: 150px;">
+                </div>
+                <div class="search-item">
+                  <label>模板名称：</label>
+                  <input type="text" class="form-input" placeholder="请输入模板名称" style="width: 120px;">
+                </div>
+                <div class="search-item">
+                  <label>发送时间：</label>
+                  <input type="date" class="form-input" style="width: 130px;">
+                  <span>至</span>
+                  <input type="date" class="form-input" style="width: 130px;">
+                </div>
+                <button class="btn btn-default btn-sm">查询</button>
+                <button class="btn btn-default btn-sm">重置</button>
+              </div>
+
+              <table class="table" id="batchEmailTable">
+                <thead>
+                  <tr>
+                    <th>批次号</th>
+                    <th>模板名称</th>
+                    <th>状态</th>
+                    <th>是否定时</th>
+                    <th>定时发送时间</th>
+                    <th>发送数量</th>
+                    <th>发送成功</th>
+                    <th>发送失败</th>
+                    <th>发送时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>EMAIL20240515001</td>
+                    <td>会员到期续费提醒</td>
+                    <td><span class="tag tag-success">已发送</span></td>
+                    <td><span class="tag tag-default">否</span></td>
+                    <td>-</td>
+                    <td>856</td>
+                    <td><span style="color: #52c41a;">842</span></td>
+                    <td><span style="color: #ff4d4f;">14</span></td>
+                    <td>2024-05-15 10:00:00</td>
+                    <td><button class="btn btn-default btn-sm" onclick="location.href='email-batch-detail.html?batch=EMAIL20240515001'">详情</button></td>
+                  </tr>
+                  <tr>
+                    <td>EMAIL20240514002</td>
+                    <td>缴费成功通知</td>
+                    <td><span class="tag tag-warning">未发送</span></td>
+                    <td><span class="tag tag-primary">是</span></td>
+                    <td>2024-05-20 09:00:00</td>
+                    <td>456</td>
+                    <td><span style="color: #52c41a;">450</span></td>
+                    <td><span style="color: #ff4d4f;">6</span></td>
+                    <td>-</td>
+                    <td><button class="btn btn-default btn-sm" onclick="location.href='email-batch-detail.html?batch=EMAIL20240514002'">详情</button> <button class="btn btn-default btn-sm" onclick="openCancelBatchModal(1)">取消</button></td>
+                  </tr>
+                  <tr>
+                    <td>EMAIL20240510003</td>
+                    <td>审核结果通知</td>
+                    <td><span class="tag tag-success">已发送</span></td>
+                    <td><span class="tag tag-default">否</span></td>
+                    <td>-</td>
+                    <td>356</td>
+                    <td><span style="color: #52c41a;">350</span></td>
+                    <td><span style="color: #ff4d4f;">6</span></td>
+                    <td>2024-05-10 09:00:00</td>
+                    <td><button class="btn btn-default btn-sm" onclick="location.href='email-batch-detail.html?batch=EMAIL20240510003'">详情</button></td>
+                  </tr>
+                  <tr>
+                    <td>EMAIL20240508004</td>
+                    <td>会员注册成功通知</td>
+                    <td><span class="tag tag-warning">未发送</span></td>
+                    <td><span class="tag tag-primary">是</span></td>
+                    <td>2024-05-25 14:00:00</td>
+                    <td>600</td>
+                    <td><span style="color: #52c41a;">580</span></td>
+                    <td><span style="color: #ff4d4f;">20</span></td>
+                    <td>-</td>
+                    <td><button class="btn btn-default btn-sm" onclick="location.href='email-batch-detail.html?batch=EMAIL20240508004'">详情</button> <button class="btn btn-default btn-sm" onclick="openCancelBatchModal(3)">取消</button></td>
+                  </tr>
+                  <tr>
+                    <td>EMAIL20240505005</td>
+                    <td>活动通知</td>
+                    <td><span class="tag tag-success">已发送</span></td>
+                    <td><span class="tag tag-default">否</span></td>
+                    <td>-</td>
+                    <td>300</td>
+                    <td><span style="color: #52c41a;">276</span></td>
+                    <td><span style="color: #ff4d4f;">24</span></td>
+                    <td>2024-05-05 10:00:00</td>
+                    <td><button class="btn btn-default btn-sm" onclick="location.href='email-batch-detail.html?batch=EMAIL20240505005'">详情</button></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pagination">
+                <div class="pagination-info">共 5 条</div>
+                <div class="pagination-btns">
+                  <button class="page-btn" disabled>上一页</button>
+                  <button class="page-btn active">1</button>
+                  <button class="page-btn">下一页</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 系统推荐详情弹窗 -->
+  <div class="modal" id="systemDetailModal">
+    <div class="modal-dialog" style="width: 500px;">
+      <div class="modal-header">
+        <span class="modal-title">邮件详情</span>
+        <span class="close-btn" onclick="closeModal('systemDetailModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">接收邮箱：</label>
+          <span id="sysEmail"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">姓名：</label>
+          <span id="sysName"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">模板名称：</label>
+          <span id="sysTemplate"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">发送状态：</label>
+          <span id="sysStatus"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">发送时间：</label>
+          <span id="sysTime"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="color:#666;">邮件内容：</label>
+          <div id="sysContent" style="background:#f5f5f5;padding:12px;border-radius:6px;line-height:1.8;margin-top:4px;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('systemDetailModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 批次详情弹窗 -->
+  <div class="modal" id="batchDetailModal">
+    <div class="modal-dialog" style="width: 500px;">
+      <div class="modal-header">
+        <span class="modal-title">批次详情</span>
+        <span class="close-btn" onclick="closeModal('batchDetailModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">批次号：</label>
+          <span id="batchCode"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">模板名称：</label>
+          <span id="batchTemplate"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">发送状态：</label>
+          <span id="batchStatus"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">发送数量：</label>
+          <span id="batchCount"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">发送成功：</label>
+          <span id="batchSuccess" style="color:#52c41a;"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">发送失败：</label>
+          <span id="batchFail" style="color:#ff4d4f;"></span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('batchDetailModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 重发确认弹窗 -->
+  <div class="modal" id="resendModal">
+    <div class="modal-dialog" style="width: 420px;">
+      <div class="modal-header">
+        <span class="modal-title">确认重发</span>
+        <span class="close-btn" onclick="closeModal('resendModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="background: #fff7e6; border: 1px solid #ffd591; border-radius: 6px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: #d46b08;">
+          请确认是否重新发送该邮件记录。
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">接收邮箱：</label>
+          <span id="resendEmail"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">模板名称：</label>
+          <span id="resendTemplate"></span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('resendModal')">取消</button>
+        <button class="btn btn-primary" onclick="submitResend()">确认重发</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 取消批次弹窗 -->
+  <div class="modal" id="cancelBatchModal">
+    <div class="modal-dialog" style="width: 420px;">
+      <div class="modal-header">
+        <span class="modal-title">取消批次发送</span>
+        <span class="close-btn" onclick="closeModal('cancelBatchModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="background: #fff1f0; border: 1px solid #ffa39e; border-radius: 6px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: #cf1322;">
+          取消后该定时批次将不再发送，请谨慎操作。
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">批次号：</label>
+          <span id="cancelBatchCode"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:inline-block;width:80px;color:#666;">模板名称：</label>
+          <span id="cancelBatchTemplate"></span>
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label">取消原因</label>
+          <textarea id="cancelBatchReason" class="form-textarea" rows="3" placeholder="请输入取消原因"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('cancelBatchModal')">返回</button>
+        <button class="btn btn-danger" onclick="submitCancelBatch()">确认取消</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script>
+    var systemRecords = [
+      { email: 'zhangsan@example.com', name: '张三', template: '会员注册成功通知', subject: '【农学会】恭喜您成为正式会员', status: '发送成功', time: '2024-05-15 10:23:15', content: '【农学会】恭喜您成为正式会员，感谢您的加入！' },
+      { email: 'lisi@example.com', name: '李四', template: '会员到期续费提醒', subject: '【农学会】会员续费提醒', status: '发送成功', time: '2024-05-15 09:18:32', content: '【农学会】亲爱的李四，您的会员资格即将到期，请及时续费！' },
+      { email: 'wangwu@example.com', name: '王五', template: '缴费成功通知', subject: '【农学会】缴费成功确认', status: '发送成功', time: '2024-05-14 16:45:08', content: '【农学会】亲爱的王五，您已成功缴纳会员费用，祝您使用愉快！' },
+      { email: 'zhaoliu@example.com', name: '赵六', template: '审核结果通知', subject: '【农学会】您的申请已通过审核', status: '发送失败', time: '2024-05-14 14:22:41', content: '【农学会】尊敬的赵六，您的会员申请已通过审核，感谢您的加入！' },
+      { email: 'sunqi@example.com', name: '孙七', template: '活动通知', subject: '【农学会】关于召开2024年会的通知', status: '发送成功', time: '2024-05-13 11:30:55', content: '【农学会】亲爱的孙七，本会将于6月25日举办年会活动，届时请准时参加。' },
+    ];
+
+    var batchRecords = [
+      { code: 'EMAIL20240515001', template: '会员到期续费提醒', status: '已发送', count: 856, success: 842, fail: 14, sendTime: '2024-05-15 10:00:00' },
+      { code: 'EMAIL20240514002', template: '缴费成功通知', status: '未发送', count: 456, success: 450, fail: 6, sendTime: '-' },
+      { code: 'EMAIL20240510003', template: '审核结果通知', status: '已发送', count: 356, success: 350, fail: 6, sendTime: '2024-05-10 09:00:00' },
+      { code: 'EMAIL20240508004', template: '会员注册成功通知', status: '未发送', count: 600, success: 580, fail: 20, sendTime: '-' },
+      { code: 'EMAIL20240505005', template: '活动通知', status: '已发送', count: 300, success: 276, fail: 24, sendTime: '2024-05-05 10:00:00' },
+    ];
+
+    var currentSystemIndex = null;
+    var currentBatchIndex = null;
+
+    function showSystemDetail(idx) {
+      currentSystemIndex = idx;
+      var r = systemRecords[idx];
+      document.getElementById('sysEmail').textContent = r.email;
+      document.getElementById('sysName').textContent = r.name;
+      document.getElementById('sysTemplate').textContent = r.template;
+      document.getElementById('sysStatus').textContent = r.status;
+      document.getElementById('sysTime').textContent = r.time;
+      document.getElementById('sysContent').textContent = r.content;
+      openModal('systemDetailModal');
+    }
+
+    function showBatchDetail(idx) {
+      currentBatchIndex = idx;
+      var r = batchRecords[idx];
+      document.getElementById('batchCode').textContent = r.code;
+      document.getElementById('batchTemplate').textContent = r.template;
+      document.getElementById('batchStatus').textContent = r.status;
+      document.getElementById('batchCount').textContent = r.count + ' 人';
+      document.getElementById('batchSuccess').textContent = r.success + ' 人';
+      document.getElementById('batchFail').textContent = r.fail + ' 人';
+      openModal('batchDetailModal');
+    }
+
+    function openResendModal(idx) {
+      currentSystemIndex = idx;
+      var r = systemRecords[idx];
+      document.getElementById('resendEmail').textContent = r.email;
+      document.getElementById('resendTemplate').textContent = r.template;
+      openModal('resendModal');
+    }
+
+    function submitResend() {
+      closeModal('resendModal');
+      showToast('已重新发送');
+    }
+
+    function openCancelBatchModal(idx) {
+      currentBatchIndex = idx;
+      var r = batchRecords[idx];
+      document.getElementById('cancelBatchCode').textContent = r.code;
+      document.getElementById('cancelBatchTemplate').textContent = r.template;
+      document.getElementById('cancelBatchReason').value = '';
+      openModal('cancelBatchModal');
+    }
+
+    function submitCancelBatch() {
+      closeModal('cancelBatchModal');
+      showToast('已取消');
+    }
+
+    function switchTab(index) {
+      document.querySelectorAll('.tab-item').forEach(function(t) { t.classList.remove('active'); });
+      document.querySelectorAll('.tab-item')[index].classList.add('active');
+      if (index === 0) {
+        document.getElementById('systemPushContent').style.display = '';
+        document.getElementById('batchPushContent').style.display = 'none';
+      } else {
+        document.getElementById('systemPushContent').style.display = 'none';
+        document.getElementById('batchPushContent').style.display = '';
+      }
+    }
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

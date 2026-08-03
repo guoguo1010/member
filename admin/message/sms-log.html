@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>短信发送记录 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">短信发送记录</div>
+          <div class="breadcrumb">
+            <a href="sms.html">短信管理</a> / <span>发送记录</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="tabs">
+          <div class="tab-item active">系统推送</div>
+          <div class="tab-item">批次推送</div>
+        </div>
+
+        <!-- 系统推送 -->
+        <div id="systemPushContent">
+          <div class="stat-cards" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 24px;">
+            <div class="stat-card">
+              <div class="stat-label">本月发送</div>
+              <div class="stat-value">1,256</div>
+              <div class="stat-change">较上月 +12.5%</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">发送成功</div>
+              <div class="stat-value" style="color: #52c41a;">1,198</div>
+              <div class="stat-change">成功率 95.4%</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">发送失败</div>
+              <div class="stat-value" style="color: #ff4d4f;">58</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">系统推送列表</span>
+              <div class="card-tools">
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="search-bar">
+                <div class="search-item">
+                  <label>接收手机：</label>
+                  <input type="text" class="form-input" placeholder="请输入手机号" style="width: 130px;">
+                </div>
+                <div class="search-item">
+                  <label>模板名称：</label>
+                  <input type="text" class="form-input" placeholder="请输入模板名称" style="width: 120px;">
+                </div>
+                <div class="search-item">
+                  <label>发送状态：</label>
+                  <select class="form-select" style="width: 100px;">
+                    <option>全部</option>
+                    <option>发送成功</option>
+                    <option>发送失败</option>
+                  </select>
+                </div>
+                <div class="search-item">
+                  <label>发送时间：</label>
+                  <input type="date" class="form-input" style="width: 130px;">
+                  <span>至</span>
+                  <input type="date" class="form-input" style="width: 130px;">
+                </div>
+                <button class="btn btn-default btn-sm">查询</button>
+                <button class="btn btn-default btn-sm">重置</button>
+              </div>
+
+              <table class="table" id="smsLogTable">
+                <thead>
+                  <tr>
+                    <th>接收手机</th>
+                    <th>会员名称</th>
+                    <th>模板名称</th>
+                    <th>发送内容</th>
+                    <th>发送状态</th>
+                    <th>发送时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>138****8001</td>
+                    <td>张三</td>
+                    <td>会员注册成功通知</td>
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">【农学会】亲爱的张三，您的普通个人会员申请已通过审核，成为正式会员！</td>
+                    <td><span class="tag tag-success">发送成功</span></td>
+                    <td>2024-05-15 10:23:15</td>
+                    <td><button class="btn btn-default btn-sm">详情</button></td>
+                  </tr>
+                  <tr>
+                    <td>139****8002</td>
+                    <td>李四</td>
+                    <td>会员到期续费提醒</td>
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">【农学会】亲爱的李四，您的会员资格将于2024-06-15到期，请及时续费！</td>
+                    <td><span class="tag tag-success">发送成功</span></td>
+                    <td>2024-05-15 09:18:32</td>
+                    <td><button class="btn btn-default btn-sm">详情</button></td>
+                  </tr>
+                  <tr>
+                    <td>137****8003</td>
+                    <td>王五</td>
+                    <td>缴费成功通知</td>
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">【农学会】亲爱的王五，您已成功缴纳会员费用，祝您使用愉快！</td>
+                    <td><span class="tag tag-success">发送成功</span></td>
+                    <td>2024-05-14 16:45:08</td>
+                    <td><button class="btn btn-default btn-sm">详情</button></td>
+                  </tr>
+                  <tr>
+                    <td>136****8004</td>
+                    <td>赵六</td>
+                    <td>会员到期续费提醒</td>
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">【农学会】亲爱的赵六，您的会员资格将于2024-05-20到期，请及时续费！</td>
+                    <td><span class="tag tag-danger">发送失败</span></td>
+                    <td>2024-05-14 14:22:41</td>
+                    <td><button class="btn btn-default btn-sm">详情</button> <button class="btn btn-default btn-sm" onclick="showToast('已重新发送')">重发</button></td>
+                  </tr>
+                  <tr>
+                    <td>135****8005</td>
+                    <td>孙七</td>
+                    <td>审核结果通知</td>
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">【农学会】亲爱的孙七，您的会员申请已通过审核，感谢您的加入！</td>
+                    <td><span class="tag tag-success">发送成功</span></td>
+                    <td>2024-05-13 11:30:55</td>
+                    <td><button class="btn btn-default btn-sm">详情</button></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pagination">
+                <div class="pagination-info">共 1,256 条</div>
+                <div class="pagination-btns">
+                  <button class="page-btn" disabled>上一页</button>
+                  <button class="page-btn active">1</button>
+                  <button class="page-btn">2</button>
+                  <button class="page-btn">下一页</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 批次推送 -->
+        <div id="batchPushContent" style="display: none;">
+          <div class="stat-cards" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 24px;">
+            <div class="stat-card">
+              <div class="stat-label">本月批次</div>
+              <div class="stat-value">8</div>
+              <div class="stat-change">发送会员 3,568 人</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">发送成功</div>
+              <div class="stat-value" style="color: #52c41a;">3,456</div>
+              <div class="stat-change">成功率 96.9%</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">发送失败</div>
+              <div class="stat-value" style="color: #ff4d4f;">112</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">批次推送列表</span>
+              <div class="card-tools">
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="search-bar">
+                <div class="search-item">
+                  <label>批次名称：</label>
+                  <input type="text" class="form-input" placeholder="请输入批次名称" style="width: 150px;">
+                </div>
+                <div class="search-item">
+                  <label>模板名称：</label>
+                  <input type="text" class="form-input" placeholder="请输入模板名称" style="width: 120px;">
+                </div>
+                <div class="search-item">
+                  <label>发送时间：</label>
+                  <input type="date" class="form-input" style="width: 130px;">
+                  <span>至</span>
+                  <input type="date" class="form-input" style="width: 130px;">
+                </div>
+                <button class="btn btn-default btn-sm">查询</button>
+                <button class="btn btn-default btn-sm">重置</button>
+              </div>
+
+              <table class="table" id="batchSmsTable">
+                <thead>
+                  <tr>
+                    <th>批次号</th>
+                    <th>模板名称</th>
+                    <th>状态</th>
+                    <th>是否定时</th>
+                    <th>定时发送时间</th>
+                    <th>发送数量</th>
+                    <th>发送成功</th>
+                    <th>发送失败</th>
+                    <th>发送时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>BATCH20240515001</td>
+                    <td>会员到期续费提醒</td>
+                    <td><span class="tag tag-success">已发送</span></td>
+                    <td><span class="tag tag-default">否</span></td>
+                    <td>-</td>
+                    <td>1,256</td>
+                    <td><span style="color: #52c41a;">1,198</span></td>
+                    <td><span style="color: #ff4d4f;">58</span></td>
+                    <td>2024-05-15 10:00:00</td>
+                    <td><button class="btn btn-default btn-sm" onclick="location.href='sms-batch-detail.html?batch=BATCH20240515001'">详情</button></td>
+                  </tr>
+                  <tr>
+                    <td>BATCH20240514002</td>
+                    <td>缴费成功通知</td>
+                    <td><span class="tag tag-warning">未发送</span></td>
+                    <td><span class="tag tag-primary">是</span></td>
+                    <td>2024-05-20 09:00:00</td>
+                    <td>856</td>
+                    <td><span style="color: #52c41a;">842</span></td>
+                    <td><span style="color: #ff4d4f;">14</span></td>
+                    <td>-</td>
+                    <td><button class="btn btn-default btn-sm" onclick="location.href='sms-batch-detail.html?batch=BATCH20240514002'">详情</button> <button class="btn btn-default btn-sm" onclick="confirm('确定要取消该批次吗？') && showToast('已取消')">取消</button></td>
+                  </tr>
+                  <tr>
+                    <td>BATCH20240510003</td>
+                    <td>审核结果通知</td>
+                    <td><span class="tag tag-success">已发送</span></td>
+                    <td><span class="tag tag-default">否</span></td>
+                    <td>-</td>
+                    <td>456</td>
+                    <td><span style="color: #52c41a;">450</span></td>
+                    <td><span style="color: #ff4d4f;">6</span></td>
+                    <td>2024-05-10 09:00:00</td>
+                    <td><button class="btn btn-default btn-sm" onclick="location.href='sms-batch-detail.html?batch=BATCH20240510003'">详情</button></td>
+                  </tr>
+                  <tr>
+                    <td>BATCH20240508004</td>
+                    <td>会员注册成功通知</td>
+                    <td><span class="tag tag-warning">未发送</span></td>
+                    <td><span class="tag tag-primary">是</span></td>
+                    <td>2024-05-25 14:00:00</td>
+                    <td>1,000</td>
+                    <td><span style="color: #52c41a;">966</span></td>
+                    <td><span style="color: #ff4d4f;">34</span></td>
+                    <td>-</td>
+                    <td><button class="btn btn-default btn-sm" onclick="location.href='sms-batch-detail.html?batch=BATCH20240508004'">详情</button> <button class="btn btn-default btn-sm" onclick="confirm('确定要取消该批次吗？') && showToast('已取消')">取消</button></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pagination">
+                <div class="pagination-info">共 8 条</div>
+                <div class="pagination-btns">
+                  <button class="page-btn" disabled>上一页</button>
+                  <button class="page-btn active">1</button>
+                  <button class="page-btn">下一页</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script>
+    document.querySelectorAll('.tab-item').forEach(function(tab, index) {
+      tab.onclick = function() {
+        document.querySelectorAll('.tab-item').forEach(function(t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        if (index === 0) {
+          document.getElementById('systemPushContent').style.display = '';
+          document.getElementById('batchPushContent').style.display = 'none';
+        } else {
+          document.getElementById('systemPushContent').style.display = 'none';
+          document.getElementById('batchPushContent').style.display = '';
+        }
+      };
+    });
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

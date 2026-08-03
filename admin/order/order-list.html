@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>订单管理 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-overlay .modal {
+      position: relative;
+      top: auto;
+      left: auto;
+      right: auto;
+      bottom: auto;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 20px;
+      display: block;
+      width: auto;
+      max-width: 90%;
+      max-height: 90vh;
+      overflow: hidden;
+      opacity: 1;
+      visibility: visible;
+      transform: scale(0.9) translateY(20px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .modal-overlay.active .modal {
+      transform: scale(1) translateY(0);
+    }
+    .modal-close {
+      border: none;
+      background: transparent;
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">订单管理</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <span>订单管理</span></div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">订单列表</span>
+            <div class="card-tools">
+              <button class="btn btn-default" onclick="exportExcel()">📥 导出</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="search-bar">
+              <div class="search-item">
+                <label>订单编号：</label>
+                <input type="text" class="form-input" placeholder="请输入订单编号" style="width: 150px;">
+              </div>
+              <div class="search-item">
+                <label>姓名：</label>
+                <input type="text" class="form-input" placeholder="请输入姓名" style="width: 120px;">
+              </div>
+              <div class="search-item">
+                <label>会员类型：</label>
+                <select class="form-select" style="width: 130px;">
+                  <option>全部</option>
+                  <option>普通个人会员</option>
+                  <option>理事个人会员</option>
+                  <option>普通单位会员</option>
+                  <option>理事单位会员</option>
+                </select>
+              </div>
+              <div class="search-item">
+                <label>支付状态：</label>
+                <select class="form-select" style="width: 100px;">
+                  <option>全部</option>
+                  <option>待支付</option>
+                  <option>已支付</option>
+                  <option>已取消</option>
+                </select>
+              </div>
+              <div class="search-item">
+                <label>开票状态：</label>
+                <select class="form-select" style="width: 100px;">
+                  <option>全部</option>
+                  <option>已开票</option>
+                  <option>未开票</option>
+                </select>
+              </div>
+              <div class="search-item">
+                <label>是否申请发票：</label>
+                <select class="form-select" style="width: 110px;">
+                  <option>全部</option>
+                  <option>是</option>
+                  <option>否</option>
+                </select>
+              </div>
+              <div class="search-item">
+                <label>创建时间：</label>
+                <input type="date" class="form-input" style="width: 130px;">
+                <span>至</span>
+                <input type="date" class="form-input" style="width: 130px;">
+              </div>
+              <button class="btn btn-default btn-sm">查询</button>
+              <button class="btn btn-default btn-sm">重置</button>
+            </div>
+
+            <table class="table" id="orderTable">
+              <thead>
+                <tr>
+                  <th width="50"><input type="checkbox" class="checkbox" onclick="toggleCheckAll(this, 'orderTable')"></th>
+                  <th>订单编号</th>
+                  <th>姓名</th>
+                  <th>会员类型</th>
+                  <th>缴费年度</th>
+                  <th>订单金额</th>
+                  <th>支付状态</th>
+                  <th>支付方式</th>
+                  <th>创建时间</th>
+                  <th>开票状态</th>
+                  <th>是否申请发票</th>
+                  <th>备注</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox" class="checkbox"></td>
+                  <td>ORD20240513001</td>
+                  <td>张三</td>
+                  <td><span class="tag tag-primary">普通个人会员</span></td>
+                  <td>1年</td>
+                  <td style="color: #52c41a; font-weight: 600;">¥100.00</td>
+                  <td><span class="tag tag-success">已支付</span></td>
+                  <td>微信支付</td>
+                  <td>2024-05-13 10:23</td>
+                  <td><span class="tag tag-success">已开票</span></td>
+                  <td>是</td>
+                  <td>-</td>
+                  <td><button class="btn btn-default btn-sm" onclick="openOrderDetail(this)">详情</button> <button class="btn btn-default btn-sm" onclick="openViewInvoice(this)">查看发票</button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="checkbox"></td>
+                  <td>ORD20240512001</td>
+                  <td>李四</td>
+                  <td><span class="tag tag-primary">普通个人会员</span></td>
+                  <td>2年</td>
+                  <td style="color: #52c41a; font-weight: 600;">¥180.00</td>
+                  <td><span class="tag tag-success">已支付</span></td>
+                  <td>支付宝</td>
+                  <td>2024-05-12 14:35</td>
+                  <td><span class="tag tag-default">未开票</span></td>
+                  <td>是</td>
+                  <td>-</td>
+                  <td><button class="btn btn-default btn-sm" onclick="openOrderDetail(this)">详情</button> <button class="btn btn-default btn-sm" onclick="openUploadInvoice(this)">上传发票</button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="checkbox"></td>
+                  <td>ORD20240511001</td>
+                  <td>北京科技有限公司</td>
+                  <td><span class="tag tag-success">理事单位会员</span></td>
+                  <td>终生</td>
+                  <td style="color: #52c41a; font-weight: 600;">¥5,000.00</td>
+                  <td><span class="tag tag-warning">待支付</span></td>
+                  <td>-</td>
+                  <td>2024-05-11 09:18</td>
+                  <td><span class="tag tag-default">未开票</span></td>
+                  <td>否</td>
+                  <td>理事单位续费</td>
+                  <td><button class="btn btn-default btn-sm" onclick="openOrderDetail(this)">详情</button> <button class="btn btn-default btn-sm" onclick="openConfirmPay(this)">确认缴费</button> <button class="btn btn-default btn-sm" onclick="openCancelModal(this)">取消</button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="checkbox"></td>
+                  <td>ORD20240510001</td>
+                  <td>王五</td>
+                  <td><span class="tag tag-primary">普通个人会员</span></td>
+                  <td>终生</td>
+                  <td style="color: #52c41a; font-weight: 600;">¥1,000.00</td>
+                  <td><span class="tag tag-default">已取消</span></td>
+                  <td>-</td>
+                  <td>2024-05-10 16:42</td>
+                  <td><span class="tag tag-default">未开票</span></td>
+                  <td>否</td>
+                  <td>-</td>
+                  <td><button class="btn btn-default btn-sm" onclick="openOrderDetail(this)">详情</button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="checkbox"></td>
+                  <td>ORD20240509001</td>
+                  <td>上海农业集团</td>
+                  <td><span class="tag tag-success">理事单位会员</span></td>
+                  <td>2年</td>
+                  <td style="color: #52c41a; font-weight: 600;">¥3,000.00</td>
+                  <td><span class="tag tag-success">已支付</span></td>
+                  <td>银行转账</td>
+                  <td>2024-05-09 11:25</td>
+                  <td><span class="tag tag-success">已开票</span></td>
+                  <td>是</td>
+                  <td>-</td>
+                  <td><button class="btn btn-default btn-sm" onclick="openOrderDetail(this)">详情</button> <button class="btn btn-default btn-sm" onclick="openViewInvoice(this)">查看发票</button></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="pagination">
+              <div class="pagination-info">共 3,456 条</div>
+              <div class="pagination-btns">
+                <button class="page-btn" disabled>上一页</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script src="../sidebar.js"></script>
+
+  <!-- 订单详情弹窗 -->
+  <div class="modal-overlay" id="orderDetailModal" onclick="closeModalOnOverlay(event, 'orderDetailModal')">
+    <div class="modal" style="width: 620px;">
+      <div class="modal-header">
+        <span class="modal-title">订单详情</span>
+        <button class="modal-close" onclick="closeModal('orderDetailModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 24px;">
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">订单编号</div><div style="font-weight: 500;" id="detailOrderNo">ORD20240513001</div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">会员名称</div><div style="font-weight: 500;" id="detailMemberName">张三</div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">会员类型</div><div style="font-weight: 500;" id="detailMemberType">个人会员</div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">缴费年度</div><div style="font-weight: 500;" id="detailOrderYear">1年</div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">订单金额</div><div style="font-weight: 500; color: #52c41a;" id="detailAmount">¥100.00</div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">支付状态</div><div style="font-weight: 500;" id="detailPayStatus"><span class="tag tag-success">已支付</span></div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">支付方式</div><div style="font-weight: 500;" id="detailPayMethod">微信支付</div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">开票状态</div><div style="font-weight: 500;" id="detailInvoiceStatus"><span class="tag tag-success">已开票</span></div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">是否申请发票</div><div style="font-weight: 500;" id="detailApplyInvoice">是</div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">开票类型</div><div style="font-weight: 500;" id="detailInvoiceType">增值税普通发票</div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">发票抬头</div><div style="font-weight: 500;" id="detailInvoiceTitle">张三</div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">纳税人识别号</div><div style="font-weight: 500;" id="detailTaxNo">91110000XXXXXXXX</div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">创建时间</div><div style="font-weight: 500;" id="detailCreateTime">2024-05-13 10:23</div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">支付时间</div><div style="font-weight: 500;" id="detailPayTime">2024-05-13 11:05</div></div>
+          <div style="grid-column: span 2;"><div style="font-size: 12px; color: #999; margin-bottom: 4px;">备注</div><div style="font-weight: 500;" id="detailRemark">-</div></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('orderDetailModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 确认缴费弹窗 -->
+  <div class="modal-overlay" id="confirmPayModal" onclick="closeModalOnOverlay(event, 'confirmPayModal')">
+    <div class="modal" style="width: 420px;">
+      <div class="modal-header">
+        <span class="modal-title">确认缴费</span>
+        <button class="modal-close" onclick="closeModal('confirmPayModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="background: #fff7e6; border: 1px solid #ffd591; border-radius: 6px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: #d46b08;">
+          请确认已收到该笔款项，再进行确认操作。
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px;">
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">订单编号</div><div style="font-weight: 500;" id="confirmPayOrderNo">ORD20240511001</div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">会员名称</div><div style="font-weight: 500;" id="confirmPayMemberName">北京科技有限公司</div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">订单金额</div><div style="font-weight: 500; color: #52c41a;" id="confirmPayAmount">¥5,000.00</div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">支付方式</div>
+            <select class="form-select" style="width: 100%;" id="confirmPayMethod">
+              <option>银行转账</option>
+              <option>微信支付</option>
+              <option>支付宝</option>
+              <option>现金</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('confirmPayModal')">取消</button>
+        <button class="btn btn-primary" onclick="submitConfirmPay()">确认收款</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 取消订单弹窗 -->
+  <div class="modal-overlay" id="cancelModal" onclick="closeModalOnOverlay(event, 'cancelModal')">
+    <div class="modal" style="width: 420px;">
+      <div class="modal-header">
+        <span class="modal-title">取消订单</span>
+        <button class="modal-close" onclick="closeModal('cancelModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="background: #fff1f0; border: 1px solid #ffa39e; border-radius: 6px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: #cf1322;">
+          取消后订单不可恢复，确认要取消该订单吗？
+        </div>
+        <div style="margin-bottom: 8px; font-size: 13px; color: #666;">取消原因</div>
+        <textarea id="cancelReason" class="form-textarea" rows="3" placeholder="请输入取消原因" style="width: 100%;"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('cancelModal')">取消</button>
+        <button class="btn btn-danger" onclick="submitCancel()">下一步</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 取消订单二次确认弹窗 -->
+  <div class="modal-overlay" id="cancelConfirmModal" onclick="closeModalOnOverlay(event, 'cancelConfirmModal')">
+    <div class="modal" style="width: 420px;">
+      <div class="modal-header">
+        <span class="modal-title">再次确认取消</span>
+        <button class="modal-close" onclick="closeModal('cancelConfirmModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="background: #fff1f0; border: 1px solid #ffa39e; border-radius: 6px; padding: 12px 16px; font-size: 13px; color: #cf1322; line-height: 1.8;">
+          确认取消后订单将不可恢复，请再次确认是否取消该订单。
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('cancelConfirmModal')">返回修改</button>
+        <button class="btn btn-danger" onclick="finalSubmitCancel()">确认取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 确认开票弹窗 -->
+  <div class="modal-overlay" id="confirmInvoiceModal" onclick="closeModalOnOverlay(event, 'confirmInvoiceModal')">
+    <div class="modal" style="width: 420px;">
+      <div class="modal-header">
+        <span class="modal-title">确认开票</span>
+        <button class="modal-close" onclick="closeModal('confirmInvoiceModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px;">
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">订单编号</div><div style="font-weight: 500;" id="confirmInvoiceOrderNo">ORD20240512001</div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">会员名称</div><div style="font-weight: 500;" id="confirmInvoiceMemberName">李四</div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">发票金额</div><div style="font-weight: 500; color: #52c41a;" id="confirmInvoiceAmount">¥180.00</div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">开票类型</div>
+            <select class="form-select" style="width: 100%;" id="confirmInvoiceType">
+              <option>增值税普通发票</option>
+              <option>增值税专用发票</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-bottom: 8px; font-size: 13px; color: #666;">发票抬头</div>
+        <input type="text" class="form-input" value="李四" id="invoiceTitle" style="width: 100%; margin-bottom: 12px;">
+        <div style="margin-bottom: 8px; font-size: 13px; color: #666;">纳税人识别号</div>
+        <input type="text" class="form-input" placeholder="请输入纳税人识别号" id="invoiceTaxNo" style="width: 100%;">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('confirmInvoiceModal')">取消</button>
+        <button class="btn btn-primary" onclick="submitConfirmInvoice()">确认开票</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 上传发票弹窗 -->
+  <div class="modal-overlay" id="uploadInvoiceModal" onclick="closeModalOnOverlay(event, 'uploadInvoiceModal')">
+    <div class="modal" style="width: 420px;">
+      <div class="modal-header">
+        <span class="modal-title">上传发票</span>
+        <button class="modal-close" onclick="closeModal('uploadInvoiceModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px;">
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">订单编号</div><div style="font-weight: 500;" id="uploadInvoiceOrderNo">ORD20240512001</div></div>
+          <div><div style="font-size: 12px; color: #999; margin-bottom: 4px;">会员名称</div><div style="font-weight: 500;" id="uploadInvoiceMemberName">李四</div></div>
+        </div>
+        <div style="margin-bottom: 8px; font-size: 13px; color: #666;">发票文件 <span style="color: #ff4d4f;">*</span></div>
+        <input type="file" class="form-input" id="uploadInvoiceFile" accept=".pdf,.jpg,.jpeg,.png" style="width: 100%;">
+        <div style="font-size: 12px; color: #999; margin-top: 6px;">支持 PDF、JPG、PNG 格式</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('uploadInvoiceModal')">取消</button>
+        <button class="btn btn-primary" onclick="submitUploadInvoice()">上传</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 查看发票弹窗 -->
+  <div class="modal-overlay" id="viewInvoiceModal" onclick="closeModalOnOverlay(event, 'viewInvoiceModal')">
+    <div class="modal" style="width: 600px;">
+      <div class="modal-header">
+        <span class="modal-title">查看发票</span>
+        <button class="modal-close" onclick="closeModal('viewInvoiceModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="text-align: center;">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='560' height='400' viewBox='0 0 560 400'%3E%3Crect fill='%23f5f5f5' width='560' height='400'/%3E%3Ctext x='280' y='195' font-size='14' fill='%23999' text-anchor='middle' font-family='sans-serif'%3E发票图片预览区%3C/text%3E%3C/svg%3E" alt="发票图片" style="max-width: 100%; border-radius: 6px; border: 1px solid #e8e8e8;">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('viewInvoiceModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .btn-danger { background: #ff4d4f; color: #fff; border: none; }
+    .btn-danger:hover { background: #ff7875; }
+  </style>
+
+  <script>
+    var currentOrderRow = null;
+
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function closeModalOnOverlay(event, id) { if (event.target === event.currentTarget) closeModal(id); }
+    function getRowData(btn) {
+      var row = btn.closest('tr');
+      var cells = row.querySelectorAll('td');
+      return {
+        row: row,
+        orderNo: cells[1].textContent.trim(),
+        memberName: cells[2].textContent.trim(),
+        memberType: cells[3].textContent.trim(),
+        orderYear: cells[4].textContent.trim(),
+        amount: cells[5].textContent.trim(),
+        payStatusText: cells[6].textContent.trim(),
+        payStatusHtml: cells[6].innerHTML.trim(),
+        payMethod: cells[7].textContent.trim(),
+        createTime: cells[8].textContent.trim(),
+        invoiceStatusText: cells[9].textContent.trim(),
+        invoiceStatusHtml: cells[9].innerHTML.trim(),
+        needInvoice: cells[10].textContent.trim(),
+        remark: cells[11].textContent.trim()
+      };
+    }
+    function setText(id, value) {
+      document.getElementById(id).textContent = value || '-';
+    }
+    function setHtml(id, value) {
+      document.getElementById(id).innerHTML = value || '-';
+    }
+    function openOrderDetail(btn) {
+      var data = getRowData(btn);
+      currentOrderRow = data.row;
+      setText('detailOrderNo', data.orderNo);
+      setText('detailMemberName', data.memberName);
+      setText('detailMemberType', data.memberType);
+      setText('detailOrderYear', data.orderYear);
+      setText('detailAmount', data.amount);
+      setHtml('detailPayStatus', data.payStatusHtml);
+      setText('detailPayMethod', data.payMethod === '-' ? '未支付' : data.payMethod);
+      setHtml('detailInvoiceStatus', data.invoiceStatusHtml);
+      setText('detailCreateTime', data.createTime);
+      setText('detailPayTime', data.payStatusText === '已支付' ? data.createTime : '-');
+      setText('detailRemark', data.remark);
+      openModal('orderDetailModal');
+    }
+    function openConfirmPay(btn) {
+      var data = getRowData(btn);
+      currentOrderRow = data.row;
+      setText('confirmPayOrderNo', data.orderNo);
+      setText('confirmPayMemberName', data.memberName);
+      setText('confirmPayAmount', data.amount);
+      document.getElementById('confirmPayMethod').value = data.payMethod === '-' ? '银行转账' : data.payMethod;
+      openModal('confirmPayModal');
+    }
+    function submitConfirmPay() {
+      if (currentOrderRow) {
+        currentOrderRow.cells[6].innerHTML = '<span class="tag tag-success">已支付</span>';
+        currentOrderRow.cells[7].textContent = document.getElementById('confirmPayMethod').value;
+      }
+      showToast('已确认收款');
+      closeModal('confirmPayModal');
+    }
+    function openCancelModal(btn) {
+      currentOrderRow = btn.closest('tr');
+      document.getElementById('cancelReason').value = '';
+      openModal('cancelModal');
+    }
+    function submitCancel() {
+      var reason = document.getElementById('cancelReason').value.trim();
+      if (!reason) { showToast('请输入取消原因'); return; }
+      openModal('cancelConfirmModal');
+    }
+    function finalSubmitCancel() {
+      var reason = document.getElementById('cancelReason').value.trim();
+      if (currentOrderRow) {
+        currentOrderRow.cells[6].innerHTML = '<span class="tag tag-default">已取消</span>';
+        currentOrderRow.cells[11].textContent = reason;
+        currentOrderRow.cells[12].innerHTML = '<button class="btn btn-default btn-sm" onclick="openOrderDetail(this)">详情</button>';
+      }
+      closeModal('cancelConfirmModal');
+      closeModal('cancelModal');
+      showToast('订单已取消');
+    }
+    function openConfirmInvoice(btn) {
+      var data = getRowData(btn);
+      currentOrderRow = data.row;
+      setText('confirmInvoiceOrderNo', data.orderNo);
+      setText('confirmInvoiceMemberName', data.memberName);
+      setText('confirmInvoiceAmount', data.amount);
+      document.getElementById('invoiceTitle').value = data.memberName;
+      document.getElementById('invoiceTaxNo').value = '';
+      document.getElementById('confirmInvoiceType').value = '增值税普通发票';
+      openModal('confirmInvoiceModal');
+    }
+    function submitConfirmInvoice() {
+      var title = document.getElementById('invoiceTitle').value.trim();
+      var taxNo = document.getElementById('invoiceTaxNo').value.trim();
+      if (!title || !taxNo) { showToast('请填写完整开票信息'); return; }
+      if (currentOrderRow) {
+        currentOrderRow.cells[9].innerHTML = '<span class="tag tag-success">已开票</span>';
+      }
+      showToast('已确认开票');
+      closeModal('confirmInvoiceModal');
+    }
+    function openUploadInvoice(btn) {
+      var data = getRowData(btn);
+      currentOrderRow = data.row;
+      setText('uploadInvoiceOrderNo', data.orderNo);
+      setText('uploadInvoiceMemberName', data.memberName);
+      document.getElementById('uploadInvoiceFile').value = '';
+      openModal('uploadInvoiceModal');
+    }
+    function submitUploadInvoice() {
+      if (!document.getElementById('uploadInvoiceFile').value) { showToast('请先选择发票文件'); return; }
+      if (currentOrderRow) {
+        currentOrderRow.cells[9].innerHTML = '<span class="tag tag-success">已开票</span>';
+      }
+      showToast('发票上传成功');
+      closeModal('uploadInvoiceModal');
+    }
+    function openViewInvoice(btn) {
+      var data = getRowData(btn);
+      currentOrderRow = data.row;
+      setText('viewInvoiceNo', 'INV' + data.orderNo.slice(3));
+      setText('viewInvoiceAmount', data.amount);
+      setText('viewInvoiceTitle', data.memberName);
+      setText('viewInvoiceTime', data.createTime);
+      openModal('viewInvoiceModal');
+    }
+    function downloadInvoice() {
+      showToast('发票下载中');
+    }
+  </script>
+</body>
+</html>

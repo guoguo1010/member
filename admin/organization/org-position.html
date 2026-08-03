@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>机构任职管理 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">机构任职管理</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <a href="#">组织机构</a> / <span>机构任职</span></div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">任职列表</span>
+            <div class="card-tools">
+              <button class="btn btn-primary" onclick="openModal('addPositionModal')">+ 新增任职</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="search-bar">
+              <div class="search-item">
+                <label>任职机构名称：</label>
+                <input type="text" class="form-input" placeholder="请输入机构名称" style="width: 150px;">
+              </div>
+              <div class="search-item">
+                <label>界次：</label>
+                <select class="form-select" style="width: 120px;">
+                  <option>全部</option>
+                  <option>第十届</option>
+                  <option>第九届</option>
+                  <option>第八届</option>
+                </select>
+              </div>
+              <div class="search-item">
+                <label>任职机构类型：</label>
+                <select class="form-select" style="width: 130px;">
+                  <option>全部</option>
+                  <option>地方学会</option>
+                  <option>专业委员会</option>
+                  <option>理事单位</option>
+                  <option>合作单位</option>
+                </select>
+              </div>
+              <button class="btn btn-default btn-sm">查询</button>
+              <button class="btn btn-default btn-sm">重置</button>
+            </div>
+
+            <table class="table" id="positionTable">
+              <thead>
+                <tr>
+                  <th>任职机构名称</th>
+                  <th>界次</th>
+                  <th>任职机构类型</th>
+                  <th>职位名称</th>
+                  <th>有效期</th>
+                  <th>附件</th>
+                  <th>权重</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>中国农业学会</td>
+                  <td>第十届</td>
+                  <td><span class="tag tag-primary">理事会</span></td>
+                  <td><span class="tag tag-danger">会长</span></td>
+                  <td>2024-01-01 至 2028-12-31</td>
+                  <td><span style="color: #1890ff; cursor: pointer;" onclick="openModal('attachmentModal')">📎 查看</span></td>
+                  <td><input type="number" class="form-input" value="100" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('viewPositionModal')">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('editPositionModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="location.href='position-members.html?org=中国农业学会&title=会长&orgType=理事会'">任职会员</button>
+                    <button class="btn btn-danger btn-sm" onclick="if(confirm('删除将解除会员的任职数据，确定删除该任职机构吗？')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>中国农业学会</td>
+                  <td>第十届</td>
+                  <td><span class="tag tag-primary">理事会</span></td>
+                  <td>
+                    <span class="tag tag-warning">秘书长</span>
+                    <span class="tag tag-info">副会长</span>
+                    <span class="tag tag-default">理事</span>
+                  </td>
+                  <td>2024-01-01 至 2028-12-31</td>
+                  <td><span style="color: #1890ff; cursor: pointer;" onclick="openModal('attachmentModal')">📎 查看</span></td>
+                  <td><input type="number" class="form-input" value="90" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('viewPositionModal')">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('editPositionModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="location.href='position-members.html?org=中国农业学会&title=秘书长&orgType=理事会'">任职会员</button>
+                    <button class="btn btn-danger btn-sm" onclick="if(confirm('删除将解除会员的任职数据，确定删除该任职机构吗？')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>中国农业学会</td>
+                  <td>第十届</td>
+                  <td><span class="tag tag-primary">理事会</span></td>
+                  <td>
+                    <span class="tag tag-info">副会长</span>
+                    <span class="tag tag-default">理事</span>
+                  </td>
+                  <td>2024-01-01 至 2028-12-31</td>
+                  <td><span style="color: #1890ff; cursor: pointer;" onclick="openModal('attachmentModal')">📎 查看</span></td>
+                  <td><input type="number" class="form-input" value="80" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('viewPositionModal')">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('editPositionModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="location.href='position-members.html?org=中国农业学会&title=副会长&orgType=理事会'">任职会员</button>
+                    <button class="btn btn-danger btn-sm" onclick="if(confirm('删除将解除会员的任职数据，确定删除该任职机构吗？')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>作物学专业委员会</td>
+                  <td>第十届</td>
+                  <td><span class="tag tag-primary">专业委员会</span></td>
+                  <td><span class="tag tag-success">主任</span></td>
+                  <td>2024-01-01 至 2028-12-31</td>
+                  <td><span style="color: #999; cursor: pointer;" onclick="openModal('attachmentModal')">暂无</span></td>
+                  <td><input type="number" class="form-input" value="70" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('viewPositionModal')">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('editPositionModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="location.href='position-members.html?org=作物学专业委员会&title=主任&orgType=专业委员会'">任职会员</button>
+                    <button class="btn btn-danger btn-sm" onclick="if(confirm('删除将解除会员的任职数据，确定删除该任职机构吗？')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="pagination">
+              <div class="pagination-info">共 156 条</div>
+              <div class="pagination-btns">
+                <button class="page-btn" disabled>上一页</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增任职弹窗 -->
+  <div class="modal" id="addPositionModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">新增任职</span>
+        <span class="close-btn" onclick="closeModal('addPositionModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">机构类型 <span class="required">*</span></label>
+          <select class="form-select" id="addOrgType" onchange="onOrgTypeChange('add')">
+            <option value="">请选择机构类型</option>
+            <option value="地方学会">地方学会</option>
+            <option value="专业委员会">专业委员会</option>
+            <option value="理事单位">理事单位</option>
+            <option value="合作单位">合作单位</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">任职机构 <span class="required">*</span></label>
+          <select class="form-select" id="addOrg">
+            <option value="">请先选择机构类型</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">界次 <span class="required">*</span></label>
+          <select class="form-select">
+            <option value="">请选择界次</option>
+            <option>第十届</option>
+            <option>第九届</option>
+            <option>第八届</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">任职类型 <span class="required">*</span></label>
+          <select class="form-select" id="addPositionType" onchange="onPositionTypeChange('add')">
+            <option value="">请选择任职类型</option>
+            <option value="理事会">理事会</option>
+            <option value="监事会">监事会</option>
+            <option value="理事会党委">理事会党委</option>
+            <option value="会员代表大会">会员代表大会</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">任职名称 <span class="required">*</span></label>
+          <div id="addTitleCheckboxes" style="padding: 8px 0; color: #999; font-size: 13px;">请先选择任职类型</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">任职有效期 <span class="required">*</span></label>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <input type="date" class="form-input" style="flex: 1;">
+            <span>至</span>
+            <input type="date" class="form-input" style="flex: 1;">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">任职附件</label>
+          <div style="border: 2px dashed #d9d9d9; border-radius: 6px; padding: 20px; text-align: center; cursor: pointer;" onclick="document.getElementById('addAttachment').click()">
+            <div style="color: #666; font-size: 14px;">点击上传附件</div>
+            <div style="color: #c0c4cc; font-size: 12px; margin-top: 4px;">支持 jpg、png、pdf、word、excel 等格式</div>
+            <input type="file" id="addAttachment" style="display: none;" onchange="handleAttachmentChange(this, 'add')">
+          </div>
+          <div id="addAttachmentList" style="margin-top: 8px;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('addPositionModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('addPositionModal'); showToast('添加成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑任职弹窗 -->
+  <div class="modal" id="editPositionModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">编辑任职</span>
+        <span class="close-btn" onclick="closeModal('editPositionModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">机构类型 <span class="required">*</span></label>
+          <select class="form-select" id="editOrgType" onchange="onOrgTypeChange('edit')">
+            <option value="">请选择机构类型</option>
+            <option value="地方学会">地方学会</option>
+            <option value="专业委员会">专业委员会</option>
+            <option value="理事单位">理事单位</option>
+            <option value="合作单位">合作单位</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">任职机构 <span class="required">*</span></label>
+          <select class="form-select" id="editOrg">
+            <option value="">请先选择机构类型</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">界次 <span class="required">*</span></label>
+          <select class="form-select">
+            <option selected>第十届</option>
+            <option>第九届</option>
+            <option>第八届</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">任职类型 <span class="required">*</span></label>
+          <select class="form-select" id="editPositionType" onchange="onPositionTypeChange('edit')">
+            <option value="">请选择任职类型</option>
+            <option value="理事会">理事会</option>
+            <option value="监事会">监事会</option>
+            <option value="理事会党委">理事会党委</option>
+            <option value="会员代表大会">会员代表大会</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">任职名称 <span class="required">*</span></label>
+          <div id="editTitleCheckboxes" style="padding: 8px 0; color: #999; font-size: 13px;">请先选择任职类型</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">任职有效期 <span class="required">*</span></label>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <input type="date" class="form-input" value="2024-01-01" style="flex: 1;">
+            <span>至</span>
+            <input type="date" class="form-input" value="2028-12-31" style="flex: 1;">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">任职附件</label>
+          <div style="border: 2px dashed #d9d9d9; border-radius: 6px; padding: 20px; text-align: center; cursor: pointer;" onclick="document.getElementById('editAttachment').click()">
+            <div style="color: #52c41a; font-size: 14px;">✓ 已上传 1 个附件</div>
+            <div style="color: #999; font-size: 12px; margin-top: 4px;">点击修改附件</div>
+            <input type="file" id="editAttachment" style="display: none;" onchange="handleAttachmentChange(this, 'edit')">
+          </div>
+          <div id="editAttachmentList" style="margin-top: 8px;">
+            <div style="background: #f5f5f5; padding: 8px 12px; border-radius: 4px; margin-top: 8px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
+              <span>📎 聘书.pdf</span>
+              <button class="btn btn-default btn-sm" onclick="removeAttachment(this)" style="padding: 2px 8px;">移除</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('editPositionModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('editPositionModal'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 查看任职弹窗 -->
+  <div class="modal" id="viewPositionModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">任职详情</span>
+        <span class="close-btn" onclick="closeModal('viewPositionModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="grid-2" style="gap: 16px;">
+          <div class="form-group">
+            <label class="form-label">机构类型</label>
+            <div style="padding: 8px 0;">地方学会</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">任职机构</label>
+            <div style="padding: 8px 0;">中国农业学会</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">界次</label>
+            <div style="padding: 8px 0;">第十届</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">任职类型</label>
+            <div style="padding: 8px 0;">负责人</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">任职名称</label>
+            <div style="padding: 8px 0;"><span class="tag tag-danger">会长</span></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">有效期</label>
+            <div style="padding: 8px 0;">2024-01-01 至 2028-12-31</div>
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label class="form-label">附件</label>
+            <div style="padding: 8px 0;"><span style="color: #1890ff; cursor: pointer;">📎 聘书.pdf</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('viewPositionModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 附件管理弹窗 -->
+  <div class="modal" id="attachmentModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">附件列表</span>
+        <span class="close-btn" onclick="closeModal('attachmentModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 16px;">
+          <div style="border: 2px dashed #d9d9d9; border-radius: 6px; padding: 16px; text-align: center; cursor: pointer;" onclick="document.getElementById('modalAttachment').click()">
+            <div style="color: #1890ff; font-size: 14px;">+ 添加附件</div>
+            <div style="color: #c0c4cc; font-size: 12px; margin-top: 4px;">支持 jpg、png、pdf、word、excel 等格式</div>
+            <input type="file" id="modalAttachment" style="display: none;" multiple onchange="handleModalAttachmentChange(this)">
+          </div>
+        </div>
+        <div id="modalAttachmentList">
+          <div style="background: #f5f5f5; padding: 10px 12px; border-radius: 4px; margin-bottom: 8px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span>📎</span>
+              <span>聘书.pdf</span>
+              <span style="color: #999; font-size: 12px;">2024-03-15</span>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-default btn-sm" style="padding: 2px 8px;" onclick="window.open('#')">下载</button>
+              <button class="btn btn-default btn-sm" style="padding: 2px 8px; color: #ff4d4f;" onclick="this.closest('div').remove(); showToast('已删除')">删除</button>
+            </div>
+          </div>
+          <div style="background: #f5f5f5; padding: 10px 12px; border-radius: 4px; margin-bottom: 8px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span>📎</span>
+              <span>任职通知函.docx</span>
+              <span style="color: #999; font-size: 12px;">2024-04-20</span>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-default btn-sm" style="padding: 2px 8px;" onclick="window.open('#')">下载</button>
+              <button class="btn btn-default btn-sm" style="padding: 2px 8px; color: #ff4d4f;" onclick="this.closest('div').remove(); showToast('已删除')">删除</button>
+            </div>
+          </div>
+        </div>
+        <div id="modalEmptyHint" style="display: none; text-align: center; padding: 24px; color: #999; font-size: 14px;">
+          暂无附件
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('attachmentModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script>
+    // 机构类型对应的机构列表
+    var orgMap = {
+      '地方学会': ['北京市农学会', '山东省农学会', '江苏省农学会', '浙江省农学会', '广东省农学会'],
+      '专业委员会': ['作物学专业委员会', '园艺学专业委员会', '畜牧兽医专业委员会', '农业机械专业委员会'],
+      '理事单位': ['中国农业科学院', '中国农业大学', '农业农村部规划设计研究院'],
+      '合作单位': ['中国农村专业技术协会', '国家农业科技创新联盟']
+    };
+
+    // 任职类型对应的任职名称
+    var titleMap = {
+      '理事会': ['会长', '副会长', '秘书长', '常务理事', '理事'],
+      '监事会': ['监事长', '副监事长', '监事'],
+      '理事会党委': ['党委书记', '副书记', '组织委员', '纪检委员', '宣传委员', '统战委员'],
+      '会员代表大会': ['代表']
+    };
+
+    function onOrgTypeChange(prefix) {
+      var orgType = document.getElementById(prefix + 'OrgType').value;
+      var orgSelect = document.getElementById(prefix + 'Org');
+      orgSelect.innerHTML = '<option value="">请选择任职机构</option>';
+      if (orgType && orgMap[orgType]) {
+        orgMap[orgType].forEach(function(org) {
+          var option = document.createElement('option');
+          option.value = org;
+          option.textContent = org;
+          orgSelect.appendChild(option);
+        });
+      }
+    }
+
+    function onPositionTypeChange(prefix) {
+      var positionType = document.getElementById(prefix + 'PositionType').value;
+      var checkboxContainer = document.getElementById(prefix + 'TitleCheckboxes');
+      checkboxContainer.innerHTML = '';
+      if (positionType && titleMap[positionType]) {
+        var div = document.createElement('div');
+        div.style.cssText = 'display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 0;';
+        titleMap[positionType].forEach(function(title) {
+          var tag = document.createElement('span');
+          tag.style.cssText = 'padding: 6px 16px; background: #f0f5ff; border: 1px solid #adc6ff; border-radius: 4px; font-size: 13px; color: #1890ff;';
+          tag.textContent = title;
+          div.appendChild(tag);
+        });
+        checkboxContainer.appendChild(div);
+      } else {
+        checkboxContainer.innerHTML = '<span style="color: #999; font-size: 13px;">请先选择任职类型</span>';
+      }
+    }
+
+    function handleAttachmentChange(input, prefix) {
+      var list = document.getElementById(prefix + 'AttachmentList');
+      list.innerHTML = '';
+      for (var i = 0; i < input.files.length; i++) {
+        var file = input.files[i];
+        var div = document.createElement('div');
+        div.style = 'background: #f5f5f5; padding: 8px 12px; border-radius: 4px; margin-top: 8px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;';
+        div.innerHTML = '<span>📎 ' + file.name + '</span><button class="btn btn-default btn-sm" onclick="removeAttachment(this)" style="padding: 2px 8px;">移除</button>';
+        list.appendChild(div);
+      }
+    }
+
+    function removeAttachment(btn) {
+      btn.parentElement.remove();
+    }
+
+    function handleModalAttachmentChange(input) {
+      var list = document.getElementById('modalAttachmentList');
+      var emptyHint = document.getElementById('modalEmptyHint');
+      var today = new Date().toISOString().split('T')[0];
+      for (var i = 0; i < input.files.length; i++) {
+        var file = input.files[i];
+        var div = document.createElement('div');
+        div.style = 'background: #f5f5f5; padding: 10px 12px; border-radius: 4px; margin-bottom: 8px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;';
+        div.innerHTML = '<div style="display:flex;align-items:center;gap:8px;"><span>📎</span><span>' + file.name + '</span><span style="color:#999;font-size:12px;">' + today + '</span></div><div style="display:flex;gap:8px;"><button class="btn btn-default btn-sm" style="padding:2px 8px;" onclick="window.open(\'#\')">下载</button><button class="btn btn-default btn-sm" style="padding:2px 8px;color:#ff4d4f;" onclick="this.closest(\'div\').remove(); showToast(\'已删除\')">删除</button></div>';
+        list.appendChild(div);
+      }
+      if (emptyHint) emptyHint.style.display = 'none';
+      input.value = '';
+    }
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

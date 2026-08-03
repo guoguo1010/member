@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>操作日志 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">操作日志</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <a href="#">系统管理</a> / <span>操作日志</span></div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">操作日志列表 <span style="font-weight: normal; font-size: 12px; color: #999;">日志永久保留</span></span>
+            <div class="card-tools">
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="search-bar">
+              <div class="search-item">
+                <label>操作人：</label>
+                <input type="text" class="form-input" placeholder="请输入操作人" style="width: 120px;">
+              </div>
+              <div class="search-item">
+                <label>操作模块：</label>
+                <select class="form-select" style="width: 130px;">
+                  <option>全部</option>
+                  <option>会员管理</option>
+                  <option>审核管理</option>
+                  <option>机构管理</option>
+                  <option>系统管理</option>
+                </select>
+              </div>
+              <div class="search-item">
+                <label>操作类型：</label>
+                <select class="form-select" style="width: 100px;">
+                  <option>全部</option>
+                  <option>新增</option>
+                  <option>编辑</option>
+                  <option>删除</option>
+                  <option>审核</option>
+                </select>
+              </div>
+              <div class="search-item">
+                <label>时间范围：</label>
+                <input type="date" class="form-input" style="width: 140px;">
+                <span>至</span>
+                <input type="date" class="form-input" style="width: 140px;">
+              </div>
+              <button class="btn btn-default btn-sm">查询</button>
+              <button class="btn btn-default btn-sm">重置</button>
+            </div>
+
+            <table class="table" id="logTable">
+              <thead>
+                <tr>
+                  <th>操作人</th>
+                  <th>角色</th>
+                  <th>操作时间</th>
+                  <th>操作类型</th>
+                  <th>操作模块</th>
+                  <th>操作内容</th>
+                  <th>IP地址</th>
+                  <th>结果</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>admin</td>
+                  <td>超级管理员</td>
+                  <td>2024-05-13 14:32:15</td>
+                  <td><span class="tag tag-primary">新增</span></td>
+                  <td>会员管理</td>
+                  <td>新增个人会员：张三，手机号：13800138001</td>
+                  <td>192.168.1.100</td>
+                  <td><span class="tag tag-success">成功</span></td>
+                  <td><button class="btn btn-default btn-sm">详情</button></td>
+                </tr>
+                <tr>
+                  <td>li_admin</td>
+                  <td>农学会管理员</td>
+                  <td>2024-05-13 13:25:08</td>
+                  <td><span class="tag tag-warning">审核</span></td>
+                  <td>审核管理</td>
+                  <td>审核通过个人会员申请：李四，申请编号：APP20240513001</td>
+                  <td>192.168.1.101</td>
+                  <td><span class="tag tag-success">成功</span></td>
+                  <td><button class="btn btn-default btn-sm">详情</button></td>
+                </tr>
+                <tr>
+                  <td>wang_admin</td>
+                  <td>分支机构管理员</td>
+                  <td>2024-05-13 11:18:42</td>
+                  <td><span class="tag tag-default">编辑</span></td>
+                  <td>机构管理</td>
+                  <td>编辑机构信息：北京市农学会，修改联系人电话</td>
+                  <td>192.168.1.102</td>
+                  <td><span class="tag tag-success">成功</span></td>
+                  <td><button class="btn btn-default btn-sm">详情</button></td>
+                </tr>
+                <tr>
+                  <td>admin</td>
+                  <td>超级管理员</td>
+                  <td>2024-05-13 10:05:33</td>
+                  <td><span class="tag tag-default">编辑</span></td>
+                  <td>系统管理</td>
+                  <td>修改角色权限：农学会管理员，关闭导出按钮权限</td>
+                  <td>192.168.1.100</td>
+                  <td><span class="tag tag-success">成功</span></td>
+                  <td><button class="btn btn-default btn-sm">详情</button></td>
+                </tr>
+                <tr>
+                  <td>zhang_admin</td>
+                  <td>高级管理员</td>
+                  <td>2024-05-13 09:42:19</td>
+                  <td><span class="tag tag-default">查看</span></td>
+                  <td>会员管理</td>
+                  <td>查看会员数据看板，筛选条件：地区=北京市</td>
+                  <td>192.168.1.103</td>
+                  <td><span class="tag tag-success">成功</span></td>
+                  <td><button class="btn btn-default btn-sm">详情</button></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="pagination">
+              <div class="pagination-info">共 156 条</div>
+              <div class="pagination-btns">
+                <button class="page-btn" disabled>上一页</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">...</button>
+                <button class="page-btn">16</button>
+                <button class="page-btn">下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

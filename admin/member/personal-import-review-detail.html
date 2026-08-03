@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>批量导入详情 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .batch-info { display: flex; gap: 24px; margin-bottom: 20px; flex-wrap: wrap; }
+    .batch-info-item { display: flex; align-items: center; gap: 8px; }
+    .batch-info-item .label { color: #666; font-size: 13px; }
+    .batch-info-item .value { font-weight: 500; color: #333; font-size: 14px; }
+    .status-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+    .status-pending { background: #fff7e6; color: #fa8c16; }
+    .status-approved { background: #f6ffed; color: #52c41a; }
+    .status-rejected { background: #fff1f0; color: #ff4d4f; }
+    .approve-btn { color: #52c41a; cursor: pointer; }
+    .reject-btn { color: #ff4d4f; cursor: pointer; }
+    .action-link { color: #1890ff; cursor: pointer; text-decoration: underline; }
+    .reason-text { color: #ff4d4f; font-size: 12px; }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .toolbar-left { display: flex; gap: 12px; align-items: center; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">批量导入详情</div>
+          <div class="breadcrumb">
+            <a href="personal-import-review.html">批量导入审核</a> / <span>详情</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- 批次信息 -->
+        <div class="batch-info">
+          <div class="batch-info-item">
+            <span class="label">批次号：</span>
+            <span class="value">BATCH20260610001</span>
+          </div>
+          <div class="batch-info-item">
+            <span class="label">导入时间：</span>
+            <span class="value">2026-06-10 10:30</span>
+          </div>
+          <div class="batch-info-item">
+            <span class="label">导入人：</span>
+            <span class="value">王管理</span>
+          </div>
+          <div class="batch-info-item">
+            <span class="label">状态：</span>
+            <span class="status-tag status-pending">待审核</span>
+          </div>
+        </div>
+
+        <!-- 操作栏 -->
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <button class="btn btn-default btn-sm" onclick="selectAll()">全选</button>
+            <button class="btn btn-default btn-sm" onclick="batchAction('approve')">批量通过</button>
+            <button class="btn btn-default btn-sm" onclick="batchAction('reject')">批量驳回</button>
+          </div>
+          <div class="toolbar-right">
+            <button class="btn btn-default" onclick="location.href='personal-import-review.html'">返回列表</button>
+          </div>
+        </div>
+
+        <!-- 数据列表 -->
+        <div class="card">
+          <div class="card-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th width="50"><input type="checkbox" class="checkbox" onclick="toggleCheckAll(this)"></th>
+                  <th>序号</th>
+                  <th>姓名</th>
+                  <th>手机号</th>
+                  <th>身份证号</th>
+                  <th>会员类型</th>
+                  <th>发展来源</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox" class="checkbox" data-id="1"></td>
+                  <td>1</td>
+                  <td>张三</td>
+                  <td>138****8001</td>
+                  <td>110***********1234</td>
+                  <td><span class="tag tag-primary">普通个人会员</span></td>
+                  <td>北京市农学会</td>
+                  <td><span class="status-tag status-pending">待审核</span></td>
+                  <td>
+                    <span class="approve-btn" onclick="singleAction(1, 'approve')">通过</span>
+                    <span style="color: #ddd; margin: 0 4px;">|</span>
+                    <span class="reject-btn" onclick="singleAction(1, 'reject')">驳回</span>
+                    <span style="color: #ddd; margin: 0 4px;">|</span>
+                    <span class="action-link" onclick="location.href='personal-audit-detail.html'">查看</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="checkbox" data-id="2"></td>
+                  <td>2</td>
+                  <td>李四</td>
+                  <td>138****8002</td>
+                  <td>120***********5678</td>
+                  <td><span class="tag tag-primary">普通个人会员</span></td>
+                  <td>上海市农学会</td>
+                  <td><span class="status-tag status-pending">待审核</span></td>
+                  <td>
+                    <span class="approve-btn" onclick="singleAction(2, 'approve')">通过</span>
+                    <span style="color: #ddd; margin: 0 4px;">|</span>
+                    <span class="reject-btn" onclick="singleAction(2, 'reject')">驳回</span>
+                    <span style="color: #ddd; margin: 0 4px;">|</span>
+                    <span class="action-link" onclick="location.href='personal-audit-detail.html'">查看</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="checkbox" data-id="3"></td>
+                  <td>3</td>
+                  <td>王五</td>
+                  <td>139****8003</td>
+                  <td>130***********9012</td>
+                  <td><span class="tag tag-primary">普通个人会员</span></td>
+                  <td>作物学专业委员会</td>
+                  <td><span class="status-tag status-approved">已通过</span></td>
+                  <td>
+                    <span class="action-link" onclick="location.href='personal-audit-detail.html'">查看</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="checkbox" data-id="4"></td>
+                  <td>4</td>
+                  <td>赵六</td>
+                  <td>137****8004</td>
+                  <td>140***********3456</td>
+                  <td><span class="tag tag-primary">普通个人会员</span></td>
+                  <td>园艺学专业委员会</td>
+                  <td>
+                    <span class="status-tag status-rejected">已驳回</span>
+                    <div class="reason-text">信息填写不完整</div>
+                  </td>
+                  <td>
+                    <span class="action-link" onclick="location.href='personal-audit-detail.html'">查看</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="checkbox" data-id="5"></td>
+                  <td>5</td>
+                  <td>孙七</td>
+                  <td>136****8005</td>
+                  <td>150***********7890</td>
+                  <td><span class="tag tag-primary">普通个人会员</span></td>
+                  <td>北京市农学会</td>
+                  <td><span class="status-tag status-pending">待审核</span></td>
+                  <td>
+                    <span class="approve-btn" onclick="singleAction(5, 'approve')">通过</span>
+                    <span style="color: #ddd; margin: 0 4px;">|</span>
+                    <span class="reject-btn" onclick="singleAction(5, 'reject')">驳回</span>
+                    <span style="color: #ddd; margin: 0 4px;">|</span>
+                    <span class="action-link" onclick="location.href='personal-audit-detail.html'">查看</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="pagination">
+              <div class="pagination-info">共 45 条，第 1/9 页</div>
+              <div class="pagination-btns">
+                <button class="btn btn-default btn-sm" disabled>上一页</button>
+                <button class="btn btn-default btn-sm">下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 驳回弹窗 -->
+  <div class="modal" id="rejectModal">
+    <div class="modal-dialog" style="width: 400px;">
+      <div class="modal-header">
+        <span class="modal-title">驳回原因</span>
+        <span class="close-btn" onclick="closeModal('rejectModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">驳回原因 <span class="required">*</span></label>
+          <textarea class="form-textarea" id="rejectReason" rows="4" placeholder="请输入驳回原因"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('rejectModal')">取消</button>
+        <button class="btn btn-primary" onclick="confirmReject()">确认驳回</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script>
+    var currentActionId = null;
+
+    function toggleCheckAll(checkbox) {
+      var checkboxes = document.querySelectorAll('tbody .checkbox');
+      checkboxes.forEach(function(cb) {
+        cb.checked = checkbox.checked;
+      });
+    }
+
+    function selectAll() {
+      var checkboxes = document.querySelectorAll('tbody .checkbox');
+      var allChecked = true;
+      checkboxes.forEach(function(cb) {
+        if (!cb.checked) allChecked = false;
+      });
+      checkboxes.forEach(function(cb) {
+        cb.checked = !allChecked;
+      });
+    }
+
+    function singleAction(id, action) {
+      currentActionId = id;
+      if (action === 'approve') {
+        if (confirm('确定要通过该条数据吗？')) {
+          showToast('操作成功');
+          // 实际应更新状态
+        }
+      } else if (action === 'reject') {
+        openModal('rejectModal');
+      }
+    }
+
+    function batchAction(action) {
+      var checkedBoxes = document.querySelectorAll('tbody .checkbox:checked');
+      if (checkedBoxes.length === 0) {
+        showToast('请先选择数据');
+        return;
+      }
+
+      if (action === 'approve') {
+        if (confirm('确定要通过选中的 ' + checkedBoxes.length + ' 条数据吗？')) {
+          showToast('批量通过成功');
+        }
+      } else if (action === 'reject') {
+        openModal('rejectModal');
+      }
+    }
+
+    function confirmReject() {
+      var reason = document.getElementById('rejectReason').value.trim();
+      if (!reason) {
+        showToast('请输入驳回原因');
+        return;
+      }
+      showToast('驳回成功');
+      closeModal('rejectModal');
+      document.getElementById('rejectReason').value = '';
+    }
+
+    function submitReview() {
+      if (confirm('确定要提交审核结果吗？')) {
+        showToast('提交成功');
+        location.href = 'personal-import-review.html';
+      }
+    }
+
+    function viewMember(id) {
+      showToast('查看会员详情');
+    }
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

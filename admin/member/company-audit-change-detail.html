@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>会员信息变更详情 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .detail-section { margin-bottom: 24px; }
+    .detail-section-title { font-size: 16px; font-weight: 600; color: #333; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #f0f0f0; }
+    .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .info-item { display: flex; padding: 12px 16px; background: #fafafa; border-radius: 8px; }
+    .info-item-label { width: 140px; color: #666; font-size: 14px; flex-shrink: 0; }
+    .info-item-value { color: #333; font-size: 14px; font-weight: 500; }
+
+    .change-table { width: 100%; border-collapse: collapse; }
+    .change-table th { background: #f5f7fa; padding: 12px 16px; text-align: left; font-weight: 500; color: #666; font-size: 14px; border-bottom: 1px solid #e4e7ed; }
+    .change-table td { padding: 14px 16px; border-bottom: 1px solid #f0f0f0; font-size: 14px; vertical-align: top; }
+    .change-table tr:last-child td { border-bottom: none; }
+    .change-field { color: #333; font-weight: 500; }
+    .change-original { color: #999; text-decoration: line-through; background: #fff1f0; padding: 2px 6px; border-radius: 4px; }
+    .change-new { color: #52c41a; background: #f6ffed; padding: 2px 6px; border-radius: 4px; }
+    .arrow-col { color: #999; text-align: center; width: 60px; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">会员信息变更详情</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <a href="#">单位会员</a> / <a href="company-audit.html">会员审核</a> / <span>变更详情</span></div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">变更信息</span>
+          </div>
+          <div class="card-body">
+            <div class="detail-section">
+              <div class="detail-section-title">基本信息</div>
+              <div class="info-grid">
+                <div class="info-item">
+                  <div class="info-item-label">申请编号</div>
+                  <div class="info-item-value">CHG20240513001</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-item-label">变更类型</div>
+                  <div class="info-item-value"><span class="tag tag-info">联系人变更</span></div>
+                </div>
+                <div class="info-item">
+                  <div class="info-item-label">单位名称</div>
+                  <div class="info-item-value">北京科技有限公司</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-item-label">申请时间</div>
+                  <div class="info-item-value">2024-05-13 10:23</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <div class="detail-section-title">变更内容</div>
+              <table class="change-table">
+                <thead>
+                  <tr>
+                    <th width="150">修改字段</th>
+                    <th class="arrow-col">变更</th>
+                    <th>修改内容</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="change-field">联系人姓名</td>
+                    <td class="arrow-col">→</td>
+                    <td><span class="change-original">张总</span> <span class="change-new">张明</span></td>
+                  </tr>
+                  <tr>
+                    <td class="change-field">联系人职务</td>
+                    <td class="arrow-col">→</td>
+                    <td><span class="change-original">董事长</span> <span class="change-new">总经理</span></td>
+                  </tr>
+                  <tr>
+                    <td class="change-field">手机号码</td>
+                    <td class="arrow-col">→</td>
+                    <td><span class="change-original">138****8001</span> <span class="change-new">139****8888</span></td>
+                  </tr>
+                  <tr>
+                    <td class="change-field">电子邮箱</td>
+                    <td class="arrow-col">→</td>
+                    <td><span class="change-original">zhang@company.com</span> <span class="change-new">zhangming@company.com</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="detail-section">
+              <div style="margin-bottom: 16px;">
+                <div style="font-weight: 500; margin-bottom: 8px;">资质材料</div>
+                <div style="display: flex; gap: 12px;">
+                  <div style="padding: 12px; background: #fafafa; border-radius: 4px; text-align: center; cursor: pointer;">
+                    <div style="font-size: 32px;">📄</div>
+                    <div style="font-size: 12px; margin-top: 4px;">新营业执照.jpg</div>
+                  </div>
+                  <div style="padding: 12px; background: #fafafa; border-radius: 4px; text-align: center; cursor: pointer;">
+                    <div style="font-size: 32px;">📄</div>
+                    <div style="font-size: 12px; margin-top: 4px;">联系人身份证.jpg</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <div style="margin-bottom: 16px;">
+                <div style="font-weight: 500; margin-bottom: 8px;">审核意见</div>
+                <textarea class="form-textarea" placeholder="请输入审核意见（驳回时必填）" style="width: 100%; min-height: 80px;"></textarea>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+              <button class="btn btn-default" onclick="location.href='company-audit.html'">返回列表</button>
+              <button class="btn btn-danger" onclick="showToast('已驳回')">驳回</button>
+              <button class="btn btn-success" onclick="showToast('审核通过')">通过</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

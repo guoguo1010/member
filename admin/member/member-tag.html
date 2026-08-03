@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>会员标签管理 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .tag-tree { padding: 8px 0; }
+    .tag-item { display: flex; align-items: center; padding: 10px 16px; border-bottom: 1px solid #f0f0f0; }
+    .tag-item:last-child { border-bottom: none; }
+    .tag-item:hover { background: #fafafa; }
+    .tag-item .tag-name { width: 300px; font-weight: 500; }
+    .tag-item .tag-parent { width: 200px; color: #999; font-size: 13px; text-align: center; }
+    .tag-item .tag-count { width: 120px; text-align: center; color: #666; }
+    .tag-item .tag-status { width: 100px; text-align: center; }
+    .tag-item .tag-display { width: 100px; text-align: center; }
+    .tag-item .tag-actions { flex: 1; text-align: right; }
+    .child-tag { padding-left: 40px; background: #fafafa; }
+    .child-tag .tag-name { color: #666; font-weight: normal; }
+    .parent-tag { font-weight: 600; }
+    .parent-tag .tag-name { color: #333; }
+    .tag-level-1 { padding-left: 0; }
+    .tag-toggle { cursor: pointer; margin-right: 8px; color: #999; }
+    .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 22px; }
+    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+    input:checked + .slider { background-color: #52c41a; }
+    input:checked + .slider:before { transform: translateX(18px); }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">会员标签管理</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <a href="#">会员角色</a> / <span>会员标签</span></div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">会员标签列表</span>
+            <div class="card-tools">
+              <button class="btn btn-default" onclick="openModal('addParentTagModal')" style="margin-right: 8px;">+ 新增父级标签</button>
+              <button class="btn btn-primary" onclick="openModal('addTagModal')">+ 新增子级标签</button>
+            </div>
+          </div>
+          <div class="card-body" style="padding: 0;">
+            <div class="tag-tree">
+              <!-- 表头 -->
+              <div class="tag-item" style="background: #fafafa; font-weight: 600; color: #666; font-size: 13px;">
+                <div class="tag-name" style="padding-left: 24px;">标签名称</div>
+                <div class="tag-parent">父级</div>
+                <div class="tag-count">会员数</div>
+                <div class="tag-status">状态</div>
+                <div class="tag-display">对外展示</div>
+                <div class="tag-actions">操作</div>
+              </div>
+              <!-- 父级标签：行业 -->
+              <div class="tag-item parent-tag tag-level-1">
+                <span class="tag-toggle" onclick="toggleChildren(this)">▼</span>
+                <div class="tag-name">行业</div>
+                <div class="tag-parent">-</div>
+                <div class="tag-count">156</div>
+                <div class="tag-status">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleStatus(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-display">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleDisplay(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-actions">
+                  <button class="btn btn-default btn-sm" onclick="addChildTag('行业')">新增子级</button>
+                  <button class="btn btn-default btn-sm" onclick="openModal('editTagModal')">编辑</button>
+                  <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该标签吗？')) { showToast('已删除'); }">删除</button>
+                </div>
+              </div>
+              <!-- 子级标签 -->
+              <div class="tag-item child-tag">
+                <div class="tag-name">高新技术企业</div>
+                <div class="tag-parent">行业</div>
+                <div class="tag-count">89</div>
+                <div class="tag-status">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleStatus(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-display">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleDisplay(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-actions">
+                  <button class="btn btn-default btn-sm" onclick="openModal('editTagModal')">编辑</button>
+                  <button class="btn btn-default btn-sm" onclick="location.href='tag-member-assign.html'">分配会员</button>
+                  <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该标签吗？')) { showToast('已删除'); }">删除</button>
+                </div>
+              </div>
+              <div class="tag-item child-tag">
+                <div class="tag-name">农业科技企业</div>
+                <div class="tag-parent">行业</div>
+                <div class="tag-count">45</div>
+                <div class="tag-status">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleStatus(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-display">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleDisplay(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-actions">
+                  <button class="btn btn-default btn-sm" onclick="openModal('editTagModal')">编辑</button>
+                  <button class="btn btn-default btn-sm" onclick="location.href='tag-member-assign.html'">分配会员</button>
+                  <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该标签吗？')) { showToast('已删除'); }">删除</button>
+                </div>
+              </div>
+              <div class="tag-item child-tag">
+                <div class="tag-name">龙头企业</div>
+                <div class="tag-parent">行业</div>
+                <div class="tag-count">22</div>
+                <div class="tag-status">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleStatus(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-display">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" onchange="toggleDisplay(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-actions">
+                  <button class="btn btn-default btn-sm" onclick="openModal('editTagModal')">编辑</button>
+                  <button class="btn btn-default btn-sm" onclick="location.href='tag-member-assign.html'">分配会员</button>
+                  <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该标签吗？')) { showToast('已删除'); }">删除</button>
+                </div>
+              </div>
+
+              <!-- 父级标签：等级 -->
+              <div class="tag-item parent-tag tag-level-1">
+                <span class="tag-toggle" onclick="toggleChildren(this)">▼</span>
+                <div class="tag-name">等级</div>
+                <div class="tag-parent">-</div>
+                <div class="tag-count">89</div>
+                <div class="tag-status">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleStatus(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-display">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleDisplay(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-actions">
+                  <button class="btn btn-default btn-sm" onclick="addChildTag('等级')">新增子级</button>
+                  <button class="btn btn-default btn-sm" onclick="openModal('editTagModal')">编辑</button>
+                  <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该标签吗？')) { showToast('已删除'); }">删除</button>
+                </div>
+              </div>
+              <div class="tag-item child-tag">
+                <div class="tag-name">AAAA级会员</div>
+                <div class="tag-parent">等级</div>
+                <div class="tag-count">56</div>
+                <div class="tag-status">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleStatus(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-display">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleDisplay(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-actions">
+                  <button class="btn btn-default btn-sm" onclick="openModal('editTagModal')">编辑</button>
+                  <button class="btn btn-default btn-sm" onclick="location.href='tag-member-assign.html'">分配会员</button>
+                  <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该标签吗？')) { showToast('已删除'); }">删除</button>
+                </div>
+              </div>
+              <div class="tag-item child-tag">
+                <div class="tag-name">AAA级会员</div>
+                <div class="tag-parent">等级</div>
+                <div class="tag-count">33</div>
+                <div class="tag-status">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleStatus(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-display">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleDisplay(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-actions">
+                  <button class="btn btn-default btn-sm" onclick="openModal('editTagModal')">编辑</button>
+                  <button class="btn btn-default btn-sm" onclick="location.href='tag-member-assign.html'">分配会员</button>
+                  <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该标签吗？')) { showToast('已删除'); }">删除</button>
+                </div>
+              </div>
+
+              <!-- 父级标签：活跃度 -->
+              <div class="tag-item parent-tag tag-level-1">
+                <span class="tag-toggle" onclick="toggleChildren(this)">▼</span>
+                <div class="tag-name">活跃度</div>
+                <div class="tag-parent">-</div>
+                <div class="tag-count">2,345</div>
+                <div class="tag-status">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleStatus(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-display">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" onchange="toggleDisplay(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-actions">
+                  <button class="btn btn-default btn-sm" onclick="addChildTag('活跃度')">新增子级</button>
+                  <button class="btn btn-default btn-sm" onclick="openModal('editTagModal')">编辑</button>
+                  <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该标签吗？')) { showToast('已删除'); }">删除</button>
+                </div>
+              </div>
+              <div class="tag-item child-tag">
+                <div class="tag-name">活跃会员</div>
+                <div class="tag-parent">活跃度</div>
+                <div class="tag-count">1,500</div>
+                <div class="tag-status">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleStatus(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-display">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleDisplay(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-actions">
+                  <button class="btn btn-default btn-sm" onclick="openModal('editTagModal')">编辑</button>
+                  <button class="btn btn-default btn-sm" onclick="location.href='tag-member-assign.html'">分配会员</button>
+                  <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该标签吗？')) { showToast('已删除'); }">删除</button>
+                </div>
+              </div>
+              <div class="tag-item child-tag">
+                <div class="tag-name">沉默会员</div>
+                <div class="tag-parent">活跃度</div>
+                <div class="tag-count">845</div>
+                <div class="tag-status">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleStatus(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-display">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" onchange="toggleDisplay(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-actions">
+                  <button class="btn btn-default btn-sm" onclick="openModal('editTagModal')">编辑</button>
+                  <button class="btn btn-default btn-sm" onclick="location.href='tag-member-assign.html'">分配会员</button>
+                  <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该标签吗？')) { showToast('已删除'); }">删除</button>
+                </div>
+              </div>
+
+              <!-- 父级标签：地域 -->
+              <div class="tag-item parent-tag tag-level-1">
+                <span class="tag-toggle" onclick="toggleChildren(this)">▼</span>
+                <div class="tag-name">地域</div>
+                <div class="tag-parent">-</div>
+                <div class="tag-count">1,234</div>
+                <div class="tag-status">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleStatus(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-display">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleDisplay(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-actions">
+                  <button class="btn btn-default btn-sm" onclick="addChildTag('地域')">新增子级</button>
+                  <button class="btn btn-default btn-sm" onclick="openModal('editTagModal')">编辑</button>
+                  <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该标签吗？')) { showToast('已删除'); }">删除</button>
+                </div>
+              </div>
+              <div class="tag-item child-tag">
+                <div class="tag-name">北京地区</div>
+                <div class="tag-parent">地域</div>
+                <div class="tag-count">500</div>
+                <div class="tag-status">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleStatus(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-display">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleDisplay(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-actions">
+                  <button class="btn btn-default btn-sm" onclick="openModal('editTagModal')">编辑</button>
+                  <button class="btn btn-default btn-sm" onclick="location.href='tag-member-assign.html'">分配会员</button>
+                  <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该标签吗？')) { showToast('已删除'); }">删除</button>
+                </div>
+              </div>
+              <div class="tag-item child-tag">
+                <div class="tag-name">上海地区</div>
+                <div class="tag-parent">地域</div>
+                <div class="tag-count">400</div>
+                <div class="tag-status">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleStatus(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-display">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleDisplay(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-actions">
+                  <button class="btn btn-default btn-sm" onclick="openModal('editTagModal')">编辑</button>
+                  <button class="btn btn-default btn-sm" onclick="location.href='tag-member-assign.html'">分配会员</button>
+                  <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该标签吗？')) { showToast('已删除'); }">删除</button>
+                </div>
+              </div>
+              <div class="tag-item child-tag">
+                <div class="tag-name">广东地区</div>
+                <div class="tag-parent">地域</div>
+                <div class="tag-count">334</div>
+                <div class="tag-status">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" checked onchange="toggleStatus(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-display">
+                  <label class="switch" onclick.stop>
+                    <input type="checkbox" onchange="toggleDisplay(this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="tag-actions">
+                  <button class="btn btn-default btn-sm" onclick="openModal('editTagModal')">编辑</button>
+                  <button class="btn btn-default btn-sm" onclick="location.href='tag-member-assign.html'">分配会员</button>
+                  <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该标签吗？')) { showToast('已删除'); }">删除</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增父级标签弹窗 -->
+  <div class="modal" id="addParentTagModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">新增父级标签</span>
+        <span class="close-btn" onclick="closeModal('addParentTagModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">标签名称 <span class="required">*</span></label>
+          <div style="position: relative;">
+            <input type="text" class="form-input" id="parentTagName" placeholder="请输入父级标签名称" maxlength="50" oninput="updateCharCount(this, 'parentTagCount')">
+            <span style="position: absolute; right: 10px; bottom: 8px; font-size: 12px; color: #999;" id="parentTagCount">0/50</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('addParentTagModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('addParentTagModal'); showToast('添加成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增子级标签弹窗 -->
+  <div class="modal" id="addTagModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">新增子级标签</span>
+        <span class="close-btn" onclick="closeModal('addTagModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">所属父级 <span class="required">*</span></label>
+          <select class="form-select" id="childTagParent">
+            <option value="">请选择父级标签</option>
+            <option>行业</option>
+            <option>等级</option>
+            <option>活跃度</option>
+            <option>地域</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">标签名称 <span class="required">*</span></label>
+          <div style="position: relative;">
+            <input type="text" class="form-input" placeholder="请输入子级标签名称" maxlength="50" oninput="updateCharCount(this, 'childTagNameCount')">
+            <span style="position: absolute; right: 10px; bottom: 8px; font-size: 12px; color: #999;" id="childTagNameCount">0/50</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('addTagModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('addTagModal'); showToast('添加成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 从父级行新增子级标签弹窗 -->
+  <div class="modal" id="addChildTagModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">新增子级标签</span>
+        <span class="close-btn" onclick="closeModal('addChildTagModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">所属父级</label>
+          <input type="text" class="form-input" id="childTagParentName" readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label">标签名称 <span class="required">*</span></label>
+          <div style="position: relative;">
+            <input type="text" class="form-input" placeholder="请输入子级标签名称" maxlength="50" oninput="updateCharCount(this, 'childTagInlineCount')">
+            <span style="position: absolute; right: 10px; bottom: 8px; font-size: 12px; color: #999;" id="childTagInlineCount">0/50</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('addChildTagModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('addChildTagModal'); showToast('添加成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑标签弹窗 -->
+  <div class="modal" id="editTagModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">编辑标签</span>
+        <span class="close-btn" onclick="closeModal('editTagModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">标签名称</label>
+          <div style="position: relative;">
+            <input type="text" class="form-input" id="editTagName" value="高新技术企业" maxlength="50" oninput="updateCharCount(this, 'editTagCount')">
+            <span style="position: absolute; right: 10px; bottom: 8px; font-size: 12px; color: #999;" id="editTagCount">0/50</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('editTagModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('editTagModal'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script>
+    window.addEventListener('load', function() {
+      var origOpenModal = window.openModal;
+      var origCloseModal = window.closeModal;
+      window.openModal = function(id) {
+        origOpenModal(id);
+        if (id === 'editTagModal') {
+          setTimeout(function() { initCharCount('editTagName', 'editTagCount'); }, 0);
+        }
+      };
+      window.closeModal = origCloseModal;
+    });
+    function updateCharCount(input, counterId) {
+      document.getElementById(counterId).textContent = input.value.length + '/50';
+    }
+    function initCharCount(inputId, counterId) {
+      var input = document.getElementById(inputId);
+      if (input) updateCharCount(input, counterId);
+    }
+    function toggleStatus(el) {
+      var isChecked = el.checked;
+      showToast(isChecked ? '已启用' : '已禁用');
+    }
+    function toggleDisplay(el) {
+      var isChecked = el.checked;
+      showToast(isChecked ? '已开启对外展示' : '已关闭对外展示');
+    }
+    function addChildTag(parentName) {
+      document.getElementById('childTagParentName').value = parentName;
+      openModal('addChildTagModal');
+    }
+    function toggleChildren(el) {
+      var item = el.closest('.tag-item');
+      var nextEl = item.nextElementSibling;
+      var isExpanded = el.textContent === '▼';
+
+      if (isExpanded) {
+        el.textContent = '▶';
+        while (nextEl && nextEl.classList.contains('child-tag')) {
+          nextEl.style.display = 'none';
+          nextEl = nextEl.nextElementSibling;
+        }
+      } else {
+        el.textContent = '▼';
+        while (nextEl && nextEl.classList.contains('child-tag')) {
+          nextEl.style.display = '';
+          nextEl = nextEl.nextElementSibling;
+        }
+      }
+    }
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

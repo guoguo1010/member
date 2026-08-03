@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>批次发送详情 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">批次发送详情</div>
+          <div class="breadcrumb">
+            <a href="notice-log.html">发送记录</a> / <span>批次详情</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <span class="card-title">批次信息</span>
+          </div>
+          <div class="card-body">
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">批次名称</label>
+                <div style="color: #333;">2024年会员代表大会通知</div>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">站内信类型</label>
+                <div style="color: #333;"><span class="tag tag-success">通知公告</span></div>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">发送范围</label>
+                <div style="color: #333;">全体会员</div>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">发送时间</label>
+                <div style="color: #333;">2024-05-13 09:00:00</div>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">发送人数</label>
+                <div style="color: #333;">5,280 人</div>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">已读数</label>
+                <div style="color: #52c41a;">4,256 人</div>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">回复数</label>
+                <div style="color: #1890ff;">326 人</div>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">阅读率</label>
+                <div style="color: #333;">80.6%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <span class="card-title">信件内容</span>
+          </div>
+          <div class="card-body">
+            <div style="padding: 16px; background: #fafafa; border-radius: 4px;">
+              <div style="font-size: 15px; font-weight: 500; color: #333; margin-bottom: 12px;">【通知公告】关于召开2024年度会员代表大会的通知</div>
+              <div style="font-size: 14px; color: #666; line-height: 1.8;">
+                <p>各位会员：</p>
+                <p style="margin-top: 12px;">经研究决定，中国农学会定于2024年6月15日召开2024年度会员代表大会。届时请各位会员准时参加，具体事项通知如下：</p>
+                <p style="margin-top: 12px;">一、会议时间：2024年6月15日（周六）9:00-17:00</p>
+                <p style="margin-top: 8px;">二、会议地点：北京国际会议中心</p>
+                <p style="margin-top: 8px;">三、会议内容：年度工作总结、财务报告、换届选举等</p>
+                <p style="margin-top: 8px;">四、注意事项：请于6月1日前确认参会情况</p>
+                <p style="margin-top: 16px;">中国农学会<br>2024年5月13日</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">发送明细</span>
+            <div class="card-tools">
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="search-bar">
+              <div class="search-item">
+                <label>姓名：</label>
+                <input type="text" class="form-input" placeholder="请输入姓名" style="width: 100px;">
+              </div>
+              <div class="search-item">
+                <label>手机号：</label>
+                <input type="text" class="form-input" placeholder="请输入手机号" style="width: 130px;">
+              </div>
+              <div class="search-item">
+                <label>会员类型：</label>
+                <select class="form-select" style="width: 110px;">
+                  <option>全部</option>
+                  <option>个人会员</option>
+                  <option>单位会员</option>
+                </select>
+              </div>
+              <div class="search-item">
+                <label>阅读状态：</label>
+                <select class="form-select" style="width: 100px;">
+                  <option>全部</option>
+                  <option>已读</option>
+                  <option>未读</option>
+                </select>
+              </div>
+              <div class="search-item">
+                <label>回复状态：</label>
+                <select class="form-select" style="width: 100px;">
+                  <option>全部</option>
+                  <option>已回复</option>
+                  <option>未回复</option>
+                </select>
+              </div>
+              <button class="btn btn-default btn-sm">查询</button>
+              <button class="btn btn-default btn-sm">重置</button>
+            </div>
+
+            <table class="table" id="batchDetailTable">
+              <thead>
+                <tr>
+                  <th>姓名</th>
+                  <th>手机号</th>
+                  <th>会员类型</th>
+                  <th>发展来源</th>
+                  <th>发送时间</th>
+                  <th>阅读状态</th>
+                  <th>阅读时间</th>
+                  <th>回复状态</th>
+                  <th>回复时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>                  <td>张三</td>
+                  <td>138****8001</td>
+                  <td><span class="tag tag-primary">普通个人会员</span></td>
+                  <td>自主入会</td>
+                  <td>2024-05-13 09:00:15</td>
+                  <td><span class="tag tag-success">已读</span></td>
+                  <td>2024-05-13 10:23:45</td>
+                  <td><span class="tag tag-success">是</span></td>
+                  <td>2024-05-14 08:30:22</td>
+                  <td><button class="btn btn-default btn-sm" onclick="openModal('replyModal')">查看回复</button></td>
+                </tr>
+                <tr>                  <td>李四</td>
+                  <td>139****8002</td>
+                  <td><span class="tag tag-warning">普通单位会员</span></td>
+                  <td>推荐入会</td>
+                  <td>2024-05-13 09:00:28</td>
+                  <td><span class="tag tag-success">已读</span></td>
+                  <td>2024-05-13 14:56:12</td>
+                  <td><span class="tag tag-default">否</span></td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+                <tr>                  <td>王五</td>
+                  <td>137****8003</td>
+                  <td><span class="tag tag-success">理事单位会员</span></td>
+                  <td>机构推荐</td>
+                  <td>2024-05-13 09:00:35</td>
+                  <td><span class="tag tag-success">已读</span></td>
+                  <td>2024-05-13 16:42:08</td>
+                  <td><span class="tag tag-success">是</span></td>
+                  <td>2024-05-14 09:15:33</td>
+                  <td><button class="btn btn-default btn-sm" onclick="openModal('replyModal')">查看回复</button></td>
+                </tr>
+                <tr>                  <td>赵六</td>
+                  <td>136****8004</td>
+                  <td><span class="tag tag-primary">普通个人会员</span></td>
+                  <td>自主入会</td>
+                  <td>2024-05-13 09:00:42</td>
+                  <td><span class="tag tag-warning">未读</span></td>
+                  <td>-</td>
+                  <td><span class="tag tag-default">否</span></td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+                <tr>                  <td>钱七</td>
+                  <td>135****8005</td>
+                  <td><span class="tag tag-warning">普通单位会员</span></td>
+                  <td>推荐入会</td>
+                  <td>2024-05-13 09:00:55</td>
+                  <td><span class="tag tag-success">已读</span></td>
+                  <td>2024-05-13 18:20:11</td>
+                  <td><span class="tag tag-success">是</span></td>
+                  <td>2024-05-15 10:05:44</td>
+                  <td><button class="btn btn-default btn-sm" onclick="openModal('replyModal')">查看回复</button></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="pagination">
+              <div class="pagination-info">共 5,280 条</div>
+              <div class="pagination-btns">
+                <button class="page-btn" disabled>上一页</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">...</button>
+                <button class="page-btn">106</button>
+                <button class="page-btn">下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 查看回复弹窗 -->
+  <div class="modal" id="replyModal">
+    <div class="modal-dialog" style="max-height: 85vh; display: flex; flex-direction: column; overflow: hidden;">
+      <div class="modal-header">
+        <span class="modal-title">查看回复内容</span>
+        <span class="close-btn" onclick="closeModal('replyModal')">✕</span>
+      </div>
+      <div class="modal-body" style="flex: 1; overflow-y: auto; padding: 20px 24px;">
+        <div class="form-group">
+          <label class="form-label">姓名</label>
+          <div style="color: #333;">张三</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">手机号</label>
+          <div style="color: #333;">138****8001</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">会员类型</label>
+          <div style="color: #333;"><span class="tag tag-primary">普通个人会员</span></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">发展来源</label>
+          <div style="color: #333;">自主入会</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">发送时间</label>
+          <div style="color: #333;">2024-05-13 09:00:15</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">阅读时间</label>
+          <div style="color: #333;">2024-05-13 10:23:45</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">回复时间</label>
+          <div style="color: #333;">2024-05-14 08:30:22</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">回复内容</label>
+          <div style="padding: 12px; background: #fafafa; border-radius: 4px; color: #333; line-height: 1.8;">
+            您好！收到会议通知，我确认参加本次会员代表大会。届时会准时到达会场，谢谢通知！
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('replyModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

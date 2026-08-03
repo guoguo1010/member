@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>会员证书管理 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 2px solid #f0f0f0; }
+    .tab-item { padding: 12px 24px; font-size: 14px; color: #666; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.3s; }
+    .tab-item:hover { color: #1890ff; }
+    .tab-item.active { color: #1890ff; border-bottom-color: #1890ff; font-weight: 500; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">会员证书管理</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <a href="#">会员角色</a> / <span>会员证书</span></div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="tabs">
+          <div class="tab-item active" onclick="switchTab(this, 'personal')">个人会员证书</div>
+          <div class="tab-item" onclick="switchTab(this, 'company')">单位会员证书</div>
+        </div>
+
+        <!-- 个人会员证书 -->
+        <div id="personalTab" class="tab-content active">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">证书样式配置</span>
+            <div class="card-tools">
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="cert-editor">
+              <!-- 左侧：证书编辑区 -->
+              <div>
+                <div style="margin-bottom: 16px;">
+                  <span style="font-weight: 500;">证书背景图</span>
+                  <button class="btn btn-default btn-sm ml-10" onclick="showToast('选择文件')">上传背景图</button>
+                </div>
+                <div class="cert-canvas" style="height: 400px; position: relative; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+                  <div style="position: absolute; top: 30px; left: 50%; transform: translateX(-50%); font-size: 28px; font-weight: 600; color: #fff;">会员证书</div>
+                  <div style="position: absolute; top: 90px; left: 50%; transform: translateX(-50%); text-align: center; font-size: 32px; font-weight: 600; color: gold; border-bottom: 2px solid gold; padding: 0 40px 8px;">张三</div>
+                  <div style="position: absolute; top: 160px; left: 50%; transform: translateX(-50%); text-align: center; font-size: 14px; color: rgba(255,255,255,0.7);">
+                    普通个人会员
+                  </div>
+                  <div style="position: absolute; top: 195px; left: 50%; transform: translateX(-50%); text-align: center; font-size: 12px; color: rgba(255,255,255,0.7);">
+                    工作单位：中国科学院农业研究所
+                  </div>
+                  <div style="position: absolute; top: 218px; left: 50%; transform: translateX(-50%); text-align: center; font-size: 12px; color: rgba(255,255,255,0.7);">
+                    职称：高级研究员
+                  </div>
+                  <div style="position: absolute; top: 250px; left: 50%; transform: translateX(-50%); text-align: center; font-size: 12px; color: rgba(255,255,255,0.7);">
+                    会员编号：M20240500001
+                  </div>
+                  <div style="position: absolute; top: 275px; left: 50%; transform: translateX(-50%); text-align: center; font-size: 12px; color: rgba(255,255,255,0.7);">
+                    有效期至：2027-05-13
+                  </div>
+                  <div style="position: absolute; bottom: 50px; left: 40px; font-size: 12px; color: rgba(255,255,255,0.7);">
+                    发证日期：2024-05-13
+                  </div>
+                  <div style="position: absolute; bottom: 40px; right: 40px; width: 80px; height: 80px; border: 3px solid gold; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: gold; text-align: center;">中国农业学会<br>公章</div>
+                </div>
+              </div>
+
+              <!-- 右侧：字段配置 -->
+              <div class="cert-props">
+                <h4>字段配置</h4>
+                <p style="color: #666; font-size: 12px; margin-bottom: 16px;">拖拽字段到证书预览区调整位置</p>
+
+                <div style="margin-bottom: 16px;">
+                  <div style="font-size: 13px; font-weight: 500; margin-bottom: 8px;">可选字段</div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    <span class="tag tag-default" style="cursor: pointer;" onclick="addField('姓名', 180, 100, 32)">姓名</span>
+                    <span class="tag tag-default" style="cursor: pointer;" onclick="addField('会员编号', 180, 250, 12)">会员编号</span>
+                    <span class="tag tag-default" style="cursor: pointer;" onclick="addField('会员类型', 180, 200, 14)">会员类型</span>
+                    <span class="tag tag-default" style="cursor: pointer;" onclick="addField('有效期', 180, 280, 12)">有效期</span>
+                    <span class="tag tag-default" style="cursor: pointer;" onclick="addField('发证日期', 40, 330, 12)">发证日期</span>
+                    <span class="tag tag-default" style="cursor: pointer;" onclick="addField('工作单位', 180, 150, 14)">工作单位</span>
+                    <span class="tag tag-default" style="cursor: pointer;" onclick="addField('职称', 180, 180, 14)">职称</span>
+                  </div>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                  <div style="font-size: 13px; font-weight: 500; margin-bottom: 8px;">已添加字段</div>
+                  <div id="addedFields">
+                    <div class="field-config" style="margin-bottom: 8px; padding: 8px; border: 1px solid #e8e8e8; border-radius: 4px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>姓名</span>
+                        <button class="btn btn-default btn-sm" style="padding: 2px 6px; color: #ff4d4f;" onclick="removeField(this, '姓名')">移除</button>
+                      </div>
+                      <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 12px; color: #666;">
+                        <span>X:</span><input type="number" class="form-input" value="180" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>Y:</span><input type="number" class="form-input" value="90" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>字号:</span><input type="number" class="form-input" value="32" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                      </div>
+                    </div>
+                    <div class="field-config" style="margin-bottom: 8px; padding: 8px; border: 1px solid #e8e8e8; border-radius: 4px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>会员类型</span>
+                        <button class="btn btn-default btn-sm" style="padding: 2px 6px; color: #ff4d4f;" onclick="removeField(this, '会员类型')">移除</button>
+                      </div>
+                      <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 12px; color: #666;">
+                        <span>X:</span><input type="number" class="form-input" value="180" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>Y:</span><input type="number" class="form-input" value="180" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>字号:</span><input type="number" class="form-input" value="14" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                      </div>
+                    </div>
+                    <div class="field-config" style="margin-bottom: 8px; padding: 8px; border: 1px solid #e8e8e8; border-radius: 4px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>工作单位</span>
+                        <button class="btn btn-default btn-sm" style="padding: 2px 6px; color: #ff4d4f;" onclick="removeField(this, '工作单位')">移除</button>
+                      </div>
+                      <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 12px; color: #666;">
+                        <span>X:</span><input type="number" class="form-input" value="180" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>Y:</span><input type="number" class="form-input" value="215" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>字号:</span><input type="number" class="form-input" value="12" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                      </div>
+                    </div>
+                    <div class="field-config" style="margin-bottom: 8px; padding: 8px; border: 1px solid #e8e8e8; border-radius: 4px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>职称</span>
+                        <button class="btn btn-default btn-sm" style="padding: 2px 6px; color: #ff4d4f;" onclick="removeField(this, '职称')">移除</button>
+                      </div>
+                      <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 12px; color: #666;">
+                        <span>X:</span><input type="number" class="form-input" value="180" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>Y:</span><input type="number" class="form-input" value="238" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>字号:</span><input type="number" class="form-input" value="12" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                      </div>
+                    </div>
+                    <div class="field-config" style="margin-bottom: 8px; padding: 8px; border: 1px solid #e8e8e8; border-radius: 4px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>会员编号</span>
+                        <button class="btn btn-default btn-sm" style="padding: 2px 6px; color: #ff4d4f;" onclick="removeField(this, '会员编号')">移除</button>
+                      </div>
+                      <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 12px; color: #666;">
+                        <span>X:</span><input type="number" class="form-input" value="180" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>Y:</span><input type="number" class="form-input" value="270" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>字号:</span><input type="number" class="form-input" value="12" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                      </div>
+                    </div>
+                    <div class="field-config" style="margin-bottom: 8px; padding: 8px; border: 1px solid #e8e8e8; border-radius: 4px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>有效期</span>
+                        <button class="btn btn-default btn-sm" style="padding: 2px 6px; color: #ff4d4f;" onclick="removeField(this, '有效期')">移除</button>
+                      </div>
+                      <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 12px; color: #666;">
+                        <span>X:</span><input type="number" class="form-input" value="180" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>Y:</span><input type="number" class="form-input" value="295" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>字号:</span><input type="number" class="form-input" value="12" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                      </div>
+                    </div>
+                    <div class="field-config" style="margin-bottom: 8px; padding: 8px; border: 1px solid #e8e8e8; border-radius: 4px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>发证日期</span>
+                        <button class="btn btn-default btn-sm" style="padding: 2px 6px; color: #ff4d4f;" onclick="removeField(this, '发证日期')">移除</button>
+                      </div>
+                      <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 12px; color: #666;">
+                        <span>X:</span><input type="number" class="form-input" value="40" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>Y:</span><input type="number" class="form-input" value="350" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>字号:</span><input type="number" class="form-input" value="12" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <!-- 单位会员证书 -->
+        <div id="companyTab" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">证书样式配置</span>
+            <div class="card-tools">
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="cert-editor">
+              <!-- 左侧：证书编辑区 -->
+              <div>
+                <div style="margin-bottom: 16px;">
+                  <span style="font-weight: 500;">证书背景图</span>
+                  <button class="btn btn-default btn-sm ml-10" onclick="showToast('选择文件')">上传背景图</button>
+                </div>
+                <div class="cert-canvas" style="height: 400px; position: relative; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+                  <div style="position: absolute; top: 30px; left: 50%; transform: translateX(-50%); font-size: 28px; font-weight: 600; color: #fff;">会员证书</div>
+                  <div style="position: absolute; top: 90px; left: 50%; transform: translateX(-50%); text-align: center; font-size: 28px; font-weight: 600; color: gold; border-bottom: 2px solid gold; padding: 0 40px 8px;">北京科技有限公司</div>
+                  <div style="position: absolute; top: 155px; left: 50%; transform: translateX(-50%); text-align: center; font-size: 14px; color: rgba(255,255,255,0.7);">
+                    理事单位会员
+                  </div>
+                  <div style="position: absolute; top: 188px; left: 50%; transform: translateX(-50%); text-align: center; font-size: 12px; color: rgba(255,255,255,0.7);">
+                    法定代表人：张三
+                  </div>
+                  <div style="position: absolute; top: 210px; left: 50%; transform: translateX(-50%); text-align: center; font-size: 12px; color: rgba(255,255,255,0.7);">
+                    统一社会信用代码：91110000XXXXXXXX
+                  </div>
+                  <div style="position: absolute; top: 240px; left: 50%; transform: translateX(-50%); text-align: center; font-size: 12px; color: rgba(255,255,255,0.7);">
+                    会员编号：ORG20240500001
+                  </div>
+                  <div style="position: absolute; top: 265px; left: 50%; transform: translateX(-50%); text-align: center; font-size: 12px; color: rgba(255,255,255,0.7);">
+                    有效期至：2027-05-13
+                  </div>
+                  <div style="position: absolute; bottom: 50px; left: 40px; font-size: 12px; color: rgba(255,255,255,0.7);">
+                    发证日期：2024-05-13
+                  </div>
+                  <div style="position: absolute; bottom: 40px; right: 40px; width: 80px; height: 80px; border: 3px solid gold; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: gold; text-align: center;">中国农业学会<br>公章</div>
+                </div>
+              </div>
+
+              <!-- 右侧：字段配置 -->
+              <div class="cert-props">
+                <h4>字段配置</h4>
+                <p style="color: #666; font-size: 12px; margin-bottom: 16px;">拖拽字段到证书预览区调整位置</p>
+
+                <div style="margin-bottom: 16px;">
+                  <div style="font-size: 13px; font-weight: 500; margin-bottom: 8px;">可选字段</div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    <span class="tag tag-default" style="cursor: pointer;" onclick="addCompanyField('单位名称', 180, 100, 28)">单位名称</span>
+                    <span class="tag tag-default" style="cursor: pointer;" onclick="addCompanyField('会员编号', 180, 220, 12)">会员编号</span>
+                    <span class="tag tag-default" style="cursor: pointer;" onclick="addCompanyField('会员类型', 180, 180, 14)">会员类型</span>
+                    <span class="tag tag-default" style="cursor: pointer;" onclick="addCompanyField('有效期', 180, 250, 12)">有效期</span>
+                    <span class="tag tag-default" style="cursor: pointer;" onclick="addCompanyField('发证日期', 40, 330, 12)">发证日期</span>
+                    <span class="tag tag-default" style="cursor: pointer;" onclick="addCompanyField('法定代表人', 180, 140, 14)">法定代表人</span>
+                    <span class="tag tag-default" style="cursor: pointer;" onclick="addCompanyField('统一社会信用代码', 40, 310, 10)">统一社会信用代码</span>
+                  </div>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                  <div style="font-size: 13px; font-weight: 500; margin-bottom: 8px;">已添加字段</div>
+                  <div id="addedCompanyFields">
+                    <div class="field-config" style="margin-bottom: 8px; padding: 8px; border: 1px solid #e8e8e8; border-radius: 4px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>单位名称</span>
+                        <button class="btn btn-default btn-sm" style="padding: 2px 6px; color: #ff4d4f;" onclick="removeCompanyField(this, '单位名称')">移除</button>
+                      </div>
+                      <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 12px; color: #666;">
+                        <span>X:</span><input type="number" class="form-input" value="180" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>Y:</span><input type="number" class="form-input" value="90" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>字号:</span><input type="number" class="form-input" value="28" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                      </div>
+                    </div>
+                    <div class="field-config" style="margin-bottom: 8px; padding: 8px; border: 1px solid #e8e8e8; border-radius: 4px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>会员类型</span>
+                        <button class="btn btn-default btn-sm" style="padding: 2px 6px; color: #ff4d4f;" onclick="removeCompanyField(this, '会员类型')">移除</button>
+                      </div>
+                      <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 12px; color: #666;">
+                        <span>X:</span><input type="number" class="form-input" value="180" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>Y: 170</span>
+                        <span>字号:</span><input type="number" class="form-input" value="14" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                      </div>
+                    </div>
+                    <div class="field-config" style="margin-bottom: 8px; padding: 8px; border: 1px solid #e8e8e8; border-radius: 4px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>法定代表人</span>
+                        <button class="btn btn-default btn-sm" style="padding: 2px 6px; color: #ff4d4f;" onclick="removeCompanyField(this, '法定代表人')">移除</button>
+                      </div>
+                      <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 12px; color: #666;">
+                        <span>X:</span><input type="number" class="form-input" value="180" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>Y: 205</span>
+                        <span>字号:</span><input type="number" class="form-input" value="12" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                      </div>
+                    </div>
+                    <div class="field-config" style="margin-bottom: 8px; padding: 8px; border: 1px solid #e8e8e8; border-radius: 4px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>统一社会信用代码</span>
+                        <button class="btn btn-default btn-sm" style="padding: 2px 6px; color: #ff4d4f;" onclick="removeCompanyField(this, '统一社会信用代码')">移除</button>
+                      </div>
+                      <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 12px; color: #666;">
+                        <span>X:</span><input type="number" class="form-input" value="40" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>Y: 228</span>
+                        <span>字号:</span><input type="number" class="form-input" value="12" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                      </div>
+                    </div>
+                    <div class="field-config" style="margin-bottom: 8px; padding: 8px; border: 1px solid #e8e8e8; border-radius: 4px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>会员编号</span>
+                        <button class="btn btn-default btn-sm" style="padding: 2px 6px; color: #ff4d4f;" onclick="removeCompanyField(this, '会员编号')">移除</button>
+                      </div>
+                      <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 12px; color: #666;">
+                        <span>X:</span><input type="number" class="form-input" value="180" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>Y: 258</span>
+                        <span>字号:</span><input type="number" class="form-input" value="12" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                      </div>
+                    </div>
+                    <div class="field-config" style="margin-bottom: 8px; padding: 8px; border: 1px solid #e8e8e8; border-radius: 4px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>有效期</span>
+                        <button class="btn btn-default btn-sm" style="padding: 2px 6px; color: #ff4d4f;" onclick="removeCompanyField(this, '有效期')">移除</button>
+                      </div>
+                      <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 12px; color: #666;">
+                        <span>X:</span><input type="number" class="form-input" value="180" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>Y: 283</span>
+                        <span>字号:</span><input type="number" class="form-input" value="12" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                      </div>
+                    </div>
+                    <div class="field-config" style="margin-bottom: 8px; padding: 8px; border: 1px solid #e8e8e8; border-radius: 4px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>发证日期</span>
+                        <button class="btn btn-default btn-sm" style="padding: 2px 6px; color: #ff4d4f;" onclick="removeCompanyField(this, '发证日期')">移除</button>
+                      </div>
+                      <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 12px; color: #666;">
+                        <span>X:</span><input type="number" class="form-input" value="40" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>Y:</span><input type="number" class="form-input" value="350" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                        <span>字号:</span><input type="number" class="form-input" value="12" style="width: 60px; padding: 2px 6px; font-size: 12px;"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 单位会员证书预览弹窗 -->
+  <div class="modal" id="previewCompanyModal">
+    <div class="modal-dialog" style="width: 600px;">
+      <div class="modal-header">
+        <span class="modal-title">单位会员证书预览</span>
+        <span class="close-btn" onclick="closeModal('previewCompanyModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="cert-preview">
+          <div class="cert-bg" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+            <div style="font-size: 36px; margin-bottom: 20px;">🏛️</div>
+            <div style="font-size: 28px; margin-bottom: 30px; font-weight: 600;">会员证书</div>
+            <div style="font-size: 14px; margin-bottom: 10px;">兹证明</div>
+            <div style="font-size: 32px; font-weight: 600; color: gold; margin-bottom: 15px; border-bottom: 2px solid gold; padding: 0 30px 10px;">北京科技有限公司</div>
+            <div style="font-size: 16px; margin-bottom: 8px;">为本会 <span style="color: gold;">理事单位会员</span></div>
+            <div style="font-size: 13px; opacity: 0.7; margin-bottom: 4px;">法定代表人：张三</div>
+            <div style="font-size: 13px; opacity: 0.7; margin-bottom: 4px;">统一社会信用代码：91110000XXXXXXXX</div>
+            <div style="font-size: 13px; opacity: 0.7; margin-bottom: 4px;">会员编号：ORG20240500001</div>
+            <div style="font-size: 13px; opacity: 0.7; margin-bottom: 4px;">有效期至：2027-05-13</div>
+            <div style="position: absolute; bottom: 30px; left: 30px; font-size: 11px; opacity: 0.7;">发证日期：2024-05-13</div>
+            <div style="position: absolute; bottom: 30px; right: 30px; width: 60px; height: 60px; border: 2px solid gold; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; color: gold;">中国农业学会公章</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('previewCompanyModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 预览弹窗 -->
+  <div class="modal" id="previewModal">
+    <div class="modal-dialog" style="width: 600px;">
+      <div class="modal-header">
+        <span class="modal-title">证书预览</span>
+        <span class="close-btn" onclick="closeModal('previewModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="cert-preview">
+          <div class="cert-bg" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+            <div style="font-size: 36px; margin-bottom: 20px;">🏛️</div>
+            <div style="font-size: 28px; margin-bottom: 30px; font-weight: 600;">会员证书</div>
+            <div style="font-size: 14px; margin-bottom: 10px;">兹证明</div>
+            <div style="font-size: 36px; font-weight: 600; color: gold; margin-bottom: 15px; border-bottom: 2px solid gold; padding: 0 30px 10px;">张三</div>
+            <div style="font-size: 16px; margin-bottom: 8px;">为本会 <span style="color: gold;">普通个人会员</span></div>
+            <div style="font-size: 13px; opacity: 0.7; margin-bottom: 4px;">工作单位：中国科学院农业研究所</div>
+            <div style="font-size: 13px; opacity: 0.7; margin-bottom: 4px;">职称：高级研究员</div>
+            <div style="font-size: 13px; opacity: 0.7; margin-bottom: 4px;">会员编号：M20240500001</div>
+            <div style="font-size: 13px; opacity: 0.7; margin-bottom: 4px;">有效期至：2027-05-13</div>
+            <div style="position: absolute; bottom: 30px; left: 40px; font-size: 12px; opacity: 0.7;">发证日期：2024-05-13</div>
+            <div style="position: absolute; bottom: 30px; right: 30px; width: 70px; height: 70px; border: 3px solid gold; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; color: gold; text-align: center;">中国农业学会<br>公章</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('previewModal')">关闭</button>
+        <button class="btn btn-primary" onclick="showToast('证书图片已生成并下载'); closeModal('previewModal')">📥 下载证书图片</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script>
+    var fieldIdCounter = 10;
+
+    function switchTab(tab, tabName) {
+      var tabs = document.querySelectorAll('.tab-item');
+      tabs.forEach(function(t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+
+      var tabContents = document.querySelectorAll('.tab-content');
+      tabContents.forEach(function(c) { c.classList.remove('active'); });
+
+      if (tabName === 'personal') {
+        document.getElementById('personalTab').classList.add('active');
+      } else if (tabName === 'company') {
+        document.getElementById('companyTab').classList.add('active');
+      }
+    }
+
+    function addField(name, x, y, fontSize) {
+      var addedFields = document.getElementById('addedFields');
+      var existingFields = addedFields.querySelectorAll('.field-config');
+      for (var i = 0; i < existingFields.length; i++) {
+        var title = existingFields[i].querySelector('span');
+        if (title && title.textContent === name) {
+          showToast(name + ' 已添加');
+          return;
+        }
+      }
+
+      var id = ++fieldIdCounter;
+      var html = '<div class="field-config" style="margin-bottom: 8px; padding: 8px; border: 1px solid #e8e8e8; border-radius: 4px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center;">' +
+        '<span>' + name + '</span>' +
+        '<button class="btn btn-default btn-sm" style="padding: 2px 6px; color: #ff4d4f;" onclick="removeField(this, \'' + name + '\')">移除</button>' +
+        '</div>' +
+        '<div style="display: flex; gap: 8px; margin-top: 8px; font-size: 12px; align-items: center; color: #666;">' +
+        '<span>X:</span><input type="number" class="form-input" value="' + x + '" style="width: 60px; padding: 2px 6px; font-size: 12px;">' +
+        '<span>Y:</span><input type="number" class="form-input" value="' + y + '" style="width: 60px; padding: 2px 6px; font-size: 12px;">' +
+        '<span>字号:</span><input type="number" class="form-input" value="' + fontSize + '" style="width: 60px; padding: 2px 6px; font-size: 12px;">' +
+        '</div>' +
+        '</div>';
+      addedFields.insertAdjacentHTML('beforeend', html);
+      showToast('已添加 ' + name);
+    }
+
+    function addCompanyField(name, x, y, fontSize) {
+      var addedFields = document.getElementById('addedCompanyFields');
+      var existingFields = addedFields.querySelectorAll('.field-config');
+      for (var i = 0; i < existingFields.length; i++) {
+        var title = existingFields[i].querySelector('span');
+        if (title && title.textContent === name) {
+          showToast(name + ' 已添加');
+          return;
+        }
+      }
+
+      var id = ++fieldIdCounter;
+      var html = '<div class="field-config" style="margin-bottom: 8px; padding: 8px; border: 1px solid #e8e8e8; border-radius: 4px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center;">' +
+        '<span>' + name + '</span>' +
+        '<button class="btn btn-default btn-sm" style="padding: 2px 6px; color: #ff4d4f;" onclick="removeCompanyField(this, \'' + name + '\')">移除</button>' +
+        '</div>' +
+        '<div style="display: flex; gap: 8px; margin-top: 8px; font-size: 12px; align-items: center; color: #666;">' +
+        '<span>X:</span><input type="number" class="form-input" value="' + x + '" style="width: 60px; padding: 2px 6px; font-size: 12px;">' +
+        '<span>Y:</span><input type="number" class="form-input" value="' + y + '" style="width: 60px; padding: 2px 6px; font-size: 12px;">' +
+        '<span>字号:</span><input type="number" class="form-input" value="' + fontSize + '" style="width: 60px; padding: 2px 6px; font-size: 12px;">' +
+        '</div>' +
+        '</div>';
+      addedFields.insertAdjacentHTML('beforeend', html);
+      showToast('已添加 ' + name);
+    }
+
+    function removeField(btn, name) {
+      btn.closest('.field-config').remove();
+      showToast('已移除 ' + name);
+    }
+
+    function removeCompanyField(btn, name) {
+      btn.closest('.field-config').remove();
+      showToast('已移除 ' + name);
+    }
+
+    function generateCert() {
+      showToast('证书模板生成中...');
+    }
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

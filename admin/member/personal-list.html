@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人会员列表 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">现任个人会员</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <a href="#">个人会员</a> / <span>现任会员</span></div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="card">
+          <div class="list-tabs">
+            <div class="list-tab-item active" onclick="switchListTab(this, 'current')">现任会员</div>
+            <div class="list-tab-item" onclick="switchListTab(this, 'interested')">感兴趣的会员</div>
+          </div>
+
+          <div id="currentTab" class="list-tab-content active">
+          <div class="card-header">
+            <span class="card-title">会员列表</span>
+            <div class="card-tools">
+              <button class="btn btn-default" onclick="openFieldConfig()">⚙️ 配置查询字段</button>
+              <button class="btn btn-default" onclick="openModal('importModal')">📥 批量导入</button>
+              <button class="btn btn-default" onclick="batchExport()">📤 批量导出</button>
+              <a class="btn btn-primary" href="member-add.html">+ 新增会员</a>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="search-bar">
+              <div class="search-item" data-field="name">
+                <label>姓名：</label>
+                <input type="text" class="form-input" placeholder="请输入姓名" style="width: 100px;">
+              </div>
+              <div class="search-item" data-field="phone">
+                <label>手机号：</label>
+                <input type="text" class="form-input" placeholder="请输入手机号" style="width: 130px;">
+              </div>
+              <div class="search-item" data-field="memberId">
+                <label>会员编号：</label>
+                <input type="text" class="form-input" placeholder="请输入编号" style="width: 130px;">
+              </div>
+              <div class="search-item" data-field="memberType">
+                <label>会员类型：</label>
+                <select class="form-select" style="width: 130px;">
+                  <option>全部</option>
+                  <option>普通个人会员</option>
+                  <option>学生会员</option>
+                </select>
+              </div>
+              <div class="search-item" data-field="gender">
+                <label>性别：</label>
+                <select class="form-select" style="width: 80px;">
+                  <option>全部</option>
+                  <option>男</option>
+                  <option>女</option>
+                </select>
+              </div>
+              <div class="search-item" data-field="education">
+                <label>学历：</label>
+                <select class="form-select" style="width: 120px;">
+                  <option>全部</option>
+                  <option>博士研究生</option>
+                  <option>硕士研究生</option>
+                  <option>大学本科</option>
+                </select>
+              </div>
+              <div class="search-item" data-field="title">
+                <label>职称：</label>
+                <select class="form-select" style="width: 100px;">
+                  <option>全部</option>
+                  <option>研究员</option>
+                  <option>副研究员</option>
+                  <option>教授</option>
+                </select>
+              </div>
+              <div class="search-item" data-field="region">
+                <label>地区：</label>
+                <input type="text" class="form-input" placeholder="请输入地区" style="width: 100px;">
+              </div>
+              <div class="search-item" data-field="company">
+                <label>工作单位：</label>
+                <input type="text" class="form-input" placeholder="请输入单位" style="width: 120px;">
+              </div>
+              <div class="search-item" data-field="joinDate">
+                <label>入会时间：</label>
+                <input type="date" class="form-input" style="width: 130px;">
+              </div>
+              <button class="btn btn-default btn-sm">查询</button>
+              <button class="btn btn-default btn-sm">重置</button>
+            </div>
+
+            <table class="table" id="memberTable">
+              <thead>
+                <tr>
+                  <th width="50" data-field=""><input type="checkbox" class="checkbox" onclick="toggleCheckAll(this, 'memberTable')"></th>
+                  <th data-field="memberId">会员编号</th>
+                  <th data-field="name">姓名</th>
+                  <th data-field="gender">性别</th>
+                  <th data-field="phone">手机号</th>
+                  <th data-field="memberType">会员类型</th>
+                  <th data-field="source">发展来源</th>
+                  <th data-field="joinDate">入会时间</th>
+                  <th data-field="expireDate">到期时间</th>
+                  <th data-field="updateTime">更新时间</th>
+                                    <th data-field="weight">权重</th>
+                  <th data-field="">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox" class="checkbox"></td>
+                  <td>M20240100001</td>
+                  <td>张三</td>
+                  <td>男</td>
+                  <td>138****8001</td>
+                  <td><span class="tag tag-primary">普通个人会员</span></td>
+                  <td>北京市农学会</td>
+                  <td>2024-01-15</td>
+                  <td>2027-01-14</td>
+                  <td>2024-06-10 15:30:00</td>
+                                    <td><input type="number" class="form-input" value="100" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='personal-detail.html'">详情</button>
+                    <a class="btn btn-default btn-sm" href="member-add.html?id=M20240100001">编辑</a>
+                    <button class="btn btn-default btn-sm" onclick="openBlacklistModal('M20240100001', '张三')">加入黑名单</button>
+                    <button class="btn btn-default btn-sm" onclick="openIntegrityModal('M20240100001', '张三')">诚信档案</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="checkbox"></td>
+                  <td>M20240100002</td>
+                  <td>李四</td>
+                  <td>女</td>
+                  <td>138****8002</td>
+                  <td><span class="tag tag-primary">普通个人会员</span></td>
+                  <td>山东省农学会</td>
+                  <td>2024-02-20</td>
+                  <td>2025-02-19</td>
+                  <td>2024-05-20 09:15:00</td>
+                                    <td><input type="number" class="form-input" value="90" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='personal-detail.html'">详情</button>
+                    <a class="btn btn-default btn-sm" href="member-add.html?id=M20240100001">编辑</a>
+                    <button class="btn btn-default btn-sm" onclick="openBlacklistModal('M20240100001', '张三')">加入黑名单</button>
+                    <button class="btn btn-default btn-sm" onclick="openIntegrityModal('M20240100001', '张三')">诚信档案</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="checkbox"></td>
+                  <td>M20240200001</td>
+                  <td>王五</td>
+                  <td>男</td>
+                  <td>138****8003</td>
+                  <td><span class="tag tag-primary">学生会员</span></td>
+                  <td>江苏省农学会</td>
+                  <td>2024-03-10</td>
+                  <td>2025-03-09</td>
+                  <td>2024-04-15 11:20:00</td>
+                                    <td><input type="number" class="form-input" value="80" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='personal-detail.html'">详情</button>
+                    <a class="btn btn-default btn-sm" href="member-add.html?id=M20240100001">编辑</a>
+                    <button class="btn btn-default btn-sm" onclick="openBlacklistModal('M20240100001', '张三')">加入黑名单</button>
+                    <button class="btn btn-default btn-sm" onclick="openIntegrityModal('M20240100001', '张三')">诚信档案</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="checkbox"></td>
+                  <td>M20231200001</td>
+                  <td>赵六</td>
+                  <td>女</td>
+                  <td>138****8004</td>
+                  <td><span class="tag tag-primary">普通个人会员</span></td>
+                  <td>作物学专业委员会</td>
+                  <td>2023-12-01</td>
+                  <td>2024-11-30</td>
+                  <td>2024-03-08 16:45:00</td>
+                                    <td><input type="number" class="form-input" value="70" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='personal-detail.html'">详情</button>
+                    <a class="btn btn-default btn-sm" href="member-add.html?id=M20240100001">编辑</a>
+                    <button class="btn btn-default btn-sm" onclick="openBlacklistModal('M20240100001', '张三')">加入黑名单</button>
+                    <button class="btn btn-default btn-sm" onclick="openIntegrityModal('M20240100001', '张三')">诚信档案</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="pagination">
+              <div class="pagination-info">共 72,156 条</div>
+              <div class="pagination-btns">
+                <button class="page-btn" disabled>上一页</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">...</button>
+                <button class="page-btn">下一页</button>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div id="interestedTab" class="list-tab-content">
+            <div class="card-header">
+              <span class="card-title">感兴趣的会员列表</span>
+            </div>
+            <div class="card-body">
+              <div class="search-bar">
+                <div class="search-item">
+                  <label>姓名：</label>
+                  <input type="text" class="form-input" placeholder="请输入姓名" style="width: 100px;">
+                </div>
+                <div class="search-item">
+                  <label>手机号：</label>
+                  <input type="text" class="form-input" placeholder="请输入手机号" style="width: 130px;">
+                </div>
+                <div class="search-item">
+                  <label>会员编号：</label>
+                  <input type="text" class="form-input" placeholder="请输入编号" style="width: 130px;">
+                </div>
+                <div class="search-item">
+                  <label>会员类型：</label>
+                  <select class="form-select" style="width: 130px;">
+                    <option>全部</option>
+                    <option>普通个人会员</option>
+                    <option>学生会员</option>
+                  </select>
+                </div>
+                <div class="search-item">
+                  <label>性别：</label>
+                  <select class="form-select" style="width: 80px;">
+                    <option>全部</option>
+                    <option>男</option>
+                    <option>女</option>
+                  </select>
+                </div>
+                <div class="search-item">
+                  <label>学历：</label>
+                  <select class="form-select" style="width: 120px;">
+                    <option>全部</option>
+                    <option>博士研究生</option>
+                    <option>硕士研究生</option>
+                    <option>大学本科</option>
+                  </select>
+                </div>
+                <div class="search-item">
+                  <label>职称：</label>
+                  <select class="form-select" style="width: 100px;">
+                    <option>全部</option>
+                    <option>研究员</option>
+                    <option>副研究员</option>
+                    <option>教授</option>
+                  </select>
+                </div>
+                <div class="search-item">
+                  <label>地区：</label>
+                  <input type="text" class="form-input" placeholder="请输入地区" style="width: 100px;">
+                </div>
+                <div class="search-item">
+                  <label>所在单位：</label>
+                  <input type="text" class="form-input" placeholder="请输入单位" style="width: 120px;">
+                </div>
+                <button class="btn btn-default btn-sm">查询</button>
+                <button class="btn btn-default btn-sm">重置</button>
+              </div>
+
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>会员编号</th>
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>手机号</th>
+                    <th>会员类型</th>
+                    <th>发展来源</th>
+                    <th>入会时间</th>
+                    <th>到期时间</th>
+                    <th data-field="updateTime">更新时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>I20240600001</td>
+                    <td>陈晨</td>
+                    <td>女</td>
+                    <td>139****6218</td>
+                    <td><span class="tag tag-primary">普通个人会员</span></td>
+                    <td>北京市农学会</td>
+                    <td>2024-06-18</td>
+                    <td>2025-06-17</td>
+                    <td>2024-06-18 10:00:00</td>
+                    <td class="actions">
+                      <button class="btn btn-default btn-sm" onclick="location.href='personal-detail.html'">查看</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>I20240600002</td>
+                    <td>周扬</td>
+                    <td>男</td>
+                    <td>137****3406</td>
+                    <td><span class="tag tag-primary">学生会员</span></td>
+                    <td>山东省农学会</td>
+                    <td>2024-05-09</td>
+                    <td>2025-05-08</td>
+                    <td>2024-05-10 14:30:00</td>
+                    <td class="actions">
+                      <button class="btn btn-default btn-sm" onclick="location.href='personal-detail.html'">查看</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>I20240500003</td>
+                    <td>孙敏</td>
+                    <td>女</td>
+                    <td>136****7721</td>
+                    <td><span class="tag tag-primary">普通个人会员</span></td>
+                    <td>江苏省农学会</td>
+                    <td>2024-04-22</td>
+                    <td>2025-04-21</td>
+                    <td>2024-04-23 09:00:00</td>
+                    <td class="actions">
+                      <button class="btn btn-default btn-sm" onclick="location.href='personal-detail.html'">查看</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>I20240400004</td>
+                    <td>何涛</td>
+                    <td>男</td>
+                    <td>135****9154</td>
+                    <td><span class="tag tag-primary">普通个人会员</span></td>
+                    <td>作物学专业委员会</td>
+                    <td>2024-03-30</td>
+                    <td>2025-03-29</td>
+                    <td>2024-03-31 16:20:00</td>
+                    <td class="actions">
+                      <button class="btn btn-default btn-sm" onclick="location.href='personal-detail.html'">查看</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pagination">
+                <div class="pagination-info">共 326 条</div>
+                <div class="pagination-btns">
+                  <button class="page-btn" disabled>上一页</button>
+                  <button class="page-btn active">1</button>
+                  <button class="page-btn">2</button>
+                  <button class="page-btn">3</button>
+                  <button class="page-btn">...</button>
+                  <button class="page-btn">下一页</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 配置查询字段弹窗 -->
+  <div class="modal" id="fieldConfigModal">
+    <div class="modal-dialog" style="width: 600px;">
+      <div class="modal-header">
+        <span class="modal-title">配置查询字段</span>
+        <span class="close-btn" onclick="closeModal('fieldConfigModal')">✕</span>
+      </div>
+      <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+        <div style="margin-bottom: 16px; color: #666; font-size: 13px;">勾选需要在列表和筛选中显示的字段</div>
+
+        <div class="field-group">
+          <div class="field-group-title">基本信息</div>
+          <div class="field-list">
+            <label class="field-item"><input type="checkbox" data-field="memberId" checked onchange="updateFieldConfig()"> <span>会员编号</span></label>
+            <label class="field-item"><input type="checkbox" data-field="name" checked onchange="updateFieldConfig()"> <span>姓名</span></label>
+            <label class="field-item"><input type="checkbox" data-field="gender" checked onchange="updateFieldConfig()"> <span>性别</span></label>
+            <label class="field-item"><input type="checkbox" data-field="phone" checked onchange="updateFieldConfig()"> <span>手机号</span></label>
+            <label class="field-item"><input type="checkbox" data-field="idCard" onchange="updateFieldConfig()"> <span>身份证号</span></label>
+            <label class="field-item"><input type="checkbox" data-field="birthDate" onchange="updateFieldConfig()"> <span>出生日期</span></label>
+            <label class="field-item"><input type="checkbox" data-field="nation" onchange="updateFieldConfig()"> <span>民族</span></label>
+            <label class="field-item"><input type="checkbox" data-field="politics" onchange="updateFieldConfig()"> <span>政治面貌</span></label>
+            <label class="field-item"><input type="checkbox" data-field="email" onchange="updateFieldConfig()"> <span>邮箱</span></label>
+            <label class="field-item"><input type="checkbox" data-field="region" onchange="updateFieldConfig()"> <span>所在地区</span></label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-group-title">学历与工作</div>
+          <div class="field-list">
+            <label class="field-item"><input type="checkbox" data-field="education" onchange="updateFieldConfig()"> <span>最高学历</span></label>
+            <label class="field-item"><input type="checkbox" data-field="gradSchool" onchange="updateFieldConfig()"> <span>毕业院校</span></label>
+            <label class="field-item"><input type="checkbox" data-field="major" onchange="updateFieldConfig()"> <span>专业</span></label>
+            <label class="field-item"><input type="checkbox" data-field="company" checked onchange="updateFieldConfig()"> <span>所在单位</span></label>
+            <label class="field-item"><input type="checkbox" data-field="title" onchange="updateFieldConfig()"> <span>职称</span></label>
+            <label class="field-item"><input type="checkbox" data-field="position" onchange="updateFieldConfig()"> <span>职务</span></label>
+            <label class="field-item"><input type="checkbox" data-field="workStatus" onchange="updateFieldConfig()"> <span>工作状态</span></label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-group-title">会员信息</div>
+          <div class="field-list">
+            <label class="field-item"><input type="checkbox" data-field="memberType" checked onchange="updateFieldConfig()"> <span>会员类型</span></label>
+            <label class="field-item"><input type="checkbox" data-field="source" checked onchange="updateFieldConfig()"> <span>发展来源</span></label>
+            <label class="field-item"><input type="checkbox" data-field="joinDate" checked onchange="updateFieldConfig()"> <span>入会时间</span></label>
+            <label class="field-item"><input type="checkbox" data-field="expireDate" checked onchange="updateFieldConfig()"> <span>到期时间</span></label>
+            <label class="field-item"><input type="checkbox" data-field="updateTime" checked onchange="updateFieldConfig()"> <span>更新时间</span></label>
+            <label class="field-item"><input type="checkbox" data-field="weight" onchange="updateFieldConfig()"> <span>权重</span></label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-group-title">组织信息</div>
+          <div class="field-list">
+            <label class="field-item"><input type="checkbox" data-field="societyDuty" onchange="updateFieldConfig()"> <span>学会职务</span></label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-group-title">其他</div>
+          <div class="field-list">
+            <label class="field-item"><input type="checkbox" data-field="tags" onchange="updateFieldConfig()"> <span>会员标签</span></label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="resetFieldConfig()">恢复默认</button>
+        <button class="btn btn-default" onclick="closeModal('fieldConfigModal')">取消</button>
+        <button class="btn btn-primary" onclick="saveFieldConfig()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 批量导入弹窗 -->
+  <div class="modal" id="importModal">
+    <div class="modal-dialog" style="width: 500px;">
+      <div class="modal-header">
+        <span class="modal-title">批量导入会员</span>
+        <span class="close-btn" onclick="closeModal('importModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="text-align: center; padding: 20px 0;">
+          <div style="width: 80px; height: 80px; margin: 0 auto 16px; border: 2px dashed #d9d9d9; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="document.getElementById('importFile').click()">
+            <span style="font-size: 32px; color: #999;">📁</span>
+          </div>
+          <input type="file" id="importFile" accept=".xlsx,.xls,.csv" style="display: none;" onchange="handleFileUpload(this)">
+          <div style="color: #666; font-size: 14px; margin-bottom: 8px;">点击选择文件或拖拽文件到此处</div>
+          <div style="color: #999; font-size: 12px;">支持 .xlsx、.xls、.csv 格式</div>
+        </div>
+        <div style="margin-top: 16px;">
+          <a href="#" style="color: #1890ff; font-size: 13px;">📋 下载导入模板</a>
+        </div>
+        <div style="margin-top: 16px; padding: 12px; background: #fafafa; border-radius: 4px; font-size: 13px; color: #666;">
+          <div style="margin-bottom: 8px; font-weight: 500;">导入说明：</div>
+          <ul style="margin: 0; padding-left: 20px; line-height: 1.8;">
+            <li>请先下载导入模板，按模板格式填写数据</li>
+            <li>每次导入最多支持 500 条数据</li>
+            <li>手机号、证件号等关键字段不能为空</li>
+            <li>导入过程中请勿关闭页面</li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('importModal')">取消</button>
+        <button class="btn btn-primary" onclick="doImport()">开始导入</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 会员详情弹窗 -->
+  <div class="modal" id="viewMemberModal">
+    <div class="modal-dialog" style="width: 700px;">
+      <div class="modal-header">
+        <span class="modal-title">会员详情 - M20240100001</span>
+        <span class="close-btn" onclick="closeModal('viewMemberModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+          <div style="width: 80px; height: 80px; border-radius: 50%; background: #1890ff; display: flex; align-items: center; justify-content: center; font-size: 32px; color: #fff;">张</div>
+          <div>
+            <div style="font-size: 20px; font-weight: 600;">张三</div>
+            <div style="color: #666; margin-top: 4px;">会员编号：M20240100001</div>
+            <div style="margin-top: 8px;"><span class="tag tag-primary">普通个人会员</span> <span class="status status-normal">正常</span></div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 12px;">基本信息</div>
+          <div class="grid-3" style="gap: 12px;">
+            <div><strong>性别：</strong>男</div>
+            <div><strong>出生日期：</strong>1990-01-01</div>
+            <div><strong>民族：</strong>汉族</div>
+            <div><strong>身份证号：</strong>110101199001011234</div>
+            <div><strong>手机号：</strong>13800138001</div>
+            <div><strong>邮箱：</strong>zhangsan@example.com</div>
+            <div><strong>最高学历：</strong>博士研究生</div>
+            <div><strong>毕业院校：</strong>某农业大学</div>
+            <div><strong>工作单位：</strong>某农业科学院</div>
+            <div><strong>职称：</strong>研究员</div>
+            <div><strong>职务：</strong>部门主任</div>
+            <div><strong>发展来源：</strong>北京市农学会</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 12px;">会籍信息</div>
+          <div class="grid-3" style="gap: 12px;">
+            <div><strong>入会时间：</strong>2024-01-15</div>
+            <div><strong>到期时间：</strong>2027-01-14</div>
+            <div><strong>缴费方式：</strong>终生会员</div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-weight: 500; margin-bottom: 12px;">成长轨迹</div>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="time">2024-01-15</div>
+              <div class="content">成为正式会员</div>
+            </div>
+            <div class="timeline-item">
+              <div class="time">2024-01-15</div>
+              <div class="content">缴费成功（终生）</div>
+            </div>
+            <div class="timeline-item">
+              <div class="time">2024-01-14</div>
+              <div class="content">终审通过</div>
+            </div>
+            <div class="timeline-item">
+              <div class="time">2024-01-10</div>
+              <div class="content">初审通过</div>
+            </div>
+            <div class="timeline-item">
+              <div class="time">2024-01-05</div>
+              <div class="content">提交申请</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('viewMemberModal')">关闭</button>
+        <button class="btn btn-default" onclick="closeModal('viewMemberModal')">📥 下载证书</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 诚信档案弹窗 -->
+  <div class="modal" id="integrityModal">
+    <div class="modal-dialog" style="width: 900px; max-height: 85vh;">
+      <div class="modal-header">
+        <span class="modal-title">诚信档案 - <span id="integrityMemberName">张三</span>（<span id="integrityMemberId">M20240100001</span>）</span>
+        <span class="close-btn" onclick="closeModal('integrityModal')">✕</span>
+      </div>
+      <div class="modal-body" style="max-height: calc(85vh - 120px); overflow-y: auto;">
+        <div style="margin-bottom: 16px;">
+          <button class="btn btn-primary btn-sm" onclick="addIntegrityRecord()">+ 新增记录</button>
+        </div>
+
+        <table class="table" id="integrityTable">
+          <thead>
+            <tr>
+              <th>不良学风的活动类型</th>
+              <th>行为类型</th>
+              <th>具体表现</th>
+              <th>处理情况</th>
+              <th>佐证材料</th>
+              <th width="120">操作</th>
+            </tr>
+          </thead>
+          <tbody id="integrityTableBody">
+            <tr class="empty-row">
+              <td colspan="6" style="text-align: center; color: #999; padding: 40px;">暂无记录，点击上方按钮新增</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('integrityModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增/编辑诚信档案记录弹窗 -->
+  <div class="modal" id="integrityFormModal">
+    <div class="modal-dialog" style="width: 700px;">
+      <div class="modal-header">
+        <span class="modal-title" id="integrityFormTitle">新增诚信档案记录</span>
+        <span class="close-btn" onclick="closeModal('integrityFormModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">不良学风的活动类型 <span class="required">*</span></label>
+            <select class="form-select" id="activityType">
+              <option value="">请选择</option>
+              <option value="学术研究">学术研究</option>
+              <option value="学术交流">学术交流</option>
+              <option value="论文刊发">论文刊发</option>
+              <option value="学术评议">学术评议</option>
+              <option value="其他">其他</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">行为类型 <span class="required">*</span></label>
+            <select class="form-select" id="behaviorType">
+              <option value="">请选择</option>
+              <option value="存在不注重学术民主，浮夸浮躁、投机取巧等行为">存在不注重学术民主，浮夸浮躁、投机取巧等行为</option>
+              <option value="存在违背学术诚信底线，弄虚作假，隐瞒欺诈">存在违背学术诚信底线，弄虚作假，隐瞒欺诈</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">具体表现</label>
+            <textarea class="form-textarea" id="specificPerformance" rows="3" placeholder="请输入具体表现"></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">处理情况</label>
+            <textarea class="form-textarea" id="handlingSituation" rows="3" placeholder="请输入处理情况"></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">佐证材料</label>
+            <div class="upload-area" onclick="document.getElementById('integrityFileInput').click()" id="integrityUploadArea" style="padding: 20px; border: 2px dashed #d9d9d9; border-radius: 8px; text-align: center; cursor: pointer;">
+              <input type="file" id="integrityFileInput" style="display: none;" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" onchange="handleIntegrityFileUpload(this)">
+              <div id="integrityUploadHint" style="color: #999; font-size: 13px;">点击或拖拽上传文件</div>
+              <div id="integrityFileList" style="margin-top: 12px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('integrityFormModal')">取消</button>
+        <button class="btn btn-primary" onclick="saveIntegrityRecord()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 加入黑名单弹窗 -->
+  <div class="modal" id="blacklistModal">
+    <div class="modal-dialog" style="width: 480px;">
+      <div class="modal-header">
+        <span class="modal-title">加入黑名单</span>
+        <span class="close-btn" onclick="closeModal('blacklistModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 16px;">
+          <div style="padding: 12px; background: #fafafa; border-radius: 4px;">
+            <div style="font-size: 14px; color: #333; margin-bottom: 6px;"><strong>会员编号：</strong><span id="blacklistMemberId">-</span></div>
+            <div style="font-size: 14px; color: #333;"><strong>会员姓名：</strong><span id="blacklistMemberName">-</span></div>
+          </div>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <div style="font-weight: 500; margin-bottom: 8px;">拉黑原因 <span style="color: #ff4d4f;">*</span></div>
+          <textarea id="blacklistReason" class="form-textarea" placeholder="请输入拉黑原因" style="width: 100%; min-height: 100px; resize: vertical;"></textarea>
+        </div>
+        <div style="padding: 12px; background: #fff7e6; border-radius: 4px; font-size: 13px; color: #666;">
+          <strong>提示：</strong>加入黑名单后，该会员将从现任会员列表中移除
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('blacklistModal')">取消</button>
+        <button class="btn btn-danger" onclick="submitBlacklist()">确认拉黑</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <style>
+    .list-tabs { display: flex; gap: 0; padding: 0 20px; border-bottom: 1px solid #f0f0f0; background: #fff; }
+    .list-tab-item { padding: 14px 20px; font-size: 14px; color: #666; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.3s; }
+    .list-tab-item:hover { color: #1890ff; }
+    .list-tab-item.active { color: #1890ff; border-bottom-color: #1890ff; font-weight: 500; }
+    .list-tab-content { display: none; }
+    .list-tab-content.active { display: block; }
+    .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 22px; }
+    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+    input:checked + .slider { background-color: #52c41a; }
+    input:checked + .slider:before { transform: translateX(18px); }
+    .field-group { margin-bottom: 20px; }
+    .field-group-title { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #eee; }
+    .field-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .field-item { display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #f5f5f5; border-radius: 4px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+    .field-item:hover { background: #e6f7ff; }
+    .field-item input { accent-color: #1890ff; }
+    .field-item.checked { background: #e6f7ff; color: #1890ff; }
+  </style>
+  <script>
+    var listFieldConfig = JSON.parse(localStorage.getItem('personalListFieldConfig') || 'null');
+
+    var defaultConfig = {
+      memberId: true,
+      name: true,
+      gender: true,
+      phone: true,
+      idCard: false,
+      birthDate: false,
+      nation: false,
+      politics: false,
+      email: false,
+      region: false,
+      education: false,
+      gradSchool: false,
+      major: false,
+      company: true,
+      title: false,
+      position: false,
+      workStatus: false,
+      memberType: true,
+      source: true,
+      joinDate: true,
+      expireDate: true,
+      updateTime: true,
+      weight: true,
+      societyDuty: false,
+      tags: false
+    };
+
+    var currentConfig = listFieldConfig || defaultConfig;
+
+    function toggleStatus(el) {
+      var isChecked = el.checked;
+      showToast(isChecked ? '已启用' : '已禁用');
+    }
+
+    function openFieldConfig() {
+      var checkboxes = document.querySelectorAll('#fieldConfigModal input[type="checkbox"]');
+      checkboxes.forEach(function(cb) {
+        var field = cb.dataset.field;
+        if (field && currentConfig && currentConfig.hasOwnProperty(field)) {
+          cb.checked = currentConfig[field];
+        } else {
+          cb.checked = false;
+        }
+        updateFieldItemStyle(cb);
+      });
+      openModal('fieldConfigModal');
+    }
+
+    function updateFieldConfig() {
+      var checkboxes = document.querySelectorAll('#fieldConfigModal input[type="checkbox"]');
+      checkboxes.forEach(function(cb) {
+        updateFieldItemStyle(cb);
+      });
+    }
+
+    function updateFieldItemStyle(cb) {
+      var item = cb.closest('.field-item');
+      if (item) {
+        item.classList.toggle('checked', cb.checked);
+      }
+    }
+
+    function resetFieldConfig() {
+      currentConfig = Object.assign({}, defaultConfig);
+      updateFieldConfig();
+      showToast('已恢复默认配置');
+    }
+
+    function saveFieldConfig() {
+      var checkboxes = document.querySelectorAll('#fieldConfigModal input[type="checkbox"]');
+      checkboxes.forEach(function(cb) {
+        currentConfig[cb.dataset.field] = cb.checked;
+      });
+      localStorage.setItem('personalListFieldConfig', JSON.stringify(currentConfig));
+      applyFieldConfig();
+      closeModal('fieldConfigModal');
+      showToast('字段配置已保存');
+    }
+
+    function applyFieldConfig() {
+      var fieldMap = {
+        memberId: '会员编号',
+        name: '姓名',
+        gender: '性别',
+        phone: '手机号',
+        idCard: '身份证号',
+        birthDate: '出生日期',
+        nation: '民族',
+        politics: '政治面貌',
+        email: '邮箱',
+        region: '所在地区',
+        education: '最高学历',
+        gradSchool: '毕业院校',
+        major: '专业',
+        company: '所在单位',
+        title: '职称',
+        position: '职务',
+        workStatus: '工作状态',
+        memberType: '会员类型',
+        source: '发展来源',
+        joinDate: '入会时间',
+        expireDate: '到期时间',
+        updateTime: '更新时间',
+        weight: '权重',
+        societyDuty: '学会职务',
+        tags: '会员标签'
+      };
+
+      var thead = document.querySelector('#memberTable thead tr');
+      if (thead) {
+        var ths = thead.querySelectorAll('th');
+        ths.forEach(function(th) {
+          var field = th.dataset.field;
+          if (field && field !== '' && currentConfig && currentConfig.hasOwnProperty(field)) {
+            th.style.display = currentConfig[field] ? '' : 'none';
+          }
+        });
+      }
+
+      var searchBar = document.querySelector('.search-bar');
+      if (searchBar) {
+        var searchItems = searchBar.querySelectorAll('.search-item');
+        searchItems.forEach(function(item) {
+          var field = item.dataset.field;
+          if (field && field !== '' && currentConfig && currentConfig.hasOwnProperty(field)) {
+            item.style.display = currentConfig[field] ? '' : 'none';
+          }
+        });
+      }
+    }
+
+    function batchExport() {
+      var checkboxes = document.querySelectorAll('#memberTable tbody input[type="checkbox"]:checked');
+      if (checkboxes.length === 0) {
+        showToast('请先选择要导出的会员');
+        return;
+      }
+      showToast('正在导出 ' + checkboxes.length + ' 条会员数据...');
+      setTimeout(function() {
+        showToast('导出成功');
+      }, 1000);
+    }
+
+    var currentBlacklistMemberId = '';
+    var currentBlacklistMemberName = '';
+
+    function openBlacklistModal(memberId, memberName) {
+      currentBlacklistMemberId = memberId;
+      currentBlacklistMemberName = memberName;
+      document.getElementById('blacklistMemberId').textContent = memberId;
+      document.getElementById('blacklistMemberName').textContent = memberName;
+      document.getElementById('blacklistReason').value = '';
+      openModal('blacklistModal');
+    }
+
+    function submitBlacklist() {
+      var reason = document.getElementById('blacklistReason').value.trim();
+      if (!reason) {
+        showToast('请输入拉黑原因', 'error');
+        return;
+      }
+      closeModal('blacklistModal');
+      showToast('已加入黑名单');
+      location.reload();
+    }
+
+    function handleFileUpload(el) {
+      var file = el.files[0];
+      if (file) {
+        showToast('已选择文件：' + file.name);
+      }
+    }
+
+    function doImport() {
+      var fileInput = document.getElementById('importFile');
+      if (!fileInput.files[0]) {
+        showToast('请先选择要导入的文件');
+        return;
+      }
+      showToast('正在导入，请稍候...');
+      setTimeout(function() {
+        closeModal('importModal');
+        showToast('导入成功：新增 45 条，更新 3 条');
+      }, 2000);
+    }
+
+    function switchListTab(el, tabName) {
+      document.querySelectorAll('.list-tab-item').forEach(function(item) {
+        item.classList.remove('active');
+      });
+      el.classList.add('active');
+
+      document.querySelectorAll('.list-tab-content').forEach(function(content) {
+        content.classList.remove('active');
+      });
+
+      if (tabName === 'current') {
+        document.getElementById('currentTab').classList.add('active');
+      } else {
+        document.getElementById('interestedTab').classList.add('active');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      applyFieldConfig();
+    });
+
+    // 诚信档案相关
+    var currentIntegrityMemberId = '';
+    var currentIntegrityMemberName = '';
+    var integrityRecords = [];
+    var editingRecordIndex = -1;
+    var uploadedIntegrityFiles = [];
+
+    function openIntegrityModal(memberId, memberName) {
+      currentIntegrityMemberId = memberId;
+      currentIntegrityMemberName = memberName;
+      document.getElementById('integrityMemberId').textContent = memberId;
+      document.getElementById('integrityMemberName').textContent = memberName;
+
+      // 模拟加载数据
+      loadIntegrityRecords();
+
+      // 重置选择
+      openModal('integrityModal');
+    }
+
+    function loadIntegrityRecords() {
+      // 模拟已有数据
+      integrityRecords = [
+        {
+          id: 1,
+          activityType: '论文刊发',
+          behaviorType: '存在违背学术诚信底线，弄虚作假，隐瞒欺诈',
+          specificPerformance: '论文数据造假',
+          handlingSituation: '已通报批评',
+          files: []
+        }
+      ];
+      renderIntegrityTable();
+    }
+
+    function renderIntegrityTable() {
+      var tbody = document.getElementById('integrityTableBody');
+      if (integrityRecords.length === 0) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="6" style="text-align: center; color: #999; padding: 40px;">暂无记录，点击上方按钮新增</td></tr>';
+        return;
+      }
+      tbody.innerHTML = integrityRecords.map(function(record, index) {
+        var fileNames = record.files && record.files.length > 0
+          ? record.files.map(function(f) { return '<span style="display: inline-block; background: #f0f0f0; padding: 2px 8px; border-radius: 4px; margin: 2px; font-size: 12px;">' + f + '</span>'; }).join('')
+          : '<span style="color: #999;">-</span>';
+        return '<tr>' +
+          '<td>' + record.activityType + '</td>' +
+          '<td style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="' + record.behaviorType + '">' + record.behaviorType + '</td>' +
+          '<td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="' + record.specificPerformance + '">' + (record.specificPerformance || '-') + '</td>' +
+          '<td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="' + record.handlingSituation + '">' + (record.handlingSituation || '-') + '</td>' +
+          '<td>' + fileNames + '</td>' +
+          '<td><button class="btn btn-default btn-sm" onclick="editIntegrityRecord(' + index + ')">编辑</button> <button class="btn btn-default btn-sm" onclick="deleteIntegrityRecord(' + index + ')">删除</button></td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function addIntegrityRecord() {
+      editingRecordIndex = -1;
+      document.getElementById('integrityFormTitle').textContent = '新增诚信档案记录';
+      document.getElementById('activityType').value = '';
+      document.getElementById('behaviorType').value = '';
+      document.getElementById('specificPerformance').value = '';
+      document.getElementById('handlingSituation').value = '';
+      uploadedIntegrityFiles = [];
+      document.getElementById('integrityFileList').innerHTML = '';
+      document.getElementById('integrityUploadHint').style.display = 'block';
+      openModal('integrityFormModal');
+    }
+
+    function editIntegrityRecord(index) {
+      editingRecordIndex = index;
+      var record = integrityRecords[index];
+      document.getElementById('integrityFormTitle').textContent = '编辑诚信档案记录';
+      document.getElementById('activityType').value = record.activityType;
+      document.getElementById('behaviorType').value = record.behaviorType;
+      document.getElementById('specificPerformance').value = record.specificPerformance || '';
+      document.getElementById('handlingSituation').value = record.handlingSituation || '';
+      uploadedIntegrityFiles = record.files ? [...record.files] : [];
+      renderUploadedFiles();
+      openModal('integrityFormModal');
+    }
+
+    function deleteIntegrityRecord(index) {
+      if (confirm('确定要删除这条记录吗？')) {
+        integrityRecords.splice(index, 1);
+        renderIntegrityTable();
+        showToast('删除成功');
+      }
+    }
+
+    function handleIntegrityFileUpload(input) {
+      if (input.files) {
+        for (var i = 0; i < input.files.length; i++) {
+          uploadedIntegrityFiles.push(input.files[i].name);
+        }
+        renderUploadedFiles();
+      }
+    }
+
+    function renderUploadedFiles() {
+      var fileList = document.getElementById('integrityFileList');
+      var hint = document.getElementById('integrityUploadHint');
+      if (uploadedIntegrityFiles.length > 0) {
+        hint.style.display = 'none';
+        fileList.innerHTML = uploadedIntegrityFiles.map(function(name, index) {
+          return '<div style="display: flex; align-items: center; justify-content: space-between; background: #f5f5f5; padding: 6px 12px; border-radius: 4px; margin-bottom: 4px;">' +
+            '<span style="font-size: 13px;">' + name + '</span>' +
+            '<span onclick="removeIntegrityFile(' + index + ')" style="cursor: pointer; color: #ff4d4f; margin-left: 8px;">×</span>' +
+          '</div>';
+        }).join('');
+      } else {
+        hint.style.display = 'block';
+        fileList.innerHTML = '';
+      }
+    }
+
+    function removeIntegrityFile(index) {
+      uploadedIntegrityFiles.splice(index, 1);
+      renderUploadedFiles();
+    }
+
+    function saveIntegrityRecord() {
+      var activityType = document.getElementById('activityType').value;
+      var behaviorType = document.getElementById('behaviorType').value;
+
+      if (!activityType) {
+        showToast('请选择不良学风的活动类型');
+        return;
+      }
+      if (!behaviorType) {
+        showToast('请选择行为类型');
+        return;
+      }
+
+      var record = {
+        activityType: activityType,
+        behaviorType: behaviorType,
+        specificPerformance: document.getElementById('specificPerformance').value,
+        handlingSituation: document.getElementById('handlingSituation').value,
+        files: uploadedIntegrityFiles
+      };
+
+      if (editingRecordIndex >= 0) {
+        integrityRecords[editingRecordIndex] = record;
+      } else {
+        record.id = Date.now();
+        integrityRecords.push(record);
+      }
+
+      closeModal('integrityFormModal');
+      renderIntegrityTable();
+      showToast(editingRecordIndex >= 0 ? '修改成功' : '新增成功');
+    }
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

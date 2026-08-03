@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>机构列表管理 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">机构列表管理</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <a href="#">组织机构</a> / <span>机构列表</span></div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">机构列表</span>
+            <div class="card-tools">
+              <button class="btn btn-primary" onclick="openModal('addOrgModal')">+ 新增机构</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="search-bar">
+              <div class="search-item">
+                <label>机构名称：</label>
+                <input type="text" class="form-input" placeholder="请输入机构名称" style="width: 150px;">
+              </div>
+              <div class="search-item">
+                <label>机构类型：</label>
+                <select class="form-select" style="width: 130px;">
+                  <option>全部</option>
+                  <option>地方学会</option>
+                  <option>专业委员会</option>
+                  <option>理事单位</option>
+                  <option>合作单位</option>
+                </select>
+              </div>
+              <div class="search-item">
+                <label>状态：</label>
+                <select class="form-select" style="width: 100px;">
+                  <option>全部</option>
+                  <option>启用</option>
+                  <option>禁用</option>
+                </select>
+              </div>
+              <button class="btn btn-default btn-sm">查询</button>
+              <button class="btn btn-default btn-sm">重置</button>
+            </div>
+
+            <table class="table" id="orgTable">
+              <thead>
+                <tr>
+                  <th width="50"><input type="checkbox" class="checkbox" onclick="toggleCheckAll(this, 'orgTable')"></th>
+                  <th>机构编码</th>
+                  <th>机构名称</th>
+                  <th>机构类型</th>
+                  <th>联系人</th>
+                  <th>联系电话</th>
+                  <th>个人会员数量</th>
+                  <th>单位会员数量</th>
+                  <th>权重</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox" class="checkbox"></td>
+                  <td>1100001</td>
+                  <td>北京市农学会</td>
+                  <td><span class="tag tag-primary">地方学会</span></td>
+                  <td>王芳</td>
+                  <td>010-12345678</td>
+                  <td>1,234</td>
+                  <td>56</td>
+                  <td><input type="number" class="form-input" value="100" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleStatus(this)"><span class="slider"></span></label></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('viewOrgModal')">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('editOrgModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openMigrateModal(this.closest('tr').querySelector('td:nth-child(3)').textContent)">迁移</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="checkbox"></td>
+                  <td>3700001</td>
+                  <td>山东省农学会</td>
+                  <td><span class="tag tag-primary">地方学会</span></td>
+                  <td>李明</td>
+                  <td>0531-87654321</td>
+                  <td>2,567</td>
+                  <td>23</td>
+                  <td><input type="number" class="form-input" value="90" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleStatus(this)"><span class="slider"></span></label></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('viewOrgModal')">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('editOrgModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openMigrateModal(this.closest('tr').querySelector('td:nth-child(3)').textContent)">迁移</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="checkbox"></td>
+                  <td>3200001</td>
+                  <td>江苏省农学会</td>
+                  <td><span class="tag tag-primary">地方学会</span></td>
+                  <td>张强</td>
+                  <td>025-11223344</td>
+                  <td>1,892</td>
+                  <td>12</td>
+                  <td><input type="number" class="form-input" value="85" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleStatus(this)"><span class="slider"></span></label></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('viewOrgModal')">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('editOrgModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openMigrateModal(this.closest('tr').querySelector('td:nth-child(3)').textContent)">迁移</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="checkbox"></td>
+                  <td>1100002</td>
+                  <td>作物学专业委员会</td>
+                  <td><span class="tag tag-success">专业委员会</span></td>
+                  <td>陈教授</td>
+                  <td>010-99887766</td>
+                  <td>0</td>
+                  <td>8</td>
+                  <td><input type="number" class="form-input" value="80" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                  <td><label class="switch"><input type="checkbox" checked onchange="toggleStatus(this)"><span class="slider"></span></label></td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="openModal('viewOrgModal')">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('editOrgModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openMigrateModal(this.closest('tr').querySelector('td:nth-child(3)').textContent)">迁移</button>
+                    <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该机构吗？')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="pagination">
+              <div class="pagination-info">共 264 条</div>
+              <div class="pagination-btns">
+                <button class="page-btn" disabled>上一页</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">...</button>
+                <button class="page-btn">下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增机构弹窗 -->
+  <div class="modal" id="addOrgModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">新增机构</span>
+        <span class="close-btn" onclick="closeModal('addOrgModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">机构编码 <span class="required">*</span></label>
+          <input type="text" class="form-input" placeholder="请输入机构编码，如：1100001">
+        </div>
+        <div class="form-group">
+          <label class="form-label">机构名称 <span class="required">*</span></label>
+          <input type="text" class="form-input" placeholder="请输入机构名称">
+        </div>
+        <div class="form-group">
+          <label class="form-label">机构类型 <span class="required">*</span></label>
+          <select class="form-select">
+            <option>请选择机构类型</option>
+            <option>地方学会</option>
+            <option>专业委员会</option>
+            <option>理事单位</option>
+            <option>合作单位</option>
+            <option>会员单位</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">联系人</label>
+          <input type="text" class="form-input" placeholder="请输入联系人姓名">
+        </div>
+        <div class="form-group">
+          <label class="form-label">联系电话</label>
+          <input type="text" class="form-input" placeholder="请输入联系电话">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('addOrgModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('addOrgModal'); showToast('添加成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑机构弹窗 -->
+  <div class="modal" id="editOrgModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">编辑机构</span>
+        <span class="close-btn" onclick="closeModal('editOrgModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">机构编码</label>
+          <input type="text" class="form-input" value="1100001">
+        </div>
+        <div class="form-group">
+          <label class="form-label">机构名称</label>
+          <input type="text" class="form-input" value="北京市农学会">
+        </div>
+        <div class="form-group">
+          <label class="form-label">机构类型</label>
+          <select class="form-select">
+            <option selected>地方学会</option>
+            <option>专业委员会</option>
+            <option>理事单位</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">联系人</label>
+          <input type="text" class="form-input" value="王芳">
+        </div>
+        <div class="form-group">
+          <label class="form-label">联系电话</label>
+          <input type="text" class="form-input" value="010-12345678">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('editOrgModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('editOrgModal'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 查看机构详情弹窗 -->
+  <div class="modal" id="viewOrgModal">
+    <div class="modal-dialog" style="width: 560px;">
+      <div class="modal-header">
+        <span class="modal-title">机构详情</span>
+        <span class="close-btn" onclick="closeModal('viewOrgModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <!-- 机构概览 -->
+        <div style="display: flex; gap: 20px; margin-bottom: 24px;">
+          <div style="width: 72px; height: 72px; border-radius: 12px; background: #1890ff; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #fff; flex-shrink: 0;">
+            🏢
+          </div>
+          <div style="flex: 1;">
+            <div style="font-size: 20px; font-weight: 600;">北京市农学会</div>
+            <div style="margin-top: 6px;">
+              <span class="tag tag-primary">地方学会</span>
+              <span class="status status-normal" style="margin-left: 8px;">正常</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 基本信息 -->
+        <div style="margin-bottom: 20px;">
+          <div style="font-weight: 600; margin-bottom: 12px; color: #333;">基本信息</div>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+            <div><strong>机构编码：</strong>1100001</div>
+            <div><strong>联系人：</strong>王芳</div>
+            <div><strong>联系电话：</strong>010-12345678</div>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid #eee; margin: 20px 0;"></div>
+
+        <!-- 会员统计 -->
+        <div>
+          <div style="font-weight: 600; margin-bottom: 12px; color: #333;">会员统计</div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+            <div style="background: #f8f9fa; border-radius: 10px; padding: 16px; text-align: center;">
+              <div style="font-size: 24px; font-weight: 600; color: #1890ff;">1,234</div>
+              <div style="font-size: 12px; color: #666; margin-top: 4px;">个人会员</div>
+            </div>
+            <div style="background: #f8f9fa; border-radius: 10px; padding: 16px; text-align: center;">
+              <div style="font-size: 24px; font-weight: 600; color: #52c41a;">56</div>
+              <div style="font-size: 12px; color: #666; margin-top: 4px;">单位会员</div>
+            </div>
+            <div style="background: #f8f9fa; border-radius: 10px; padding: 16px; text-align: center;">
+              <div style="font-size: 24px; font-weight: 600; color: #fa8c16;">89</div>
+              <div style="font-size: 12px; color: #666; margin-top: 4px;">待审核</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('viewOrgModal')">关闭</button>
+        <button class="btn btn-primary" onclick="closeModal('viewOrgModal'); openModal('editOrgModal')">编辑</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 迁移机构弹窗 -->
+  <div class="modal" id="migrateOrgModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">迁移机构</span>
+        <span class="close-btn" onclick="closeModal('migrateOrgModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 16px; color: #666; font-size: 13px;">
+          将 "<strong id="migrateOrgName"></strong>" 下的会员迁移到目标机构
+        </div>
+        <div class="form-group">
+          <label class="form-label">选择目标机构 <span class="required">*</span></label>
+          <select class="form-select" id="targetOrg">
+            <option value="">请选择目标机构</option>
+            <option>北京市农学会</option>
+            <option>山东省农学会</option>
+            <option>江苏省农学会</option>
+            <option>作物学专业委员会</option>
+          </select>
+        </div>
+        <div style="background: #fff7e6; border: 1px solid #ffe58f; border-radius: 4px; padding: 12px; font-size: 13px; color: #ad6800;">
+          ⚠️ 迁移后将把该机构下的所有会员转移到目标机构，包括个人会员和单位会员。
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('migrateOrgModal')">取消</button>
+        <button class="btn btn-primary" onclick="confirmMigrate()">确认迁移</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <style>
+    .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 22px; }
+    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+    input:checked + .slider { background-color: #52c41a; }
+    input:checked + .slider:before { transform: translateX(18px); }
+  </style>
+  <script>
+    function toggleStatus(el) {
+      var isChecked = el.checked;
+      showToast(isChecked ? '已启用' : '已禁用');
+    }
+
+    function openMigrateModal(orgName) {
+      document.getElementById('migrateOrgName').textContent = orgName;
+      document.getElementById('targetOrg').value = '';
+      openModal('migrateOrgModal');
+    }
+
+    function confirmMigrate() {
+      var targetOrg = document.getElementById('targetOrg').value;
+      if (!targetOrg) {
+        showToast('请选择目标机构');
+        return;
+      }
+      closeModal('migrateOrgModal');
+      showToast('迁移成功');
+    }
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

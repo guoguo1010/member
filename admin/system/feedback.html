@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>意见反馈 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .filter-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+    .filter-item { display: flex; align-items: center; gap: 8px; }
+    .filter-item label { font-size: 13px; color: #666; }
+    .filter-item select, .filter-item input { padding: 6px 12px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 13px; }
+    .display-control-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; margin-bottom: 16px; background: #fafafa; border: 1px solid #f0f0f0; border-radius: 8px; }
+    .display-control-title { font-size: 14px; font-weight: 500; color: #333; }
+    .display-control-tip { font-size: 12px; color: #999; margin-top: 4px; }
+    .type-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+    .type-tag.suggestion { background: #e6f7ff; color: #1890ff; }
+    .type-tag.system { background: #fff7e6; color: #fa8c16; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">意见反馈</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <a href="#">系统管理</a> / <span>意见反馈</span></div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">反馈列表</span>
+          </div>
+          <div class="card-body">
+            <div class="display-control-bar">
+              <div>
+                <div class="display-control-title">是否对外展示</div>
+                <div class="display-control-tip">控制意见反馈功能是否对外展示</div>
+              </div>
+              <label style="display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" id="globalDisplayToggle" onchange="toggleGlobalDisplay(this)"> 对外展示
+              </label>
+            </div>
+            <div class="filter-bar">
+              <div class="filter-item">
+                <label>反馈类型：</label>
+                <select id="typeFilter">
+                  <option value="">全部</option>
+                  <option value="suggestion">学会建议</option>
+                  <option value="system">系统建议</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label>是否回复：</label>
+                <select id="replyFilter">
+                  <option value="">全部</option>
+                  <option value="yes">已回复</option>
+                  <option value="no">未回复</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label>提交时间：</label>
+                <input type="date" id="startDate"> - <input type="date" id="endDate">
+              </div>
+              <button class="btn btn-default btn-sm" onclick="filterFeedback()">筛选</button>
+              <button class="btn btn-default btn-sm" onclick="resetFilter()">重置</button>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>反馈编号</th>
+                  <th>反馈类型</th>
+                  <th>用户名称</th>
+                  <th>反馈内容</th>
+                  <th>提交时间</th>
+                  <th>是否回复</th>
+                  <th>回复时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="feedbackTable">
+                <tr>
+                  <td>FB20260515001</td>
+                  <td><span class="type-tag suggestion">学会建议</span></td>
+                  <td>张三</td>
+                  <td>希望增加会员证书在线查看功能</td>
+                  <td>2026-05-15 10:23</td>
+                  <td><span class="tag tag-success">是</span></td>
+                  <td>2026-05-16 09:30:00</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="viewDetail(this)">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openReplyModal(this)">回复</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>FB20260515002</td>
+                  <td><span class="type-tag system">系统建议</span></td>
+                  <td>李四</td>
+                  <td>APP加载速度较慢，建议优化</td>
+                  <td>2026-05-14 15:30</td>
+                  <td><span class="tag tag-danger">否</span></td>
+                  <td>-</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="viewDetail(this)">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openReplyModal(this)">回复</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>FB20260514003</td>
+                  <td><span class="type-tag suggestion">学会建议</span></td>
+                  <td>王五</td>
+                  <td>希望举办更多农业技术交流活动</td>
+                  <td>2026-05-14 09:15</td>
+                  <td><span class="tag tag-success">是</span></td>
+                  <td>2026-05-14 14:20:00</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="viewDetail(this)">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openReplyModal(this)">回复</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>FB20260513004</td>
+                  <td><span class="type-tag system">系统建议</span></td>
+                  <td>赵六</td>
+                  <td>找回密码流程较为繁琐</td>
+                  <td>2026-05-13 14:22</td>
+                  <td><span class="tag tag-danger">否</span></td>
+                  <td>-</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="viewDetail(this)">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openReplyModal(this)">回复</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>FB20260512005</td>
+                  <td><span class="type-tag suggestion">学会建议</span></td>
+                  <td>钱七</td>
+                  <td>会员权益说明不够清晰</td>
+                  <td>2026-05-12 11:05</td>
+                  <td><span class="tag tag-success">是</span></td>
+                  <td>2026-05-13 10:15:00</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="viewDetail(this)">详情</button>
+                    <button class="btn btn-default btn-sm" onclick="openReplyModal(this)">回复</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="pagination">
+              <span class="page-info">共 5 条记录，第 1/1 页</span>
+              <div class="page-btns">
+                <button class="btn btn-default btn-sm" disabled>上一页</button>
+                <button class="btn btn-default btn-sm" disabled>下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 查看详情弹窗 -->
+  <div class="modal" id="detailModal">
+    <div class="modal-dialog" style="width: 580px;">
+      <div class="modal-header">
+        <span class="modal-title">反馈详情</span>
+        <span class="close-btn" onclick="closeModal('detailModal')">✕</span>
+      </div>
+      <div class="modal-body" style="padding: 0;">
+        <div style="background: #f5f7fa; padding: 20px 24px; border-bottom: 1px solid #e8e8e8;">
+          <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 12px;">
+            <span style="font-size: 15px; font-weight: 600; color: #333;" id="detailCode">-</span>
+            <span id="detailType">-</span>
+          </div>
+          <div style="display: flex; gap: 24px; font-size: 13px; color: #666;">
+            <span>👤 <span id="detailUser">-</span></span>
+            <span>🕐 <span id="detailTime">-</span></span>
+          </div>
+        </div>
+        <div style="padding: 20px 24px;">
+          <div style="font-size: 13px; color: #999; margin-bottom: 8px;">反馈内容</div>
+          <div style="font-size: 14px; color: #333; line-height: 1.8; background: #fafafa; padding: 16px; border-radius: 6px; border: 1px solid #f0f0f0;" id="detailContent">-</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('detailModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 回复弹窗 -->
+  <div class="modal" id="replyModal">
+    <div class="modal-dialog" style="width: 600px;">
+      <div class="modal-header">
+        <span class="modal-title">回复反馈</span>
+        <span class="close-btn" onclick="closeModal('replyModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="info-row">
+          <div class="info-label">用户名称：</div>
+          <div class="info-value" id="replyUser">-</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">反馈内容：</div>
+          <div class="info-value" id="replyContent">-</div>
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label class="form-label">回复内容 <span class="required">*</span></label>
+          <textarea class="form-input" id="replyText" rows="4" placeholder="请输入回复内容..." style="width: 100%; resize: vertical;"></textarea>
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label class="form-label">上传附件</label>
+          <div style="border: 2px dashed #d9d9d9; border-radius: 4px; padding: 20px; text-align: center; cursor: pointer;" onclick="document.getElementById('replyFile').click()">
+            <div style="color: #999; font-size: 13px;">点击上传文件</div>
+            <div style="color: #c0c4cc; font-size: 12px; margin-top: 4px;">支持 jpg、png、pdf、word 等格式</div>
+            <input type="file" id="replyFile" style="display: none;" onchange="handleFileSelect(this)">
+          </div>
+          <div id="fileList" style="margin-top: 8px;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('replyModal')">取消</button>
+        <button class="btn btn-primary" onclick="submitReply()">提交回复</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+    function showToast(msg) {
+      alert(msg);
+    }
+    function toggleGlobalDisplay(el) {
+      showToast(el.checked ? '已开启对外展示' : '已关闭对外展示');
+    }
+    function filterFeedback() {
+      showToast('筛选成功');
+    }
+    function resetFilter() {
+      document.getElementById('typeFilter').value = '';
+      document.getElementById('startDate').value = '';
+      document.getElementById('endDate').value = '';
+      showToast('已重置');
+    }
+    function viewDetail(btn) {
+      var row = btn.closest('tr');
+      var cells = row.querySelectorAll('td');
+      document.getElementById('detailCode').textContent = cells[0].textContent;
+      document.getElementById('detailType').innerHTML = cells[1].innerHTML;
+      document.getElementById('detailUser').textContent = cells[2].textContent;
+      document.getElementById('detailContent').textContent = cells[3].textContent;
+      document.getElementById('detailTime').textContent = cells[4].textContent;
+      openModal('detailModal');
+    }
+    function openReplyModal(btn) {
+      var row = btn.closest('tr');
+      var cells = row.querySelectorAll('td');
+      document.getElementById('replyUser').textContent = cells[2].textContent;
+      document.getElementById('replyContent').textContent = cells[3].textContent;
+      document.getElementById('replyText').value = '';
+      document.getElementById('fileList').innerHTML = '';
+      openModal('replyModal');
+    }
+    function handleFileSelect(input) {
+      var fileList = document.getElementById('fileList');
+      fileList.innerHTML = '';
+      for (var i = 0; i < input.files.length; i++) {
+        var file = input.files[i];
+        var div = document.createElement('div');
+        div.style = 'background: #f5f5f5; padding: 8px 12px; border-radius: 4px; margin-top: 8px; font-size: 13px;';
+        div.innerHTML = '📎 ' + file.name + ' <span style="color: #52c41a; margin-left: 8px;">已选择</span>';
+        fileList.appendChild(div);
+      }
+    }
+    function submitReply() {
+      var replyText = document.getElementById('replyText').value.trim();
+      if (!replyText) {
+        showToast('请输入回复内容', 'error');
+        return;
+      }
+      showToast('回复提交成功');
+      closeModal('replyModal');
+    }
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

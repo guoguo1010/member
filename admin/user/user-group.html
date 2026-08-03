@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>用户分组管理 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <script src="../../js/vue.global.js"></script>
+  <script src="../../js/element-plus.js"></script>
+  <script src="../../js/icons-vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    <div class="wrapper">
+      <div id="sidebar-container"></div>
+
+    <div class="main">
+        <div class="header">
+          <div class="header-left">
+            <div class="page-title">用户分组管理</div>
+            <div class="breadcrumb"><a href="#">首页</a> / <a href="#">用户管理</a> / <span>用户分组管理</span></div>
+          </div>
+          <div class="header-right">
+            <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+          </div>
+        </div>
+
+        <div class="content">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">分组列表</span>
+              <div class="card-tools">
+                <button class="btn btn-primary btn-sm" @click="openGroupModal()">+ 新增分组</button>
+              </div>
+            </div>
+            <div class="card-body" style="padding: 0;">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>分组名称</th>
+                    <th>用户类型</th>
+                    <th>用户数</th>
+                    <th>创建时间</th>
+                    <th>更新时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="group in groups" :key="group.id">
+                    <td>{{ group.name }}</td>
+                    <td>
+                      <span class="tag" :class="getTypeTagClass(group.userType)">{{ getTypeName(group.userType) }}</span>
+                    </td>
+                    <td>{{ group.userCount }}</td>
+                    <td>{{ group.createTime }}</td>
+                    <td>{{ group.updateTime }}</td>
+                    <td class="actions" @click.stop>
+                      <button class="btn btn-default btn-sm" @click="viewGroupUsers(group)">查看用户</button>
+                      <button class="btn btn-default btn-sm" @click="openGroupModal(group)">编辑</button>
+                      <button class="btn btn-danger btn-sm" @click="deleteGroup(group)">删除</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 新增/编辑分组弹窗 -->
+    <div class="modal" :class="{ active: groupModalVisible }" v-if="groupModalVisible" @click.self="groupModalVisible = false">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <span class="modal-title">{{ editingGroup ? '编辑分组' : '新增分组' }}</span>
+          <span class="close-btn" @click="groupModalVisible = false">✕</span>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">分组名称 <span class="required">*</span></label>
+            <input type="text" class="form-input" v-model="groupForm.name" placeholder="请输入分组名称">
+          </div>
+          <div class="form-group">
+            <label class="form-label">用户类型 <span class="required">*</span></label>
+            <select class="form-select" v-model="groupForm.userType" @change="onUserTypeChange">
+              <option value="platformUser">平台用户</option>
+              <option value="platformAdmin">平台管理员</option>
+              <option value="personal">个人会员</option>
+              <option value="company">单位会员</option>
+              <option value="tagUser">标签会员</option>
+              <option value="custom">自定义用户</option>
+            </select>
+          </div>
+
+          <!-- 发展来源：个人/单位会员时显示 -->
+          <div class="form-group" v-if="groupForm.userType === 'personal' || groupForm.userType === 'company'">
+            <label class="form-label">发展来源</label>
+            <div class="checkbox-group" style="margin-bottom: 8px;">
+              <span class="checkbox-item" v-for="t in orgTypes" :key="t">
+                <input type="checkbox" :id="'orgType_' + t" :value="t" v-model="groupForm.orgTypes" @change="onOrgTypeChange">
+                <label :for="'orgType_' + t">{{ t }}</label>
+              </span>
+            </div>
+            <div class="checkbox-group" style="background: #f8f9fc; padding: 10px 12px; border-radius: 6px; max-height: 140px; overflow-y: auto;">
+              <span class="checkbox-item" v-for="o in filteredOrgs" :key="o.id">
+                <input type="checkbox" :id="'org_' + o.id" :value="o.id" v-model="groupForm.orgs">
+                <label :for="'org_' + o.id">{{ o.name }}</label>
+              </span>
+              <div v-if="filteredOrgs.length === 0" style="color: #999; font-size: 13px;">请先选择机构类型</div>
+            </div>
+            <div class="form-tip">选择机构后只发送给相应的会员，不选择则发送给所有的{{ groupForm.userType === 'personal' ? '个人' : '单位' }}会员</div>
+          </div>
+
+          <!-- 标签用户：选择标签 -->
+          <div class="form-group" v-if="groupForm.userType === 'tagUser'">
+            <label class="form-label">选择标签</label>
+            <div class="checkbox-group">
+              <span class="checkbox-item" v-for="tag in tags" :key="tag.id">
+                <input type="checkbox" :id="'tag_' + tag.id" :value="tag.id" v-model="groupForm.tagIds">
+                <label :for="'tag_' + tag.id">{{ tag.name }}</label>
+              </span>
+            </div>
+            <div class="form-tip">选择标签后，将发送给有此标签的所有有效会员</div>
+          </div>
+
+          <!-- 自定义用户：手机号搜索 -->
+          <div class="form-group" v-if="groupForm.userType === 'custom'">
+            <label class="form-label">添加用户 <span class="required">*</span></label>
+            <div style="display: flex; gap: 10px; margin-bottom: 12px; align-items: center;">
+              <input type="text" class="form-input" v-model="searchPhone" placeholder="输入手机号后回车" style="flex: 1;" @keyup.enter="addUserByPhone">
+              <button class="btn btn-default btn-sm" @click="downloadTemplate">📥 下载模板</button>
+              <button class="btn btn-default btn-sm" @click="triggerUpload">📤 批量上传</button>
+              <input type="file" ref="fileInput" accept=".xlsx,.xls,.csv" style="display: none;" @change="handleFileUpload">
+            </div>
+            <div v-if="searchedUser" style="background: #f8f9fc; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div style="font-weight: 500;">{{ searchedUser.name }}</div>
+                  <div style="font-size: 12px; color: #999;">{{ searchedUser.phone }}</div>
+                </div>
+                <button class="btn btn-primary btn-sm" @click="addCustomUser">添加</button>
+              </div>
+            </div>
+            <div v-if="uploadedCount > 0" style="background: #f6ffed; border: 1px solid #b7eb8f; padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 13px; color: #52c41a;">
+              ✓ 已成功上传 {{ uploadedCount }} 个用户
+            </div>
+            <div v-if="groupForm.customUsers.length > 0">
+              <div style="font-size: 12px; color: #666; margin-bottom: 6px;">已添加用户（{{ groupForm.customUsers.length }}）：</div>
+              <div v-for="(user, index) in groupForm.customUsers" :key="index" style="background: #f8f9fc; padding: 8px 12px; border-radius: 6px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <span style="font-weight: 500;">{{ user.name }}</span>
+                  <span style="font-size: 12px; color: #999; margin-left: 8px;">{{ user.phone }}</span>
+                </div>
+                <button class="btn btn-default btn-sm" @click="removeCustomUser(index)" style="padding: 2px 8px;">移除</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">描述</label>
+            <textarea class="form-textarea" v-model="groupForm.description" placeholder="请输入分组描述"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-default" @click="groupModalVisible = false">取消</button>
+          <button class="btn btn-primary" @click="saveGroup">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { createApp, ref, computed } = Vue;
+
+    const app = createApp({
+      setup() {
+        const groups = ref([
+          { id: 1, name: '个人会员组', userType: 'personal', userCount: 1234, createTime: '2024-01-15 10:30:00', updateTime: '2024-06-20 14:20:00', description: '所有个人会员用户' },
+          { id: 2, name: '单位会员组', userType: 'company', userCount: 456, createTime: '2024-01-15 10:35:00', updateTime: '2024-07-01 09:15:00', description: '所有单位会员用户' },
+          { id: 3, name: '平台管理员组', userType: 'platformAdmin', userCount: 12, createTime: '2024-02-01 08:00:00', updateTime: '2024-05-18 16:40:00', description: '所有管理员' },
+          { id: 4, name: '高新技术企业', userType: 'tagUser', userCount: 89, createTime: '2024-03-10 11:20:00', updateTime: '2024-06-25 10:00:00', tagId: 1 },
+          { id: 5, name: '自定义测试组', userType: 'custom', userCount: 5, createTime: '2024-04-05 15:45:00', updateTime: '2024-07-10 17:30:00', customUsers: [{name: '张三', phone: '13800138001'}] }
+        ]);
+
+        const orgTypes = ref(['省学会', '专业委员会', '单位会员']);
+
+        const orgs = ref([
+          { id: 1, type: '省学会', name: '北京市农学会' },
+          { id: 2, type: '省学会', name: '上海市农学会' },
+          { id: 3, type: '省学会', name: '广东省农学会' },
+          { id: 4, type: '专业委员会', name: '作物学专业委员会' },
+          { id: 5, type: '专业委员会', name: '园艺学专业委员会' },
+          { id: 6, type: '专业委员会', name: '植物保护学专业委员会' },
+          { id: 7, type: '单位会员', name: '中国农业大学' },
+          { id: 8, type: '单位会员', name: '中国农业科学院' }
+        ]);
+
+
+        const groupModalVisible = ref(false);
+        const editingGroup = ref(null);
+        const groupForm = ref({
+          name: '',
+          userType: 'platformUser',
+          orgTypes: [],
+          orgs: [],
+          tagIds: [],
+          customUsers: []
+        });
+
+        const tags = ref([
+          { id: 1, name: '高新技术企业' },
+          { id: 2, name: '理事单位' },
+          { id: 3, name: '重点实验室' }
+        ]);
+
+        const searchPhone = ref('');
+        const searchedUser = ref(null);
+        const uploadedCount = ref(0);
+        const fileInput = ref(null);
+
+        const getTypeName = (type) => {
+          const map = {
+            platformUser: '平台用户',
+            platformAdmin: '平台管理员',
+            personal: '个人会员',
+            company: '单位会员',
+            tagUser: '标签用户',
+            custom: '自定义用户'
+          };
+          return map[type] || type;
+        };
+
+        const getTypeTagClass = (type) => {
+          const map = {
+            platformUser: 'tag-default',
+            platformAdmin: 'tag-warning',
+            personal: 'tag-primary',
+            company: 'tag-success',
+            tagUser: 'tag-warning',
+            custom: 'tag-default'
+          };
+          return map[type] || 'tag-default';
+        };
+
+        const filteredOrgs = computed(() => {
+          if (!groupForm.value.orgTypes || groupForm.value.orgTypes.length === 0) return orgs.value;
+          return orgs.value.filter(o => groupForm.value.orgTypes.includes(o.type));
+        });
+
+        const onOrgTypeChange = () => {
+          groupForm.value.orgs = [];
+        };
+
+        const onUserTypeChange = () => {
+          groupForm.value.orgTypes = [];
+          groupForm.value.orgs = [];
+          groupForm.value.tagIds = [];
+          groupForm.value.customUsers = [];
+          searchedUser.value = null;
+          uploadedCount.value = 0;
+        };
+
+        const openGroupModal = (group = null) => {
+          editingGroup.value = group;
+          if (group) {
+            groupForm.value = {
+              name: group.name,
+              userType: group.userType,
+              orgTypes: group.orgTypes || [],
+              orgs: group.orgs || [],
+              tagIds: group.tagIds || [],
+              customUsers: group.customUsers || []
+            };
+          } else {
+            groupForm.value = {
+              name: '',
+              userType: 'platformUser',
+              orgTypes: [],
+              orgs: [],
+              tagIds: [],
+              customUsers: []
+            };
+          }
+          groupModalVisible.value = true;
+        };
+
+        const saveGroup = () => {
+          if (!groupForm.value.name) {
+            alert('请输入分组名称');
+            return;
+          }
+          console.log('保存分组:', groupForm.value);
+          alert('保存成功');
+          groupModalVisible.value = false;
+        };
+
+        const deleteGroup = (group) => {
+          if (confirm('确定要删除该分组吗？')) {
+            const index = groups.value.findIndex(g => g.id === group.id);
+            if (index > -1) groups.value.splice(index, 1);
+          }
+        };
+
+        const viewGroupUsers = (group) => {
+          const params = new URLSearchParams({
+            groupId: String(group.id),
+            groupName: group.name,
+            userType: group.userType
+          });
+          window.location.href = `user-group-users.html?${params.toString()}`;
+        };
+
+
+        const addUserByPhone = () => {
+          const phone = searchPhone.value.trim();
+          if (!phone) {
+            alert('请输入手机号');
+            return;
+          }
+          // 模拟添加用户（实际应调接口验证）
+          const name = '用户' + phone.slice(-4);
+          if (!groupForm.value.customUsers.find(u => u.phone === phone)) {
+            groupForm.value.customUsers.push({ name: name, phone: phone });
+            searchPhone.value = '';
+          } else {
+            alert('该用户已添加');
+          }
+        };
+
+        const addCustomUser = () => {
+          if (searchedUser.value && !groupForm.value.customUsers.find(u => u.phone === searchedUser.value.phone)) {
+            groupForm.value.customUsers.push(searchedUser.value);
+            searchedUser.value = null;
+            searchPhone.value = '';
+          }
+        };
+
+        const removeCustomUser = (index) => {
+          groupForm.value.customUsers.splice(index, 1);
+        };
+
+        const downloadTemplate = () => {
+          alert('正在下载手机号导入模板...');
+          // 模拟下载模板
+          const templateContent = '手机号\n13800138001\n13800138002\n13800138003';
+          const blob = new Blob([templateContent], { type: 'text/plain' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = '手机号导入模板.txt';
+          a.click();
+          URL.revokeObjectURL(url);
+        };
+
+        const triggerUpload = () => {
+          fileInput.value.click();
+        };
+
+        const handleFileUpload = (event) => {
+          const file = event.target.files[0];
+          if (!file) return;
+          // 模拟解析上传文件
+          uploadedCount.value = Math.floor(Math.random() * 10) + 1;
+          // 模拟添加用户
+          for (let i = 0; i < uploadedCount.value; i++) {
+            const phone = '138' + String(Math.floor(Math.random() * 100000000)).padStart(8, '0');
+            if (!groupForm.value.customUsers.find(u => u.phone === phone)) {
+              groupForm.value.customUsers.push({ name: '用户' + (i + 1), phone: phone });
+            }
+          }
+          alert('成功上传 ' + uploadedCount.value + ' 个用户');
+          event.target.value = '';
+        };
+
+        return {
+          groups,
+          orgTypes,
+          orgs,
+          filteredOrgs,
+          tags,
+          groupModalVisible,
+          editingGroup,
+          groupForm,
+          searchPhone,
+          searchedUser,
+          uploadedCount,
+          fileInput,
+          getTypeName,
+          getTypeTagClass,
+          onUserTypeChange,
+          onOrgTypeChange,
+          openGroupModal,
+          saveGroup,
+          deleteGroup,
+          viewGroupUsers,
+          addUserByPhone,
+          addCustomUser,
+          removeCustomUser,
+          downloadTemplate,
+          triggerUpload,
+          handleFileUpload
+        };
+      }
+    });
+
+    app.mount('#app');
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

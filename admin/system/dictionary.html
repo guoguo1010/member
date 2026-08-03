@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>字典管理 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">字典管理</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <a href="#">系统管理</a> / <span>字典管理</span></div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">字典类型</span>
+            <div class="card-tools">
+              <button class="btn btn-default" onclick="exportExcel()">📥 导出</button>
+              <button class="btn btn-primary" onclick="openModal('addTypeModal')">+ 新增字典类型</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>字典类型名称</th>
+                  <th>字典类型编码</th>
+                  <th>描述</th>
+                  <th>字典项数量</th>
+                  <th>创建时间</th>
+                  <th>更新时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>学历</td>
+                  <td>education</td>
+                  <td>个人会员学历信息</td>
+                  <td>12 个</td>
+                  <td>2024-01-01 08:30:00</td>
+                  <td>2024-06-15 14:20:00</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='dictionary-items.html?type=education'">查看</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('editTypeModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该字典类型吗？')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>职称</td>
+                  <td>title</td>
+                  <td>个人会员职称信息</td>
+                  <td>8 个</td>
+                  <td>2024-01-15 10:15:30</td>
+                  <td>2024-05-20 09:10:15</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='dictionary-items.html?type=title'">查看</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('editTypeModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该字典类型吗？')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>民族</td>
+                  <td>nation</td>
+                  <td>56个民族信息</td>
+                  <td>56 个</td>
+                  <td>2024-02-01 14:20:45</td>
+                  <td>2024-07-01 16:30:22</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='dictionary-items.html?type=nation'">查看</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('editTypeModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该字典类型吗？')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>行业</td>
+                  <td>industry</td>
+                  <td>单位会员所属行业分类</td>
+                  <td>15 个</td>
+                  <td>2024-02-15 09:05:20</td>
+                  <td>2024-06-28 11:45:00</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='dictionary-items.html?type=industry'">查看</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('editTypeModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该字典类型吗？')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>地区</td>
+                  <td>region</td>
+                  <td>全国省市地区信息</td>
+                  <td>34 个</td>
+                  <td>2024-03-01 11:30:00</td>
+                  <td>2024-06-10 08:15:30</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="location.href='dictionary-items.html?type=region'">查看</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('editTypeModal')">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="if(confirm('确定删除该字典类型吗？')) { showToast('已删除'); }">删除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增字典类型弹窗 -->
+  <div class="modal" id="addTypeModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">新增字典类型</span>
+        <span class="close-btn" onclick="closeModal('addTypeModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">字典类型名称 <span class="required">*</span></label>
+          <input type="text" class="form-input" placeholder="如：学历、职称">
+        </div>
+        <div class="form-group">
+          <label class="form-label">字典类型编码 <span class="required">*</span></label>
+          <input type="text" class="form-input" placeholder="如：education、title">
+        </div>
+        <div class="form-group">
+          <label class="form-label">描述</label>
+          <textarea class="form-textarea" placeholder="请输入描述"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('addTypeModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('addTypeModal'); showToast('添加成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑字典类型弹窗 -->
+  <div class="modal" id="editTypeModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">编辑字典类型</span>
+        <span class="close-btn" onclick="closeModal('editTypeModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">字典类型名称 <span class="required">*</span></label>
+          <input type="text" class="form-input" value="学历">
+        </div>
+        <div class="form-group">
+          <label class="form-label">字典类型编码 <span class="required">*</span></label>
+          <input type="text" class="form-input" value="education" disabled>
+        </div>
+        <div class="form-group">
+          <label class="form-label">描述</label>
+          <textarea class="form-textarea">个人会员学历信息</textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('editTypeModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('editTypeModal'); showToast('保存成功')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script>
+    function showDictItems(type) {
+      document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      showToast('已切换到' + type + '字典');
+    }
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

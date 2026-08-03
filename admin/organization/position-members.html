@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>任职会员 - 机构任职管理</title>
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">任职会员</div>
+          <div class="breadcrumb">
+            <a href="org-position.html">机构任职</a> / <span>任职会员</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- 任职信息卡片 -->
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-body" style="display: flex; align-items: center; gap: 16px;">
+            <span id="orgName" class="tag tag-primary" style="font-size: 14px; padding: 6px 12px;">中国农业学会</span>
+            <span style="color: #666;">第十届 · <span id="orgTypeName">理事会</span> · <span id="validPeriod">2024-01-01 至 2028-12-31</span></span>
+            <a href="org-position.html" class="btn btn-default btn-sm" style="margin-left: auto;">返回任职列表</a>
+          </div>
+        </div>
+
+        <!-- 已添加会员 -->
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <span class="card-title">已添加会员</span>
+            <div class="card-tools">
+              <button class="btn btn-default" onclick="openModal('addMemberModal')">+ 批量添加任职人员</button>
+              <button class="btn btn-default" onclick="openModal('addNonMemberModal')">+ 添加任职人员</button>
+              <button class="btn btn-default" onclick="openModal('importMembersModal')">📥 批量导入</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="search-bar" style="margin-bottom: 16px;">
+              <div class="search-item">
+                <label>姓名：</label>
+                <input type="text" class="form-input" id="searchNameAssigned" placeholder="请输入姓名" style="width: 100px;">
+              </div>
+              <div class="search-item">
+                <label>手机号：</label>
+                <input type="text" class="form-input" id="searchPhoneAssigned" placeholder="请输入手机号" style="width: 120px;">
+              </div>
+              <div class="search-item">
+                <label>会员类型：</label>
+                <select class="form-select" id="searchTypeAssigned" style="width: 110px;">
+                  <option value="">全部</option>
+                  <option value="personal">个人会员</option>
+                  <option value="student">学生会员</option>
+                </select>
+              </div>
+              <div class="search-item">
+                <label>职位名称：</label>
+                <select class="form-select" id="searchTitleAssigned" style="width: 100px;">
+                  <option value="">全部</option>
+                  <option value="会长">会长</option>
+                  <option value="副会长">副会长</option>
+                  <option value="秘书长">秘书长</option>
+                  <option value="理事">理事</option>
+                </select>
+              </div>
+              <button class="btn btn-default btn-sm" onclick="searchAssigned()">查询</button>
+              <button class="btn btn-default btn-sm" onclick="resetAssignedSearch()">重置</button>
+              <button class="btn btn-default btn-sm" id="removeBtn" disabled onclick="removeSelected()" style="margin-left: 10px;">移除选中 (<span id="selectedCount">0</span>)</button>
+            </div>
+
+            <table class="table">
+              <thead>
+                <tr>
+                  <th width="50"><input type="checkbox" class="checkbox" id="selectAllAssigned" onchange="toggleSelectAllAssigned()"></th>
+                  <th>姓名</th>
+                  <th>手机号</th>
+                  <th>会员类型</th>
+                  <th>职位名称</th>
+                  <th>入会时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="assignedTable">
+                <tr>
+                  <td><input type="checkbox" class="checkbox assigned-checkbox" value="1" onchange="updateRemoveBtn()"></td>
+                  <td>张三</td>
+                  <td>13800138001</td>
+                  <td><span class="tag tag-primary">普通个人会员</span></td>
+                  <td><span class="tag tag-danger">会长</span></td>
+                  <td>2024-01-15</td>
+                  <td><button class="btn btn-default btn-sm" onclick="removeMember(1)">移除</button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="checkbox assigned-checkbox" value="2" onchange="updateRemoveBtn()"></td>
+                  <td>李四</td>
+                  <td>13800138002</td>
+                  <td><span class="tag tag-primary">普通个人会员</span></td>
+                  <td><span class="tag tag-warning">秘书长</span></td>
+                  <td>2024-02-20</td>
+                  <td><button class="btn btn-default btn-sm" onclick="removeMember(2)">移除</button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="checkbox assigned-checkbox" value="3" onchange="updateRemoveBtn()"></td>
+                  <td>王五</td>
+                  <td>13800138003</td>
+                  <td><span class="tag tag-primary">普通个人会员</span></td>
+                  <td><span class="tag tag-primary">副会长</span></td>
+                  <td>2024-03-10</td>
+                  <td><button class="btn btn-default btn-sm" onclick="removeMember(3)">移除</button></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="pagination">
+              <div class="pagination-info">共 3 条</div>
+              <div class="pagination-btns">
+                <button class="page-btn" disabled>上一页</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">下一页</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 选择职位弹窗 -->
+  <div class="modal" id="selectPositionModal" style="z-index: 3000;">
+    <div class="modal-dialog" style="width: 400px;">
+      <div class="modal-header">
+        <span class="modal-title">选择职位名称</span>
+        <span class="close-btn" onclick="closeModal('selectPositionModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">职位名称 <span class="required">*</span></label>
+          <select class="form-select" id="selectPositionName" style="width: 100%;">
+            <option value="">请选择职位</option>
+            <option value="会长">会长</option>
+            <option value="副会长">副会长</option>
+            <option value="秘书长">秘书长</option>
+            <option value="理事">理事</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('selectPositionModal')">取消</button>
+        <button class="btn btn-primary" onclick="confirmAddMember()">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增任职非会员弹窗 -->
+  <div class="modal" id="addNonMemberModal">
+    <div class="modal-dialog" style="width: 480px;">
+      <div class="modal-header">
+        <span class="modal-title">添加任职人员</span>
+        <span class="close-btn" onclick="closeModal('addNonMemberModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">手机号 <span class="required">*</span></label>
+          <input type="text" class="form-input" id="nonMemberPhone" placeholder="请输入手机号">
+        </div>
+        <div class="form-group">
+          <label class="form-label">姓名 <span class="required">*</span></label>
+          <input type="text" class="form-input" id="nonMemberName" placeholder="请输入姓名">
+        </div>
+        <div class="form-group">
+          <label class="form-label">任职名称 <span class="required">*</span></label>
+          <select class="form-select" id="nonMemberTitle" style="width: 100%;">
+            <option value="">请选择任职名称</option>
+            <option value="会长">会长</option>
+            <option value="副会长">副会长</option>
+            <option value="秘书长">秘书长</option>
+            <option value="理事">理事</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('addNonMemberModal')">取消</button>
+        <button class="btn btn-primary" onclick="confirmAddNonMember()">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增任职人员弹窗 -->
+  <div class="modal" id="addMemberModal">
+    <div class="modal-dialog" style="width: 1000px; max-width: 96vw;">
+      <div class="modal-header">
+        <span class="modal-title">批量添加任职人员</span>
+        <span class="close-btn" onclick="closeModal('addMemberModal')">✕</span>
+      </div>
+      <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <div class="search-bar" style="margin-bottom: 16px;">
+          <div class="search-item">
+            <label>姓名：</label>
+            <input type="text" class="form-input" id="searchName" placeholder="请输入姓名" style="width: 120px;">
+          </div>
+          <div class="search-item">
+            <label>手机号：</label>
+            <input type="text" class="form-input" id="searchPhone" placeholder="请输入手机号" style="width: 130px;">
+          </div>
+          <div class="search-item">
+            <label>会员类型：</label>
+            <select class="form-select" id="searchType" style="width: 120px;">
+              <option value="">全部</option>
+              <option value="personal">个人会员</option>
+              <option value="student">学生会员</option>
+            </select>
+          </div>
+          <button class="btn btn-default btn-sm" onclick="searchMembers()">查询</button>
+          <button class="btn btn-default btn-sm" onclick="resetSearch()">重置</button>
+        </div>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th width="50"><input type="checkbox" class="checkbox" id="selectAllSearch" onchange="toggleSelectAllSearch()"></th>
+              <th>姓名</th>
+              <th>手机号</th>
+              <th>会员类型</th>
+              <th>入会时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="searchTable">
+            <tr>
+              <td><input type="checkbox" class="checkbox search-checkbox" value="4" onchange="updateAddBtn()"></td>
+              <td>赵六</td>
+              <td>13900139001</td>
+              <td><span class="tag tag-primary">普通个人会员</span></td>
+              <td>2024-04-05</td>
+              <td><button class="btn btn-primary btn-sm" onclick="addMember(4)">添加</button></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" class="checkbox search-checkbox" value="5" onchange="updateAddBtn()"></td>
+              <td>钱七</td>
+              <td>13900139002</td>
+              <td><span class="tag tag-primary">普通个人会员</span></td>
+              <td>2024-04-10</td>
+              <td><button class="btn btn-primary btn-sm" onclick="addMember(5)">添加</button></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" class="checkbox search-checkbox" value="6" onchange="updateAddBtn()"></td>
+              <td>孙八</td>
+              <td>13900139003</td>
+              <td><span class="tag tag-primary">学生会员</span></td>
+              <td>2024-04-15</td>
+              <td><button class="btn btn-primary btn-sm" onclick="addMember(6)">添加</button></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination" style="margin-top: 16px;">
+          <div class="pagination-info">共 3 条</div>
+          <div class="pagination-btns">
+            <button class="page-btn" disabled>上一页</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">下一页</button>
+          </div>
+        </div>
+        <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
+          <button class="btn btn-primary" id="addBtn" disabled onclick="addSelected()">添加选中会员 (<span id="addSelectedCount">0</span>)</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('addMemberModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 批量导入弹窗 -->
+  <div class="modal" id="importMembersModal">
+    <div class="modal-dialog" style="width: 500px;">
+      <div class="modal-header">
+        <span class="modal-title">批量导入任职会员</span>
+        <span class="close-btn" onclick="closeModal('importMembersModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="text-align: center; padding: 20px 0;">
+          <div style="width: 80px; height: 80px; margin: 0 auto 16px; border: 2px dashed #d9d9d9; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="document.getElementById('importMembersFile').click()">
+            <span style="font-size: 32px; color: #999;">📁</span>
+          </div>
+          <input type="file" id="importMembersFile" accept=".xlsx,.xls,.csv" style="display: none;" onchange="handleImportMembersFile(this)">
+          <div style="color: #666; font-size: 14px; margin-bottom: 8px;">点击选择文件或拖拽文件到此处</div>
+          <div style="color: #999; font-size: 12px;">支持 .xlsx、.xls、.csv 格式</div>
+        </div>
+        <div style="margin-top: 16px;">
+          <a href="#" style="color: #1890ff; font-size: 13px;">📋 下载导入模板</a>
+        </div>
+        <div id="importPreview" style="display: none; margin-top: 16px;">
+          <div style="padding: 12px; background: #f5f5f5; border-radius: 6px; margin-bottom: 12px;">
+            <div style="font-weight: 500; margin-bottom: 8px;">文件信息</div>
+            <div style="font-size: 13px; color: #666;" id="importFileName"></div>
+          </div>
+        </div>
+        <div style="margin-top: 16px; padding: 12px; background: #fffbe6; border-radius: 4px; font-size: 13px; color: #666;">
+          <div style="margin-bottom: 8px; font-weight: 500; color: #faad14;">导入说明：</div>
+          <ul style="margin: 0; padding-left: 20px; line-height: 1.8;">
+            <li>请先下载导入模板，按模板格式填写数据</li>
+            <li>每次导入最多支持 500 条数据</li>
+            <li>手机号、姓名等关键字段不能为空</li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('importMembersModal')">取消</button>
+        <button class="btn btn-primary" id="importMembersBtn" disabled onclick="doImportMembers()">开始导入</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <script>
+    // 获取URL参数
+    function getQueryParam(name) {
+      var params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    // 初始化页面
+    function init() {
+      var org = getQueryParam('org');
+      var title = getQueryParam('title');
+      var orgType = getQueryParam('orgType');
+      if (org) document.getElementById('orgName').textContent = org;
+      if (title) {
+        document.getElementById('searchTitleAssigned').value = title;
+      }
+      if (orgType) {
+        document.getElementById('orgTypeName').textContent = orgType;
+      }
+    }
+
+    // 查询已添加会员
+    function searchAssigned() {
+      var name = document.getElementById('searchNameAssigned').value;
+      var phone = document.getElementById('searchPhoneAssigned').value;
+      var type = document.getElementById('searchTypeAssigned').value;
+      var title = document.getElementById('searchTitleAssigned').value;
+      console.log('查询条件:', { name: name, phone: phone, type: type, title: title });
+      showToast('查询完成');
+    }
+
+    // 重置查询条件
+    function resetAssignedSearch() {
+      document.getElementById('searchNameAssigned').value = '';
+      document.getElementById('searchPhoneAssigned').value = '';
+      document.getElementById('searchTypeAssigned').value = '';
+      document.getElementById('searchTitleAssigned').value = '';
+      showToast('已重置');
+    }
+
+    // 更新移除按钮状态
+    function updateRemoveBtn() {
+      var checkboxes = document.querySelectorAll('.assigned-checkbox:checked');
+      var count = checkboxes.length;
+      document.getElementById('selectedCount').textContent = count;
+      document.getElementById('removeBtn').disabled = count === 0;
+    }
+
+    // 更新添加按钮状态
+    function updateAddBtn() {
+      var checkboxes = document.querySelectorAll('.search-checkbox:checked');
+      var count = checkboxes.length;
+      document.getElementById('addSelectedCount').textContent = count;
+      document.getElementById('addBtn').disabled = count === 0;
+    }
+
+    // 全选已添加会员
+    function toggleSelectAllAssigned() {
+      var checked = document.getElementById('selectAllAssigned').checked;
+      document.querySelectorAll('.assigned-checkbox').forEach(function(cb) { cb.checked = checked; });
+      updateRemoveBtn();
+    }
+
+    // 全选搜索结果
+    function toggleSelectAllSearch() {
+      var checked = document.getElementById('selectAllSearch').checked;
+      document.querySelectorAll('.search-checkbox').forEach(function(cb) { cb.checked = checked; });
+      updateAddBtn();
+    }
+
+    // 移除单个会员
+    function removeMember(id) {
+      if (confirm('确定要移除该会员吗？')) {
+        showToast('已移除');
+      }
+    }
+
+    // 批量移除选中会员
+    function removeSelected() {
+      var checkboxes = document.querySelectorAll('.assigned-checkbox:checked');
+      if (checkboxes.length > 0 && confirm('确定要移除选中的 ' + checkboxes.length + ' 名会员吗？')) {
+        showToast('已移除 ' + checkboxes.length + ' 名会员');
+      }
+    }
+
+    var pendingAddIds = [];
+    var isBatchAdd = false;
+
+    // 添加单个会员
+    function addMember(id) {
+      pendingAddIds = [id];
+      isBatchAdd = false;
+      document.getElementById('selectPositionName').value = '';
+      openModal('selectPositionModal');
+    }
+
+    // 批量添加选中会员
+    function addSelected() {
+      var checkboxes = document.querySelectorAll('.search-checkbox:checked');
+      if (checkboxes.length === 0) {
+        showToast('请先选择要添加的会员');
+        return;
+      }
+      pendingAddIds = Array.from(checkboxes).map(function(cb) { return cb.value; });
+      isBatchAdd = true;
+      document.getElementById('selectPositionName').value = '';
+      openModal('selectPositionModal');
+    }
+
+    // 确认添加会员
+    function confirmAddMember() {
+      var positionName = document.getElementById('selectPositionName').value;
+      if (!positionName) {
+        showToast('请选择职位名称');
+        return;
+      }
+      if (isBatchAdd) {
+        showToast('已添加 ' + pendingAddIds.length + ' 名会员，职位：' + positionName);
+      } else {
+        showToast('已添加会员，职位：' + positionName);
+      }
+      closeModal('selectPositionModal');
+    }
+
+    // 确认添加非会员
+    function confirmAddNonMember() {
+      var phone = document.getElementById('nonMemberPhone').value.trim();
+      var name = document.getElementById('nonMemberName').value.trim();
+      var title = document.getElementById('nonMemberTitle').value;
+      if (!phone) {
+        showToast('请输入手机号');
+        return;
+      }
+      if (!name) {
+        showToast('请输入姓名');
+        return;
+      }
+      if (!title) {
+        showToast('请选择任职名称');
+        return;
+      }
+      showToast('已添加任职记录：' + name + ' - ' + title);
+      document.getElementById('nonMemberPhone').value = '';
+      document.getElementById('nonMemberName').value = '';
+      document.getElementById('nonMemberTitle').value = '';
+      closeModal('addNonMemberModal');
+    }
+
+    // 搜索会员
+    function searchMembers() {
+      var name = document.getElementById('searchName').value;
+      var phone = document.getElementById('searchPhone').value;
+      var type = document.getElementById('searchType').value;
+      console.log('搜索条件:', { name: name, phone: phone, type: type });
+      showToast('搜索完成');
+    }
+
+    // 重置搜索
+    function resetSearch() {
+      document.getElementById('searchName').value = '';
+      document.getElementById('searchPhone').value = '';
+      document.getElementById('searchType').value = '';
+      showToast('已重置');
+    }
+
+    init();
+
+    // 批量导入相关
+    var importFileName = '';
+
+    function handleImportMembersFile(input) {
+      var file = input.files[0];
+      if (file) {
+        importFileName = file.name;
+        document.getElementById('importPreview').style.display = 'block';
+        document.getElementById('importFileName').textContent = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+        document.getElementById('importMembersBtn').disabled = false;
+        showToast('已选择文件：' + file.name);
+      }
+    }
+
+    function doImportMembers() {
+      if (!importFileName) {
+        showToast('请先选择要导入的文件');
+        return;
+      }
+      showToast('正在导入，请稍候...');
+      setTimeout(function() {
+        closeModal('importMembersModal');
+        showToast('导入成功：新增 15 条任职记录');
+        importFileName = '';
+        document.getElementById('importPreview').style.display = 'none';
+        document.getElementById('importMembersBtn').disabled = true;
+      }, 2000);
+    }
+
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>单位会员主页 - 中国农学会</title>
+  <link rel="stylesheet" href="../css/web.css">
+  <link rel="stylesheet" href="../css/web.css">
+  <script src="../js/vue.global.js"></script>
+  <script src="../js/element-plus.js"></script>
+  <script src="../js/icons-vue.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%); min-height: 100vh; }
+
+    .navbar {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 0 40px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .navbar-logo { display: flex; align-items: center; gap: 12px; color: white; font-size: 20px; font-weight: 600; }
+    .navbar-logo-icon { font-size: 32px; }
+    .navbar-menu { display: flex; gap: 4px; }
+    .navbar-item { padding: 10px 20px; color: rgba(255, 255, 255, 0.9); text-decoration: none; border-radius: 8px; transition: all 0.3s; font-size: 15px; }
+    .navbar-item:hover { background: rgba(255, 255, 255, 0.2); color: white; }
+    .navbar-item.active { background: rgba(255, 255, 255, 0.3); color: white; }
+    .navbar-user { display: flex; align-items: center; gap: 16px; color: white; }
+    .navbar-avatar { width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; transition: all 0.3s; }
+    .navbar-avatar:hover { transform: scale(1.1); }
+
+    .user-dropdown { position: relative; cursor: pointer; }
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      min-width: 180px;
+      padding: 8px 0;
+      display: none;
+      z-index: 1001;
+    }
+    .dropdown-menu.show { display: block; }
+    .dropdown-item {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #666;
+      font-size: 14px;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+    .dropdown-item:hover { background: #f5f7fa; color: #667eea; }
+    .dropdown-divider { height: 1px; background: #f0f0f0; margin: 8px 0; }
+
+    .main-container { max-width: 1400px; margin: 0 auto; padding: 30px; }
+
+    .company-header {
+      background: white;
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+    .company-logo {
+      width: 100px;
+      height: 100px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .company-info { flex: 1; }
+    .company-info h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .company-info .badge { display: inline-block; padding: 4px 12px; background: linear-gradient(135deg, #52c41a, #73d13d); color: #fff; border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+    .company-info .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .company-info .tag { padding: 4px 12px; background: rgba(102, 126, 234, 0.1); color: #667eea; border-radius: 6px; font-size: 12px; }
+    .company-info .meta { display: flex; gap: 24px; font-size: 13px; color: #999; }
+    .company-info .meta span { display: flex; align-items: center; gap: 4px; }
+    .company-actions { display: flex; flex-direction: column; gap: 12px; }
+
+    .company-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+    .card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06); }
+    .card-title { font-size: 16px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; color: #333; }
+    .card-title::before { content: ''; width: 4px; height: 18px; background: linear-gradient(180deg, #667eea, #764ba2); border-radius: 2px; }
+
+    .member-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-item { text-align: center; padding: 20px; background: #f8f9fc; border-radius: 12px; }
+    .stat-item .num { font-size: 28px; font-weight: 700; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .stat-item .label { font-size: 12px; color: #999; margin-top: 4px; }
+
+    .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .info-item { padding: 12px 16px; background: #f8f9fc; border-radius: 10px; }
+    .info-item .label { font-size: 12px; color: #999; margin-bottom: 4px; }
+    .info-item .value { font-size: 14px; font-weight: 500; }
+
+    .activity-timeline { display: flex; flex-direction: column; gap: 12px; }
+    .timeline-item { display: flex; gap: 16px; padding: 16px; background: #f8f9fc; border-radius: 12px; }
+    .timeline-icon { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .timeline-item .timeline-info { flex: 1; }
+    .timeline-item .timeline-title { font-weight: 600; margin-bottom: 4px; font-size: 14px; }
+    .timeline-item .timeline-date { font-size: 12px; color: #999; }
+    .timeline-status { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+    .timeline-status.active { background: rgba(102, 126, 234, 0.1); color: #667eea; }
+    .timeline-status.ended { background: rgba(153, 153, 153, 0.1); color: #999; }
+
+    .document-list { display: flex; flex-direction: column; gap: 12px; }
+    .document-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #f8f9fc; border-radius: 10px; transition: all 0.3s; cursor: pointer; }
+    .document-item:hover { background: #f0f2f8; }
+    .doc-icon { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .doc-info { flex: 1; }
+    .doc-name { font-weight: 500; font-size: 13px; }
+    .doc-date { font-size: 11px; color: #999; }
+    .doc-action { color: #667eea; font-size: 12px; }
+
+    .notice-list { display: flex; flex-direction: column; gap: 12px; }
+    .notice-item { padding: 12px 16px; background: #f8f9fc; border-radius: 10px; border-left: 3px solid #667eea; }
+    .notice-title { font-weight: 500; font-size: 13px; margin-bottom: 4px; }
+    .notice-date { font-size: 11px; color: #999; }
+
+    .quick-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .quick-action { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; background: #f8f9fc; border-radius: 12px; cursor: pointer; transition: all 0.3s; }
+    .quick-action:hover { background: rgba(102, 126, 234, 0.1); transform: translateY(-2px); }
+    .action-icon { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .action-name { font-size: 13px; font-weight: 500; }
+
+    .btn { padding: 10px 24px; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.3s; border: none; }
+    .btn-primary { background: linear-gradient(135deg, #667eea, #764ba2); color: white; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4); }
+    .btn-default { background: #f5f7fa; color: #666; border: 1px solid #e4e7ed; }
+    .btn-default:hover { background: #e4e7ed; }
+
+    .form-item { margin-bottom: 16px; }
+    .form-label { font-size: 14px; color: #666; margin-bottom: 8px; display: block; }
+    .form-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 2px solid #e4e7ed;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    .form-input:focus { outline: none; border-color: #667eea; }
+    .form-input-phone { display: flex; gap: 8px; }
+    .form-input-phone .form-input { flex: 1; }
+    .form-input-phone .btn-code { padding: 10px 16px; background: #f5f7fa; border: 2px solid #e4e7ed; border-radius: 10px; font-size: 13px; cursor: pointer; white-space: nowrap; }
+    .form-input-phone .btn-code:hover { border-color: #667eea; color: #667eea; }
+    .form-input-phone .btn-code:disabled { background: #e4e7ed; color: #999; cursor: not-allowed; }
+
+    .upload-tip { font-size: 12px; color: #999; margin-top: 8px; }
+
+    @media (max-width: 1024px) { .company-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <span class="navbar-logo-icon">🌾</span>
+        <span>中国农学会</span>
+      </div>
+      <div class="navbar-menu">
+        <a href="company-home.html" class="navbar-item active">单位主页</a>
+        <a href="company-payment.html" class="navbar-item">缴费订单</a>
+        <a href="company-notifications.html" class="navbar-item">站内通知</a>
+      </div>
+      <div class="navbar-user">
+        <div class="user-dropdown" onclick="this.querySelector('.dropdown-menu').classList.toggle('show')">
+          <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <div class="navbar-avatar">北</div>
+            <span>北京智慧农业科技有限公司</span>
+            <span style="font-size: 12px;">▼</span>
+          </div>
+          <div class="dropdown-menu">
+            <a href="identity-switch.html" class="dropdown-item">
+              <span>🔄</span>
+              <span>切换身份</span>
+            </a>
+            <a href="account-settings.html" class="dropdown-item">
+              <span>⚙️</span>
+              <span>账号设置</span>
+            </a>
+            <a href="javascript:void(0)" class="dropdown-item" onclick="openFeedbackModal()">
+              <span>💬</span>
+              <span>意见反馈</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="login.html" class="dropdown-item">
+              <span>🚪</span>
+              <span>退出登录</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="main-container">
+      <div class="company-header">
+        <div class="company-logo">🌾</div>
+        <div class="company-info">
+          <h1><a href="company-info.html" style="color:inherit;text-decoration:none;cursor:pointer;">北京智慧农业科技有限公司</a></h1>
+          <span class="badge">正式会员</span>
+          <div class="tags">
+            <span class="tag">农业科技</span>
+            <span class="tag">高新技术企业</span>
+            <span class="tag">理事单位</span>
+          </div>
+          <div class="meta">
+            <span>📍 北京市海淀区</span>
+            <span>📅 2023-05-15 入会</span>
+            <span>👤 会员编号：CU20230086</span>
+          </div>
+        </div>
+        <div class="company-actions">
+          <button class="btn btn-primary" onclick="location.href='company-info-edit.html'">编辑单位信息</button>
+          <button class="btn btn-default" onclick="location.href='company-payment.html'">缴纳会费</button>
+        </div>
+      </div>
+
+      <div class="company-grid">
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+          <div class="card">
+            <div class="card-title">会员概览</div>
+            <div class="member-stats">
+              <div class="stat-item"><div class="num">12</div><div class="label">关联个人会员</div></div>
+            </div>
+            <div class="info-grid">
+              <div class="info-item"><div class="label">会员类型</div><div class="value">单位会员 - 理事单位</div></div>
+              <div class="info-item"><div class="label">会费标准</div><div class="value">¥ 50,000 / 年</div></div>
+              <div class="info-item"><div class="label">会费缴纳</div><div class="value">2024年度已缴纳</div></div>
+              <div class="info-item"><div class="label">会员到期</div><div class="value">2025-05-14</div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">单位资料</div>
+            <div class="info-grid">
+              <div class="info-item"><div class="label">统一社会信用代码</div><div class="value">91110108MA01234X1</div></div>
+              <div class="info-item"><div class="label">法定代表人</div><div class="value">李明</div></div>
+              <div class="info-item"><div class="label">注册资金</div><div class="value">500万元</div></div>
+              <div class="info-item"><div class="label">所属行业</div><div class="value">农业科技</div></div>
+              <div class="info-item"><div class="label">单位类别</div><div class="value">企业</div></div>
+              <div class="info-item"><div class="label">通讯地址</div><div class="value">北京市海淀区中关村科技园A座1001</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+          <div class="card">
+            <div class="card-title">快捷操作</div>
+            <div class="quick-actions">
+              <div class="quick-action" onclick="location.href='company-contacts.html'"><div class="action-icon">👥</div><div class="action-name">其他联系人</div></div>
+              <div class="quick-action" @click="showChangeContactDialog"><div class="action-icon">🔄</div><div class="action-name">变更联系人</div></div>
+              <div class="quick-action"><div class="action-icon">📄</div><div class="action-name">下载证书</div></div>
+              <div class="quick-action" onclick="location.href='company-payment.html'"><div class="action-icon">💰</div><div class="action-name">会费缴纳</div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title" style="justify-content: space-between;">
+              <span style="display: flex; align-items: center; gap: 8px;">站内通知</span>
+              <a href="company-notifications.html" style="font-size: 13px; color: #667eea; text-decoration: none; font-weight: normal;">查看更多 →</a>
+            </div>
+            <div class="notice-list">
+              <div class="notice-item"><div class="notice-title">关于2024年度会费缴纳的通知</div><div class="notice-date">2024-01-15</div></div>
+              <div class="notice-item"><div class="notice-title">2024年度学术年会参会邀请</div><div class="notice-date">2024-01-10</div></div>
+              <div class="notice-item"><div class="notice-title">会员等级调整通知</div><div class="notice-date">2023-12-20</div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">资料下载</div>
+            <div class="document-list">
+              <div class="document-item">
+                <div class="doc-icon">📄</div>
+                <div class="doc-info"><div class="doc-name">入会批准文件</div><div class="doc-date">2023-05-10 发放</div></div>
+                <span class="doc-action">下载</span>
+              </div>
+              <div class="document-item">
+                <div class="doc-icon">📄</div>
+                <div class="doc-info"><div class="doc-name">单位会员管理办法</div><div class="doc-date">2023-01-01 发布</div></div>
+                <span class="doc-action">下载</span>
+              </div>
+              <div class="document-item">
+                <div class="doc-icon">📄</div>
+                <div class="doc-info"><div class="doc-name">其他示例文件</div><div class="doc-date">—</div></div>
+                <span class="doc-action">下载</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <el-dialog v-model="changeContactDialogVisible" title="变更联系人" width="500px" :close-on-click-modal="false">
+      <div class="form-item">
+        <label class="form-label">变更联系人手机号</label>
+        <div class="form-input-phone">
+          <input type="tel" class="form-input" v-model="changeContact.phone" placeholder="请输入新联系人手机号" maxlength="11">
+          <button class="btn-code" @click="sendCode" :disabled="codeCooldown > 0 || changeContact.phone.length !== 11">
+            {{ codeCooldown > 0 ? codeCooldown + 's' : '获取验证码' }}
+          </button>
+        </div>
+      </div>
+      <div class="form-item">
+        <label class="form-label">验证码</label>
+        <input type="text" class="form-input" v-model="changeContact.code" placeholder="请输入验证码" maxlength="6">
+      </div>
+      <div class="form-item">
+        <label class="form-label">上传变更资料</label>
+        <input type="file" class="form-input" @change="handleFileChange" accept=".jpg,.png,.pdf,.doc,.docx" style="padding: 8px;">
+        <div class="upload-tip">请上传变更申请证明材料，支持 jpg、png、pdf、doc、docx 格式</div>
+      </div>
+      <template #footer>
+        <button class="btn btn-default" @click="changeContactDialogVisible = false" style="padding: 10px 20px; border-radius: 10px; border: 1px solid #e4e7ed; background: #f5f7fa; cursor: pointer;">取消</button>
+        <button class="btn btn-primary" @click="handleChangeContact" style="padding: 10px 20px; border-radius: 10px; border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: white; cursor: pointer;">
+          提交变更
+        </button>
+      </template>
+    </el-dialog>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    const { createApp, ref } = Vue;
+    const { ElMessage } = ElementPlus;
+
+    const app = createApp({
+      setup() {
+        const changeContactDialogVisible = ref(false);
+        const changeContact = ref({ phone: '', code: '', file: null });
+        const codeCooldown = ref(0);
+
+        const showChangeContactDialog = () => {
+          changeContact.value = { phone: '', code: '', file: null };
+          changeContactDialogVisible.value = true;
+        };
+
+        const sendCode = () => {
+          if (changeContact.value.phone.length !== 11) {
+            ElMessage.warning('请输入正确的手机号');
+            return;
+          }
+          codeCooldown.value = 60;
+          const timer = setInterval(() => {
+            codeCooldown.value--;
+            if (codeCooldown.value <= 0) {
+              clearInterval(timer);
+            }
+          }, 1000);
+          ElMessage.success('验证码已发送');
+        };
+
+        const handleFileChange = (e) => {
+          changeContact.value.file = e.target.files[0];
+        };
+
+        const handleChangeContact = () => {
+          if (!changeContact.value.phone || changeContact.value.phone.length !== 11) {
+            ElMessage.warning('请输入正确的手机号');
+            return;
+          }
+          if (!changeContact.value.code || changeContact.value.code.length !== 6) {
+            ElMessage.warning('请输入6位验证码');
+            return;
+          }
+          if (!changeContact.value.file) {
+            ElMessage.warning('请上传变更资料');
+            return;
+          }
+          ElMessage.success('变更申请已提交，请等待审核');
+          changeContactDialogVisible.value = false;
+        };
+
+        return {
+          changeContactDialogVisible,
+          changeContact,
+          codeCooldown,
+          showChangeContactDialog,
+          sendCode,
+          handleFileChange,
+          handleChangeContact
+        };
+      }
+    });
+
+    app.use(ElementPlus);
+    app.mount('#app');
+  </script>
+</body>
+</html>

@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>短信管理 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">短信管理</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <a href="#">消息中心</a> / <span>短信管理</span></div>
+        </div>
+        <div class="header-right">
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">短信模板列表</span>
+            <div class="card-tools">
+              <button class="btn btn-primary" onclick="openModal('addTemplateModal')">+ 新增模板</button>
+            </div>
+          </div>
+          <div class="card-body">
+                        <div class="search-bar">
+              <div class="search-item">
+                <label>模板名称：</label>
+                <input type="text" class="form-input" placeholder="请输入模板名称" style="width: 120px;">
+              </div>
+              <div class="search-item">
+                <label>模板类型：</label>
+                <select class="form-select" style="width: 110px;">
+                  <option>全部</option>
+                  <option>普通模板</option>
+                  <option>参数模板</option>
+                </select>
+              </div>
+              <div class="search-item">
+                <label>状态：</label>
+                <select class="form-select" style="width: 90px;">
+                  <option>全部</option>
+                  <option>启用</option>
+                  <option>禁用</option>
+                </select>
+              </div>
+              <button class="btn btn-default btn-sm">查询</button>
+              <button class="btn btn-default btn-sm">重置</button>
+            </div>
+
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>模板名称</th>
+                  <th>模板类型</th>
+                  <th>模板内容</th>
+                  <th>参数信息</th>
+                  <th>状态</th>
+                  <th>审核状态</th>
+                  <th>创建时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>会员注册成功通知</td>
+                  <td><span class="tag tag-primary">参数模板</span></td>
+                  <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">【农学会】亲爱的{姓名}，您的{会员类型}申请已通过审核，成为正式会员！</td>
+                  <td>2个参数：姓名、会员类型</td>
+                <td><label class="switch">
+            <input type="checkbox" checked>
+                      <span class="switch-slider"></span>
+                  </label></td>
+                  <td><span class="tag tag-success">已通过</span></td>
+                  <td>2024-01-15</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="editTemplate({
+                      name: '会员注册成功通知',
+                      type: 'param',
+                      content: '【农学会】亲爱的{姓名}，您的{会员类型}申请已通过审核，成为正式会员！',
+                      params: [
+                        { name: '姓名', desc: '会员姓名', sample: '张三', required: true },
+                        { name: '会员类型', desc: '会员申请类型', sample: '普通个人会员', required: true }
+                      ]
+                    })">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('sendModal')">发送</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>会员到期续费提醒</td>
+                  <td><span class="tag tag-primary">参数模板</span></td>
+                  <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">【农学会】亲爱的{姓名}，您的会员资格将于{到期日期}到期，请及时续费！</td>
+                  <td>2个参数：姓名、到期日期</td>
+                <td><label class="switch">
+            <input type="checkbox" checked>
+                      <span class="switch-slider"></span>
+                  </label></td>
+                  <td><span class="tag tag-success">已通过</span></td>
+                  <td>2024-01-15</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="editTemplate({
+                      name: '会员到期续费提醒',
+                      type: 'param',
+                      content: '【农学会】亲爱的{姓名}，您的会员资格将于{到期日期}到期，请及时续费！',
+                      params: [
+                        { name: '姓名', desc: '会员姓名', sample: '张三', required: true },
+                        { name: '到期日期', desc: '会员到期日期', sample: '2026-12-31', required: true }
+                      ]
+                    })">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('sendModal')">发送</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>审核结果通知</td>
+                  <td><span class="tag tag-primary">参数模板</span></td>
+                  <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">【农学会】亲爱的{姓名}，您的{会员类型}申请{审核结果}，{原因}。</td>
+                  <td>4个参数：姓名、会员类型、审核结果、原因</td>
+                <td><label class="switch">
+            <input type="checkbox" checked>
+                      <span class="switch-slider"></span>
+                  </label></td>
+                  <td><span class="tag tag-warning">待审核</span></td>
+                  <td>2024-05-10</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="editTemplate({
+                      name: '审核结果通知',
+                      type: 'param',
+                      content: '【农学会】亲爱的{姓名}，您的{会员类型}申请{审核结果}，{原因}。',
+                      params: [
+                        { name: '姓名', desc: '会员姓名', sample: '张三', required: true },
+                        { name: '会员类型', desc: '会员申请类型', sample: '普通个人会员', required: true },
+                        { name: '审核结果', desc: '审核状态结果', sample: '未通过', required: true },
+                        { name: '原因', desc: '审核原因说明', sample: '资料不完整', required: false }
+                      ]
+                    })">编辑</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>系统维护通知</td>
+                  <td><span class="tag">普通模板</span></td>
+                  <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">【农学会】系统将于今晚22:00-23:30进行维护，请提前做好相关安排。</td>
+                  <td>无参数</td>
+                <td><label class="switch">
+            <input type="checkbox" checked>
+                      <span class="switch-slider"></span>
+                  </label></td>
+                  <td><span class="tag tag-warning">已驳回</span></td>
+                  <td>2024-06-01</td>
+                  <td class="actions">
+                    <button class="btn btn-default btn-sm" onclick="editTemplate({
+                      name: '系统维护通知',
+                      type: 'normal',
+                      content: '【农学会】系统将于今晚22:00-23:30进行维护，请提前做好相关安排。',
+                      params: []
+                    })">编辑</button>
+                    <button class="btn btn-default btn-sm" onclick="openModal('rejectReasonModal')">查看原因</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增模板弹窗 -->
+  <div class="modal" id="addTemplateModal">
+    <div class="modal-dialog" style="max-height: 85vh; display: flex; flex-direction: column; overflow: hidden;">
+      <div class="modal-header">
+        <span class="modal-title">新增短信模板</span>
+        <span class="close-btn" onclick="closeModal('addTemplateModal')">✕</span>
+      </div>
+      <div class="modal-body" style="flex: 1; overflow-y: auto;">
+        <div class="form-group">
+          <label class="form-label">模板名称 <span class="required">*</span></label>
+          <input type="text" class="form-input" id="addTemplateName" placeholder="请输入模板名称">
+        </div>
+        <div class="form-group">
+          <label class="form-label">模板类型 <span class="required">*</span></label>
+          <div class="template-type-group">
+            <label class="template-type-item"><input type="radio" name="addTemplateType" value="normal" checked onchange="toggleTemplateType('add', this.value)"> <span>普通模板</span></label>
+            <label class="template-type-item"><input type="radio" name="addTemplateType" value="param" onchange="toggleTemplateType('add', this.value)"> <span>参数模板</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">模板内容 <span class="required">*</span></label>
+          <textarea class="form-textarea" rows="4" id="addTemplateContent" placeholder="请输入短信内容，普通模板直接填写文案；参数模板支持插入 {姓名}、{会员类型} 等变量" oninput="updateTemplatePreview('add')"></textarea>
+        </div>
+        <div style="font-size: 12px; color: #999; margin-top: 4px;">
+          普通模板可直接填写固定文案；参数模板变量格式为 {变量名}
+        </div>
+        <div id="addParamSection" class="param-section" style="display: none;">
+          <div class="param-toolbar">
+            <div class="param-title">可用参数</div>
+          </div>
+          <div class="param-tip">勾选参数后会自动插入到模板内容中，取消勾选后会同步移除模板内容中的该参数。</div>
+          <div id="addParamList" class="param-list simple-param-list"></div>
+        </div>
+        <div class="template-preview-box">
+          <div class="template-preview-title">预览</div>
+          <div class="template-preview-content" id="addTemplatePreview">短信内容预览会显示在这里</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('addTemplateModal')">取消</button>
+        <button class="btn btn-primary" onclick="saveTemplate('add')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 发送短信弹窗 -->
+  <div class="modal" id="sendModal">
+    <div class="modal-dialog" style="max-height: 85vh; display: flex; flex-direction: column; overflow: hidden;">
+      <div class="modal-header">
+        <span class="modal-title">发送短信</span>
+        <span class="close-btn" onclick="closeModal('sendModal')">✕</span>
+      </div>
+      <div class="modal-body" style="flex: 1; overflow-y: auto;">
+        <div class="form-group">
+          <label class="form-label">选择模板</label>
+          <select class="form-select" id="smsTemplateSelect">
+            <option value="1">会员注册成功通知（参数模板）</option>
+            <option value="2">会员到期续费提醒（参数模板）</option>
+            <option value="3">审核结果通知（参数模板）</option>
+            <option value="4">系统维护通知（普通模板）</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">发送对象</label>
+          <select class="form-select" id="smsSendTargetType" onchange="toggleSmsSendTarget(this.value)">
+            <option value="group">分组用户</option>
+            <option value="custom">自定义用户</option>
+          </select>
+        </div>
+        <div class="form-group" id="smsGroupTargetSection">
+          <label class="form-label">选择分组</label>
+          <select class="form-select">
+            <option>个人会员组</option>
+            <option>单位会员组</option>
+            <option>到期会员</option>
+          </select>
+        </div>
+        <div class="form-group" id="smsCustomTargetSection" style="display: none;">
+          <label class="form-label">添加手机号 <span class="required">*</span></label>
+          <div style="display: flex; gap: 10px; margin-bottom: 12px; align-items: center;">
+            <input type="text" class="form-input" id="customPhoneInput" placeholder="输入手机号后回车" style="flex: 1;" onkeydown="handleCustomPhoneEnter(event)">
+            <button class="btn btn-default btn-sm" type="button" onclick="downloadPhoneTemplate()">📥 下载模板</button>
+            <button class="btn btn-default btn-sm" type="button" onclick="document.getElementById('customPhoneFile').click()">📤 批量上传</button>
+            <input type="file" id="customPhoneFile" accept=".xlsx,.xls,.csv,.txt" style="display: none;" onchange="handleCustomPhoneUpload(this)">
+          </div>
+          <div id="customPhoneSearchResult" style="display: none; background: #f8f9fc; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-weight: 500;">自定义手机号用户</div>
+                <div id="customPhoneSearchText" style="font-size: 12px; color: #999;"></div>
+              </div>
+              <button class="btn btn-primary btn-sm" type="button" onclick="addCustomPhone()">添加</button>
+            </div>
+          </div>
+          <div id="customPhoneUploadResult" style="display: none; background: #f6ffed; border: 1px solid #b7eb8f; padding: 12px; border-radius: 6px; margin-bottom: 12px; font-size: 13px; color: #52c41a;"></div>
+          <div id="customPhoneListWrap" style="display: none;">
+            <div style="font-size: 12px; color: #666; margin-bottom: 6px;">已添加手机号（<span id="customPhoneCount">0</span>）：</div>
+            <div id="customPhoneList"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">审核人 <span class="required">*</span></label>
+          <select class="form-select">
+            <option value="">请选择审核人</option>
+            <option>李明（短信审核人）</option>
+            <option>王芳（短信审核人）</option>
+            <option>张强</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">定时发送</label>
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox"> 启用定时发送
+          </label>
+          <input type="datetime-local" class="form-input" style="margin-top: 8px;">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('sendModal')">取消</button>
+        <button class="btn btn-primary" onclick="closeModal('sendModal'); showToast('发送成功')">发送</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 驳回原因弹窗 -->
+  <div class="modal" id="rejectReasonModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">驳回原因</span>
+        <span class="close-btn" onclick="closeModal('rejectReasonModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="background: #fff1f0; border: 1px solid #ffa39e; border-radius: 8px; padding: 16px; font-size: 14px; color: #cf1322; line-height: 1.6;">
+          模板内容涉及敏感词汇，请修改后再提交。
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('rejectReasonModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal" id="editTemplateModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">编辑短信模板</span>
+        <span class="close-btn" onclick="closeModal('editTemplateModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">模板名称 <span class="required">*</span></label>
+          <input type="text" class="form-input" id="editTemplateName">
+        </div>
+        <div class="form-group">
+          <label class="form-label">模板类型 <span class="required">*</span></label>
+          <div class="template-type-group">
+            <label class="template-type-item"><input type="radio" name="editTemplateType" value="normal" onchange="toggleTemplateType('edit', this.value)"> <span>普通模板</span></label>
+            <label class="template-type-item"><input type="radio" name="editTemplateType" value="param" onchange="toggleTemplateType('edit', this.value)"> <span>参数模板</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">模板内容 <span class="required">*</span></label>
+          <textarea class="form-textarea" rows="4" id="editTemplateContent" oninput="updateTemplatePreview('edit')"></textarea>
+        </div>
+        <div style="font-size: 12px; color: #999; margin-top: 4px;">
+          普通模板可直接填写固定文案；参数模板变量格式为 {变量名}
+        </div>
+        <div id="editParamSection" class="param-section" style="display: none;">
+          <div class="param-toolbar">
+            <div class="param-title">可用参数</div>
+          </div>
+          <div class="param-tip">勾选参数后会自动插入到模板内容中，取消勾选后会同步移除模板内容中的该参数。</div>
+          <div id="editParamList" class="param-list simple-param-list"></div>
+        </div>
+        <div class="template-preview-box">
+          <div class="template-preview-title">预览</div>
+          <div class="template-preview-content" id="editTemplatePreview">短信内容预览会显示在这里</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('editTemplateModal')">取消</button>
+        <button class="btn btn-primary" onclick="saveTemplate('edit')">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/main.js"></script>
+  <style>
+    .template-type-group { display: flex; gap: 16px; flex-wrap: wrap; }
+    .template-type-item { display: flex; align-items: center; gap: 6px; padding: 8px 12px; border: 1px solid #e8e8e8; border-radius: 6px; background: #fafafa; cursor: pointer; }
+    .template-type-item input { accent-color: #4f46e5; }
+    .param-section { margin-top: 16px; padding: 16px; border: 1px solid #e8e8e8; border-radius: 8px; background: #fafafa; }
+    #smsParamConfigSection {
+      display: block;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    .param-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 12px; }
+    .param-title { font-size: 14px; font-weight: 600; color: #333; }
+    .param-tip { font-size: 12px; color: #999; margin-bottom: 12px; }
+    .param-list { display: flex; flex-direction: column; gap: 12px; }
+    .simple-param-list { gap: 10px; }
+    .param-item { padding: 12px; border: 1px solid #e8e8e8; border-radius: 8px; background: #fff; }
+    .param-inline { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: space-between; }
+    .param-chip { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; background: #eef2ff; color: #4f46e5; font-size: 12px; font-weight: 500; }
+    .template-preview-box { margin-top: 16px; padding: 12px; border-radius: 8px; background: #fafafa; border: 1px solid #f0f0f0; }
+    .template-preview-title { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 8px; }
+    .template-preview-content { font-size: 13px; color: #666; line-height: 1.7; min-height: 44px; white-space: pre-wrap; }
+  </style>
+  <script>
+    var availableTemplateParams = [
+      { name: '姓名', sample: '张三' },
+      { name: '会员类型', sample: '普通个人会员' },
+      { name: '会员到期日', sample: '2026-12-31' }
+    ];
+    var customPhoneUsers = [];
+    var pendingCustomPhone = '';
+
+    function getTypeValue(prefix) {
+      var checked = document.querySelector('input[name="' + prefix + 'TemplateType"]:checked');
+      return checked ? checked.value : 'normal';
+    }
+
+    function toggleTemplateType(prefix, type) {
+      var section = document.getElementById(prefix + 'ParamSection');
+      if (section) {
+        section.style.display = type === 'param' ? 'block' : 'none';
+      }
+      updateTemplatePreview(prefix);
+    }
+
+    function createParamRow(prefix, param) {
+      var wrapper = document.createElement('div');
+      wrapper.className = 'param-item';
+      var checked = param && param.checked;
+      var name = param && param.name ? param.name : '';
+      wrapper.innerHTML = `
+        <div class="param-inline">
+          <label style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" class="param-enabled" data-name="${name}" ${checked ? 'checked' : ''} onchange="toggleFixedParam(this, '${prefix}')">
+            <span>${name}</span>
+          </label>
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <span class="param-chip">{${name}}</span>
+            <button class="btn btn-default btn-sm" type="button" onclick="insertParamByName('${prefix}', '${name}')">插入到模板内容</button>
+          </div>
+        </div>
+      `;
+      return wrapper;
+    }
+
+    function addParamRow(prefix, param) {
+      var list = document.getElementById(prefix + 'ParamList');
+      if (!list) return;
+      list.appendChild(createParamRow(prefix, param || {}));
+      updateTemplatePreview(prefix);
+    }
+
+    function insertParamAtCursor(textarea, text) {
+      var start = textarea.selectionStart || 0;
+      var end = textarea.selectionEnd || 0;
+      var value = textarea.value || '';
+      textarea.value = value.slice(0, start) + text + value.slice(end);
+      textarea.focus();
+      var cursor = start + text.length;
+      textarea.setSelectionRange(cursor, cursor);
+    }
+
+    function insertParamByName(prefix, name) {
+      var textarea = document.getElementById(prefix + 'TemplateContent');
+      insertParamAtCursor(textarea, '{' + name + '}');
+      updateTemplatePreview(prefix);
+    }
+
+    function toggleFixedParam(checkbox, prefix) {
+      var textarea = document.getElementById(prefix + 'TemplateContent');
+      var token = '{' + checkbox.dataset.name + '}';
+      if (checkbox.checked) {
+        if (textarea && textarea.value.indexOf(token) === -1) {
+          insertParamByName(prefix, checkbox.dataset.name);
+        }
+      } else if (textarea) {
+        var escapedToken = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        textarea.value = textarea.value
+          .replace(new RegExp(escapedToken, 'g'), '')
+          .replace(/\s{2,}/g, ' ')
+          .replace(/，\s*，/g, '，')
+          .replace(/。\s*。/g, '。')
+          .replace(/！\s*！/g, '！')
+          .replace(/；\s*；/g, '；')
+          .replace(/^\s+|\s+$/g, '');
+      }
+      updateTemplatePreview(prefix);
+    }
+
+    function getParams(prefix) {
+      return Array.from(document.querySelectorAll('#' + prefix + 'ParamList .param-enabled:checked')).map(function(item) {
+        var meta = availableTemplateParams.find(function(param) {
+          return param.name === item.dataset.name;
+        }) || { sample: '' };
+        return {
+          name: item.dataset.name,
+          sample: meta.sample
+        };
+      });
+    }
+
+    function updateTemplatePreview(prefix) {
+      var content = document.getElementById(prefix + 'TemplateContent').value.trim();
+      var type = getTypeValue(prefix);
+      var preview = content || '短信内容预览会显示在这里';
+
+      if (content && type === 'param') {
+        getParams(prefix).forEach(function(param) {
+          var sample = param.sample || ('示例' + param.name);
+          var pattern = new RegExp('\\{' + param.name.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&') + '\\}', 'g');
+          preview = preview.replace(pattern, sample);
+        });
+      }
+
+      document.getElementById(prefix + 'TemplatePreview').textContent = preview;
+    }
+
+    function validateTemplate(prefix) {
+      var name = document.getElementById(prefix + 'TemplateName').value.trim();
+      var content = document.getElementById(prefix + 'TemplateContent').value.trim();
+      var type = getTypeValue(prefix);
+      var params = getParams(prefix);
+
+      if (!name) {
+        showToast('请输入模板名称');
+        return false;
+      }
+      if (!content) {
+        showToast('请输入模板内容');
+        return false;
+      }
+
+      if (type === 'param') {
+        if (params.length === 0) {
+          showToast('参数模板至少需要配置一个参数');
+          return false;
+        }
+
+        var placeholders = content.match(/\{[^}]+\}/g) || [];
+        var paramNames = params.map(function(item) { return item.name; });
+        for (var i = 0; i < placeholders.length; i++) {
+          var token = placeholders[i].slice(1, -1);
+          if (paramNames.indexOf(token) === -1) {
+            showToast('模板内容中存在未配置参数：' + token);
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+
+    function saveTemplate(prefix) {
+      if (!validateTemplate(prefix)) return;
+      closeModal(prefix === 'add' ? 'addTemplateModal' : 'editTemplateModal');
+      showToast(prefix === 'add' ? '提交成功，待审核' : '保存成功');
+    }
+
+    function resetAddTemplateForm() {
+      document.getElementById('addTemplateName').value = '';
+      document.getElementById('addTemplateContent').value = '';
+      document.querySelector('input[name="addTemplateType"][value="normal"]').checked = true;
+      renderFixedParams('add', []);
+      toggleTemplateType('add', 'normal');
+      updateTemplatePreview('add');
+    }
+
+    function renderFixedParams(prefix, selectedParams) {
+      var list = document.getElementById(prefix + 'ParamList');
+      if (!list) return;
+      list.innerHTML = '';
+      availableTemplateParams.forEach(function(param) {
+        addParamRow(prefix, {
+          name: param.name,
+          checked: selectedParams.indexOf(param.name) !== -1
+        });
+      });
+    }
+
+    function editTemplate(data) {
+      document.getElementById('editTemplateName').value = data.name || '';
+      document.getElementById('editTemplateContent').value = data.content || '';
+      var type = data.type || 'normal';
+      var targetRadio = document.querySelector('input[name="editTemplateType"][value="' + type + '"]');
+      if (targetRadio) targetRadio.checked = true;
+
+      renderFixedParams('edit', (data.params || []).map(function(param) {
+        return param.name;
+      }));
+
+      toggleTemplateType('edit', type);
+      updateTemplatePreview('edit');
+      openModal('editTemplateModal');
+    }
+
+    function toggleSmsSendTarget(value) {
+      var groupSection = document.getElementById('smsGroupTargetSection');
+      var customSection = document.getElementById('smsCustomTargetSection');
+      if (groupSection) groupSection.style.display = value === 'group' ? 'block' : 'none';
+      if (customSection) customSection.style.display = value === 'custom' ? 'block' : 'none';
+    }
+
+    function validatePhone(phone) {
+      return /^1\d{10}$/.test(phone);
+    }
+
+    function handleCustomPhoneEnter(event) {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      var input = document.getElementById('customPhoneInput');
+      var phone = (input.value || '').trim();
+      if (!phone) {
+        showToast('请输入手机号');
+        return;
+      }
+      if (!validatePhone(phone)) {
+        showToast('手机号格式不正确');
+        return;
+      }
+      pendingCustomPhone = phone;
+      var result = document.getElementById('customPhoneSearchResult');
+      var text = document.getElementById('customPhoneSearchText');
+      if (text) text.textContent = phone;
+      if (result) result.style.display = 'block';
+    }
+
+    function addCustomPhone() {
+      if (!pendingCustomPhone) return;
+      if (customPhoneUsers.indexOf(pendingCustomPhone) !== -1) {
+        showToast('该手机号已添加');
+        return;
+      }
+      customPhoneUsers.push(pendingCustomPhone);
+      pendingCustomPhone = '';
+      document.getElementById('customPhoneInput').value = '';
+      document.getElementById('customPhoneSearchResult').style.display = 'none';
+      renderCustomPhoneList();
+    }
+
+    function removeCustomPhone(index) {
+      customPhoneUsers.splice(index, 1);
+      renderCustomPhoneList();
+    }
+
+    function renderCustomPhoneList() {
+      var wrap = document.getElementById('customPhoneListWrap');
+      var list = document.getElementById('customPhoneList');
+      var count = document.getElementById('customPhoneCount');
+      if (!wrap || !list || !count) return;
+      count.textContent = customPhoneUsers.length;
+      list.innerHTML = '';
+      wrap.style.display = customPhoneUsers.length ? 'block' : 'none';
+      customPhoneUsers.forEach(function(phone, index) {
+        var div = document.createElement('div');
+        div.style = 'background: #f8f9fc; padding: 8px 12px; border-radius: 6px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;';
+        div.innerHTML = '<div><span style="font-weight: 500;">手机号用户</span><span style="font-size: 12px; color: #999; margin-left: 8px;">' + phone + '</span></div><button class="btn btn-default btn-sm" type="button" onclick="removeCustomPhone(' + index + ')" style="padding: 2px 8px;">移除</button>';
+        list.appendChild(div);
+      });
+    }
+
+    function downloadPhoneTemplate() {
+      var templateContent = '手机号\\n13800138001\\n13800138002\\n13800138003';
+      var blob = new Blob([templateContent], { type: 'text/plain;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = '手机号导入模板.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function handleCustomPhoneUpload(input) {
+      var file = input.files && input.files[0];
+      if (!file) return;
+      var uploadCount = Math.floor(Math.random() * 5) + 2;
+      for (var i = 0; i < uploadCount; i++) {
+        var phone = '138' + String(Math.floor(Math.random() * 100000000)).padStart(8, '0');
+        if (customPhoneUsers.indexOf(phone) === -1) {
+          customPhoneUsers.push(phone);
+        }
+      }
+      var result = document.getElementById('customPhoneUploadResult');
+      if (result) {
+        result.style.display = 'block';
+        result.textContent = '✓ 已成功上传 ' + uploadCount + ' 个手机号';
+      }
+      renderCustomPhoneList();
+      input.value = '';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      resetAddTemplateForm();
+      renderFixedParams('edit', []);
+      toggleTemplateType('edit', 'normal');
+      updateTemplatePreview('edit');
+      toggleSmsSendTarget('group');
+    });
+  </script>
+  <script src="../sidebar.js"></script>
+</body>
+</html>
