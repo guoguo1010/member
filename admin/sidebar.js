@@ -3,13 +3,20 @@ function getBasePath() {
   var currentPath = window.location.pathname;
   // 解码URL编码的中文路径
   var decodedPath = decodeURIComponent(currentPath);
-  // 查找"管理端"在路径中的位置
+  var afterAdminRoot = '';
+  // 兼容旧目录“管理端”和当前目录“admin”
   var guanliduanIndex = decodedPath.indexOf('管理端');
-  if (guanliduanIndex < 0) return '';
-  var afterGuanliduan = decodedPath.substring(guanliduanIndex + 4);
+  if (guanliduanIndex >= 0) {
+    afterAdminRoot = decodedPath.substring(guanliduanIndex + 4);
+  } else {
+    var adminMarker = '/admin/';
+    var adminIndex = decodedPath.indexOf(adminMarker);
+    if (adminIndex < 0) return '';
+    afterAdminRoot = decodedPath.substring(adminIndex + adminMarker.length);
+  }
   // afterGuanliduan is like 'system/role.html' or 'index.html'
   // Count how many directories deep we are
-  var depth = (afterGuanliduan.match(/\//g) || []).length;
+  var depth = (afterAdminRoot.match(/\//g) || []).length;
   // depth 0 = in root (like 'index.html'), no prefix needed
   // depth 1 = in subdir (like 'system/role.html'), need '../'
   if (depth > 0) {
