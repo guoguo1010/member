@@ -24,12 +24,18 @@
       <div class="content">
         <div class="card">
           <div class="card-header">
-            <span class="card-title">任职列表</span>
+            <span class="card-title">机构任职</span>
             <div class="card-tools">
-              <button class="btn btn-primary" onclick="openModal('addPositionModal')">+ 新增任职</button>
+              <button class="btn btn-primary" id="addPositionBtn" onclick="openAddPositionModal()">+ 新增任职</button>
             </div>
           </div>
           <div class="card-body">
+            <div class="tabs">
+              <div class="tab-item active" onclick="switchPositionTab(this, 'positionPanel')">任职列表</div>
+              <div class="tab-item" onclick="switchPositionTab(this, 'candidatePanel')">候选任职</div>
+            </div>
+
+            <div id="positionPanel">
             <div class="search-bar">
               <div class="search-item">
                 <label>任职机构名称：</label>
@@ -151,6 +157,116 @@
                 <button class="page-btn">下一页</button>
               </div>
             </div>
+            </div>
+
+            <div id="candidatePanel" style="display: none;">
+              <div class="search-bar">
+                <div class="search-item">
+                  <label>任职机构名称：</label>
+                  <input type="text" class="form-input" placeholder="请输入机构名称" style="width: 150px;">
+                </div>
+                <div class="search-item">
+                  <label>界次：</label>
+                  <select class="form-select" style="width: 120px;">
+                    <option>全部</option>
+                    <option>第十一届</option>
+                    <option>第十届</option>
+                    <option>第九届</option>
+                  </select>
+                </div>
+                <div class="search-item">
+                  <label>任职机构类型：</label>
+                  <select class="form-select" style="width: 130px;">
+                    <option>全部</option>
+                    <option>地方学会</option>
+                    <option>专业委员会</option>
+                    <option>理事单位</option>
+                    <option>合作单位</option>
+                  </select>
+                </div>
+                <button class="btn btn-default btn-sm">查询</button>
+                <button class="btn btn-default btn-sm">重置</button>
+              </div>
+
+              <table class="table" id="candidateTable">
+                <thead>
+                  <tr>
+                    <th>任职机构名称</th>
+                    <th>界次</th>
+                    <th>任职机构类型</th>
+                    <th>职位名称</th>
+                    <th>有效期</th>
+                    <th>附件</th>
+                    <th>权重</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>中国农业学会</td>
+                    <td>第十一届</td>
+                    <td><span class="tag tag-primary">理事会</span></td>
+                    <td>
+                      <span class="tag tag-danger">会长</span>
+                      <span class="tag tag-info">副会长</span>
+                    </td>
+                    <td>2029-01-01 至 2033-12-31</td>
+                    <td><span style="color: #1890ff; cursor: pointer;" onclick="openModal('attachmentModal')">📎 查看</span></td>
+                    <td><input type="number" class="form-input" value="100" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                    <td class="actions">
+                      <button class="btn btn-default btn-sm" onclick="openModal('viewPositionModal')">详情</button>
+                      <button class="btn btn-default btn-sm" onclick="openModal('editPositionModal')">编辑</button>
+                      <button class="btn btn-default btn-sm" onclick="location.href='position-members.html?org=中国农业学会&title=会长&orgType=理事会'">任职会员</button>
+                      <button class="btn btn-danger btn-sm" onclick="if(confirm('删除将解除会员的任职数据，确定删除该任职机构吗？')) { showToast('已删除'); }">删除</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>中国农业学会</td>
+                    <td>第十一届</td>
+                    <td><span class="tag tag-primary">理事会</span></td>
+                    <td>
+                      <span class="tag tag-warning">秘书长</span>
+                      <span class="tag tag-default">理事</span>
+                    </td>
+                    <td>2029-01-01 至 2033-12-31</td>
+                    <td><span style="color: #999; cursor: pointer;" onclick="openModal('attachmentModal')">暂无</span></td>
+                    <td><input type="number" class="form-input" value="90" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                    <td class="actions">
+                      <button class="btn btn-default btn-sm" onclick="openModal('viewPositionModal')">详情</button>
+                      <button class="btn btn-default btn-sm" onclick="openModal('editPositionModal')">编辑</button>
+                      <button class="btn btn-default btn-sm" onclick="location.href='position-members.html?org=中国农业学会&title=秘书长&orgType=理事会'">任职会员</button>
+                      <button class="btn btn-danger btn-sm" onclick="if(confirm('删除将解除会员的任职数据，确定删除该任职机构吗？')) { showToast('已删除'); }">删除</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>作物学专业委员会</td>
+                    <td>第十一届</td>
+                    <td><span class="tag tag-primary">专业委员会</span></td>
+                    <td><span class="tag tag-success">主任</span></td>
+                    <td>2029-01-01 至 2033-12-31</td>
+                    <td><span style="color: #1890ff; cursor: pointer;" onclick="openModal('attachmentModal')">📎 查看</span></td>
+                    <td><input type="number" class="form-input" value="80" min="0" style="width: 70px; padding: 4px 8px;" onchange="showToast('权重已更新')"></td>
+                    <td class="actions">
+                      <button class="btn btn-default btn-sm" onclick="openModal('viewPositionModal')">详情</button>
+                      <button class="btn btn-default btn-sm" onclick="openModal('editPositionModal')">编辑</button>
+                      <button class="btn btn-default btn-sm" onclick="location.href='position-members.html?org=作物学专业委员会&title=主任&orgType=专业委员会'">任职会员</button>
+                      <button class="btn btn-danger btn-sm" onclick="if(confirm('删除将解除会员的任职数据，确定删除该任职机构吗？')) { showToast('已删除'); }">删除</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pagination">
+                <div class="pagination-info">共 48 条</div>
+                <div class="pagination-btns">
+                  <button class="page-btn" disabled>上一页</button>
+                  <button class="page-btn active">1</button>
+                  <button class="page-btn">2</button>
+                  <button class="page-btn">3</button>
+                  <button class="page-btn">下一页</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -161,7 +277,7 @@
   <div class="modal" id="addPositionModal">
     <div class="modal-dialog">
       <div class="modal-header">
-        <span class="modal-title">新增任职</span>
+        <span class="modal-title" id="addModalTitle">新增任职</span>
         <span class="close-btn" onclick="closeModal('addPositionModal')">✕</span>
       </div>
       <div class="modal-body">
@@ -198,7 +314,6 @@
             <option value="监事会">监事会</option>
             <option value="理事会党委">理事会党委</option>
             <option value="会员代表大会">会员代表大会</option>
-            <option value="分支机构">分支机构</option>
           </select>
         </div>
         <div class="form-group">
@@ -270,7 +385,6 @@
             <option value="监事会">监事会</option>
             <option value="理事会党委">理事会党委</option>
             <option value="会员代表大会">会员代表大会</option>
-            <option value="分支机构">分支机构</option>
           </select>
         </div>
         <div class="form-group">
@@ -403,6 +517,35 @@
 
   <script src="../../js/main.js"></script>
   <script>
+    var addModeIsCandidate = false;
+
+    function openAddPositionModal() {
+      addModeIsCandidate = document.getElementById('candidatePanel').style.display !== 'none';
+      document.getElementById('addModalTitle').textContent = addModeIsCandidate ? '新增候选任职' : '新增任职';
+      // 任职类型选项：候选任职时值后追加"候选人"
+      var typeSelect = document.getElementById('addPositionType');
+      var types = ['理事会', '监事会', '理事会党委', '会员代表大会'];
+      typeSelect.innerHTML = '<option value="">请选择任职类型</option>';
+      types.forEach(function(type) {
+        var option = document.createElement('option');
+        option.value = type;
+        option.textContent = addModeIsCandidate ? type + '候选人' : type;
+        typeSelect.appendChild(option);
+      });
+      document.getElementById('addTitleCheckboxes').innerHTML = '<span style="color: #999; font-size: 13px;">请先选择任职类型</span>';
+      openModal('addPositionModal');
+    }
+
+    // Tab 切换
+    function switchPositionTab(el, panelId) {
+      var tabs = el.parentElement.querySelectorAll('.tab-item');
+      tabs.forEach(function(tab) { tab.classList.remove('active'); });
+      el.classList.add('active');
+      document.getElementById('positionPanel').style.display = panelId === 'positionPanel' ? '' : 'none';
+      document.getElementById('candidatePanel').style.display = panelId === 'candidatePanel' ? '' : 'none';
+      document.getElementById('addPositionBtn').textContent = panelId === 'candidatePanel' ? '+ 新增候选任职' : '+ 新增任职';
+    }
+
     // 机构类型对应的机构列表
     var orgMap = {
       '地方学会': ['北京市农学会', '山东省农学会', '江苏省农学会', '浙江省农学会', '广东省农学会'],
@@ -416,8 +559,7 @@
       '理事会': ['会长', '副会长', '秘书长', '常务理事', '理事'],
       '监事会': ['监事长', '副监事长', '监事'],
       '理事会党委': ['党委书记', '副书记', '组织委员', '纪检委员', '宣传委员', '统战委员'],
-      '会员代表大会': ['代表'],
-      '分支机构': ['主任委员', '副主任委员', '委员']
+      '会员代表大会': ['代表']
     };
 
     function onOrgTypeChange(prefix) {
@@ -439,12 +581,13 @@
       var checkboxContainer = document.getElementById(prefix + 'TitleCheckboxes');
       checkboxContainer.innerHTML = '';
       if (positionType && titleMap[positionType]) {
+        var suffix = (prefix === 'add' && addModeIsCandidate) ? '候选人' : '';
         var div = document.createElement('div');
         div.style.cssText = 'display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 0;';
         titleMap[positionType].forEach(function(title) {
           var tag = document.createElement('span');
           tag.style.cssText = 'padding: 6px 16px; background: #f0f5ff; border: 1px solid #adc6ff; border-radius: 4px; font-size: 13px; color: #1890ff;';
-          tag.textContent = title;
+          tag.textContent = title + suffix;
           div.appendChild(tag);
         });
         checkboxContainer.appendChild(div);

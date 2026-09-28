@@ -38,9 +38,11 @@
           <div class="card-header">
             <span class="card-title">已添加会员</span>
             <div class="card-tools">
-              <button class="btn btn-default" onclick="openModal('addMemberModal')">+ 批量添加任职人员</button>
-              <button class="btn btn-default" onclick="openModal('addNonMemberModal')">+ 添加任职人员</button>
-              <button class="btn btn-default" onclick="openModal('importMembersModal')">📥 批量导入</button>
+              <button class="btn btn-default" onclick="openAddMemberModal()">+ 批量添加任职人员</button>
+              <button class="btn btn-default" onclick="openAddNonMemberModal()">+ 添加任职人员</button>
+              <button class="btn btn-default" onclick="openImportMembersModal()">📥 批量导入</button>
+              <button class="btn btn-default" onclick="openGenerateFormModal()">批量补充字段</button>
+              <button class="btn btn-default" onclick="openBatchFormalModal()">批量变更为正式</button>
             </div>
           </div>
           <div class="card-body">
@@ -71,6 +73,14 @@
                   <option value="理事">理事</option>
                 </select>
               </div>
+              <div class="search-item">
+                <label>是否候选人：</label>
+                <select class="form-select" id="searchCandidateAssigned" style="width: 80px;">
+                  <option value="">全部</option>
+                  <option value="yes">是</option>
+                  <option value="no">否</option>
+                </select>
+              </div>
               <button class="btn btn-default btn-sm" onclick="searchAssigned()">查询</button>
               <button class="btn btn-default btn-sm" onclick="resetAssignedSearch()">重置</button>
               <button class="btn btn-default btn-sm" id="removeBtn" disabled onclick="removeSelected()" style="margin-left: 10px;">移除选中 (<span id="selectedCount">0</span>)</button>
@@ -84,6 +94,7 @@
                   <th>手机号</th>
                   <th>会员类型</th>
                   <th>职位名称</th>
+                  <th>是否候选人</th>
                   <th>入会时间</th>
                   <th>操作</th>
                 </tr>
@@ -95,8 +106,12 @@
                   <td>13800138001</td>
                   <td><span class="tag tag-primary">普通个人会员</span></td>
                   <td><span class="tag tag-danger">会长</span></td>
+                  <td><span class="tag tag-default">否</span></td>
                   <td>2024-01-15</td>
-                  <td><button class="btn btn-default btn-sm" onclick="removeMember(1)">移除</button></td>
+                  <td>
+                    <button class="btn btn-default btn-sm" onclick="openSealFileModal()">查看盖章件</button>
+                    <button class="btn btn-default btn-sm" onclick="removeMember(1)">移除</button>
+                  </td>
                 </tr>
                 <tr>
                   <td><input type="checkbox" class="checkbox assigned-checkbox" value="2" onchange="updateRemoveBtn()"></td>
@@ -104,8 +119,14 @@
                   <td>13800138002</td>
                   <td><span class="tag tag-primary">普通个人会员</span></td>
                   <td><span class="tag tag-warning">秘书长</span></td>
+                  <td><span class="tag tag-warning">是</span></td>
                   <td>2024-02-20</td>
-                  <td><button class="btn btn-default btn-sm" onclick="removeMember(2)">移除</button></td>
+                  <td>
+                    <button class="btn btn-default btn-sm" onclick="openSealFileModal()">查看盖章件</button>
+                    <button class="btn btn-default btn-sm" onclick="openGenerateFormModal()">补充字段</button>
+                    <button class="btn btn-default btn-sm" onclick="openFormalModal('李四')">变更为正式</button>
+                    <button class="btn btn-default btn-sm" onclick="removeMember(2)">移除</button>
+                  </td>
                 </tr>
                 <tr>
                   <td><input type="checkbox" class="checkbox assigned-checkbox" value="3" onchange="updateRemoveBtn()"></td>
@@ -113,8 +134,12 @@
                   <td>13800138003</td>
                   <td><span class="tag tag-primary">普通个人会员</span></td>
                   <td><span class="tag tag-primary">副会长</span></td>
+                  <td><span class="tag tag-default">否</span></td>
                   <td>2024-03-10</td>
-                  <td><button class="btn btn-default btn-sm" onclick="removeMember(3)">移除</button></td>
+                  <td>
+                    <button class="btn btn-default btn-sm" onclick="openSealFileModal()">查看盖章件</button>
+                    <button class="btn btn-default btn-sm" onclick="removeMember(3)">移除</button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -151,6 +176,11 @@
             <option value="理事">理事</option>
           </select>
         </div>
+        <div class="form-group">
+          <label class="form-label">是否候选人</label>
+          <label style="margin-right: 20px;"><input type="radio" name="selectPositionCandidate" value="yes"> 是</label>
+          <label><input type="radio" name="selectPositionCandidate" value="no" checked> 否</label>
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-default" onclick="closeModal('selectPositionModal')">取消</button>
@@ -174,6 +204,11 @@
         <div class="form-group">
           <label class="form-label">姓名 <span class="required">*</span></label>
           <input type="text" class="form-input" id="nonMemberName" placeholder="请输入姓名">
+        </div>
+        <div class="form-group">
+          <label class="form-label">是否候选人</label>
+          <label style="margin-right: 20px;"><input type="radio" name="nonMemberCandidate" value="yes" onchange="onNonMemberCandidateChange()"> 是</label>
+          <label><input type="radio" name="nonMemberCandidate" value="no" checked onchange="onNonMemberCandidateChange()"> 否</label>
         </div>
         <div class="form-group">
           <label class="form-label">任职名称 <span class="required">*</span></label>
@@ -217,6 +252,11 @@
               <option value="personal">个人会员</option>
               <option value="student">学生会员</option>
             </select>
+          </div>
+          <div class="search-item">
+            <label>是否候选人：</label>
+            <label style="margin-right: 12px;"><input type="radio" name="memberCandidate" value="yes"> 是</label>
+            <label><input type="radio" name="memberCandidate" value="no" checked> 否</label>
           </div>
           <button class="btn btn-default btn-sm" onclick="searchMembers()">查询</button>
           <button class="btn btn-default btn-sm" onclick="resetSearch()">重置</button>
@@ -286,6 +326,11 @@
         <span class="close-btn" onclick="closeModal('importMembersModal')">✕</span>
       </div>
       <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">是否候选人</label>
+          <label style="margin-right: 20px;"><input type="radio" name="importMembersCandidate" value="yes"> 是</label>
+          <label><input type="radio" name="importMembersCandidate" value="no" checked> 否</label>
+        </div>
         <div style="text-align: center; padding: 20px 0;">
           <div style="width: 80px; height: 80px; margin: 0 auto 16px; border: 2px dashed #d9d9d9; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="document.getElementById('importMembersFile').click()">
             <span style="font-size: 32px; color: #999;">📁</span>
@@ -319,12 +364,169 @@
     </div>
   </div>
 
+  <!-- 补充字段弹窗 -->
+  <div class="modal" id="generateFormModal">
+    <div class="modal-dialog" style="width: 440px;">
+      <div class="modal-header">
+        <span class="modal-title">补充字段</span>
+        <span class="close-btn" onclick="closeModal('generateFormModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">请选择要补充的字段类型（可多选） <span class="required">*</span></label>
+          <select class="form-select" id="generateFormType" multiple style="width: 100%; height: 140px;">
+            <option value="councilCandidate">理事会候选人</option>
+            <option value="branchCommitteeCandidate">分会委员候选人</option>
+            <option value="socialOrgLeader">社会团体负责人</option>
+            <option value="branchOrgLeader">分支机构负责人</option>
+            <option value="memberCongress">会员代表大会</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('generateFormModal')">取消</button>
+        <button class="btn btn-primary" onclick="confirmGenerateForm()">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 查看盖章件弹窗 -->
+  <div class="modal" id="sealFileModal">
+    <div class="modal-dialog" style="width: 500px;">
+      <div class="modal-header">
+        <span class="modal-title">盖章件列表</span>
+        <span class="close-btn" onclick="closeModal('sealFileModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="background: #f5f5f5; padding: 10px 12px; border-radius: 4px; margin-bottom: 8px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span>📎</span>
+            <span>任职文件-盖章.pdf</span>
+            <span style="color: #999; font-size: 12px;">2024-03-15</span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-default btn-sm" style="padding: 2px 8px;" onclick="window.open('#')">下载</button>
+          </div>
+        </div>
+        <div style="background: #f5f5f5; padding: 10px 12px; border-radius: 4px; margin-bottom: 8px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span>📎</span>
+            <span>候选人登记表-盖章.pdf</span>
+            <span style="color: #999; font-size: 12px;">2024-04-20</span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-default btn-sm" style="padding: 2px 8px;" onclick="window.open('#')">下载</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('sealFileModal')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 变更为正式确认弹窗 -->
+  <div class="modal" id="confirmFormalModal" style="z-index: 3000;">
+    <div class="modal-dialog" style="width: 400px;">
+      <div class="modal-header">
+        <span class="modal-title">变更为正式</span>
+        <span class="close-btn" onclick="closeModal('confirmFormalModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div id="formalConfirmText" style="padding: 8px 0; color: #666; font-size: 14px;">确定将该候选人变更为正式吗？</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" onclick="closeModal('confirmFormalModal')">取消</button>
+        <button class="btn btn-primary" onclick="confirmFormal()">确定</button>
+      </div>
+    </div>
+  </div>
+
   <script src="../../js/main.js"></script>
   <script>
     // 获取URL参数
     function getQueryParam(name) {
       var params = new URLSearchParams(window.location.search);
       return params.get(name);
+    }
+
+    function openAddMemberModal() {
+      document.querySelector('input[name="memberCandidate"][value="no"]').checked = true;
+      openModal('addMemberModal');
+    }
+
+    function openAddNonMemberModal() {
+      document.querySelector('input[name="nonMemberCandidate"][value="no"]').checked = true;
+      onNonMemberCandidateChange();
+      openModal('addNonMemberModal');
+    }
+
+    var nonMemberTitles = ['会长', '副会长', '秘书长', '理事'];
+
+    function onNonMemberCandidateChange() {
+      var candidate = document.querySelector('input[name="nonMemberCandidate"]:checked').value;
+      var suffix = candidate === 'yes' ? '候选人' : '';
+      var select = document.getElementById('nonMemberTitle');
+      select.innerHTML = '<option value="">请选择任职名称</option>';
+      nonMemberTitles.forEach(function(title) {
+        var option = document.createElement('option');
+        option.value = title;
+        option.textContent = title + suffix;
+        select.appendChild(option);
+      });
+    }
+
+    function openImportMembersModal() {
+      document.querySelector('input[name="importMembersCandidate"][value="no"]').checked = true;
+      openModal('importMembersModal');
+    }
+
+    function openGenerateFormModal() {
+      document.getElementById('generateFormType').value = '';
+      openModal('generateFormModal');
+    }
+
+    function openSealFileModal() {
+      openModal('sealFileModal');
+    }
+
+    var formalMode = 'single';
+
+    function openFormalModal(name) {
+      formalMode = 'single';
+      document.getElementById('formalConfirmText').textContent = '确定将「' + name + '」变更为正式吗？';
+      openModal('confirmFormalModal');
+    }
+
+    function openBatchFormalModal() {
+      var checkboxes = document.querySelectorAll('.assigned-checkbox:checked');
+      if (checkboxes.length === 0) {
+        showToast('请先选择候选人');
+        return;
+      }
+      formalMode = 'batch';
+      document.getElementById('formalConfirmText').textContent = '确定将选中的 ' + checkboxes.length + ' 名候选人变更为正式吗？';
+      openModal('confirmFormalModal');
+    }
+
+    function confirmFormal() {
+      closeModal('confirmFormalModal');
+      if (formalMode === 'batch') {
+        showToast('已将选中的候选人变更为正式');
+      } else {
+        showToast('已变更为正式');
+      }
+    }
+
+    function confirmGenerateForm() {
+      var select = document.getElementById('generateFormType');
+      var labels = Array.from(select.selectedOptions).map(function(o) { return o.textContent; });
+      if (labels.length === 0) {
+        showToast('请选择字段类型');
+        return;
+      }
+      showToast('正在补充「' + labels.join('、') + '」字段，请稍候...');
+      closeModal('generateFormModal');
     }
 
     // 初始化页面
@@ -347,7 +549,8 @@
       var phone = document.getElementById('searchPhoneAssigned').value;
       var type = document.getElementById('searchTypeAssigned').value;
       var title = document.getElementById('searchTitleAssigned').value;
-      console.log('查询条件:', { name: name, phone: phone, type: type, title: title });
+      var candidate = document.getElementById('searchCandidateAssigned').value;
+      console.log('查询条件:', { name: name, phone: phone, type: type, title: title, candidate: candidate });
       showToast('查询完成');
     }
 
@@ -357,6 +560,7 @@
       document.getElementById('searchPhoneAssigned').value = '';
       document.getElementById('searchTypeAssigned').value = '';
       document.getElementById('searchTitleAssigned').value = '';
+      document.getElementById('searchCandidateAssigned').value = '';
       showToast('已重置');
     }
 
@@ -413,6 +617,8 @@
       pendingAddIds = [id];
       isBatchAdd = false;
       document.getElementById('selectPositionName').value = '';
+      var candidate = document.querySelector('input[name="memberCandidate"]:checked').value;
+      document.querySelector('input[name="selectPositionCandidate"][value="' + candidate + '"]').checked = true;
       openModal('selectPositionModal');
     }
 
@@ -426,20 +632,24 @@
       pendingAddIds = Array.from(checkboxes).map(function(cb) { return cb.value; });
       isBatchAdd = true;
       document.getElementById('selectPositionName').value = '';
+      var candidate = document.querySelector('input[name="memberCandidate"]:checked').value;
+      document.querySelector('input[name="selectPositionCandidate"][value="' + candidate + '"]').checked = true;
       openModal('selectPositionModal');
     }
 
     // 确认添加会员
     function confirmAddMember() {
       var positionName = document.getElementById('selectPositionName').value;
+      var candidate = document.querySelector('input[name="selectPositionCandidate"]:checked').value;
+      var candidateLabel = candidate === 'yes' ? '是' : '否';
       if (!positionName) {
         showToast('请选择职位名称');
         return;
       }
       if (isBatchAdd) {
-        showToast('已添加 ' + pendingAddIds.length + ' 名会员，职位：' + positionName);
+        showToast('已添加 ' + pendingAddIds.length + ' 名会员，职位：' + positionName + '，是否候选人：' + candidateLabel);
       } else {
-        showToast('已添加会员，职位：' + positionName);
+        showToast('已添加会员，职位：' + positionName + '，是否候选人：' + candidateLabel);
       }
       closeModal('selectPositionModal');
     }
@@ -449,6 +659,8 @@
       var phone = document.getElementById('nonMemberPhone').value.trim();
       var name = document.getElementById('nonMemberName').value.trim();
       var title = document.getElementById('nonMemberTitle').value;
+      var candidate = document.querySelector('input[name="nonMemberCandidate"]:checked').value;
+      var candidateLabel = candidate === 'yes' ? '是' : '否';
       if (!phone) {
         showToast('请输入手机号');
         return;
@@ -461,10 +673,11 @@
         showToast('请选择任职名称');
         return;
       }
-      showToast('已添加任职记录：' + name + ' - ' + title);
+      showToast('已添加任职记录：' + name + ' - ' + title + '，是否候选人：' + candidateLabel);
       document.getElementById('nonMemberPhone').value = '';
       document.getElementById('nonMemberName').value = '';
       document.getElementById('nonMemberTitle').value = '';
+      document.querySelector('input[name="nonMemberCandidate"][value="no"]').checked = true;
       closeModal('addNonMemberModal');
     }
 
@@ -506,13 +719,16 @@
         showToast('请先选择要导入的文件');
         return;
       }
+      var candidate = document.querySelector('input[name="importMembersCandidate"]:checked').value;
+      var candidateLabel = candidate === 'yes' ? '是' : '否';
       showToast('正在导入，请稍候...');
       setTimeout(function() {
         closeModal('importMembersModal');
-        showToast('导入成功：新增 15 条任职记录');
+        showToast('导入成功：新增 15 条任职记录，是否候选人：' + candidateLabel);
         importFileName = '';
         document.getElementById('importPreview').style.display = 'none';
         document.getElementById('importMembersBtn').disabled = true;
+        document.querySelector('input[name="importMembersCandidate"][value="no"]').checked = true;
       }, 2000);
     }
 
