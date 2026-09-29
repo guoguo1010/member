@@ -208,11 +208,11 @@
           <div class="form-section-title">基本信息</div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">姓名 <span class="required">*</span></label>
+              <label class="form-label">真实姓名 <span class="required">*</span></label>
               <input type="text" class="form-input" id="name" value="张三" disabled>
             </div>
             <div class="form-group">
-              <label class="form-label">性别 <span class="required">*</span></label>
+              <label class="form-label">用户性别 <span class="required">*</span></label>
               <select class="form-select" id="gender">
                 <option value="男">男</option>
                 <option value="女">女</option>
@@ -278,15 +278,15 @@
           <div class="form-section-title">工作与联系</div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">工作单位 <span class="required">*</span></label>
+              <label class="form-label">所在单位 <span class="required">*</span></label>
               <input type="text" class="form-input" id="company" value="中国农业大学" disabled>
             </div>
             <div class="form-group">
-              <label class="form-label">工作单位及职务</label>
-              <input type="text" class="form-input" id="companyTitle" placeholder="请输入单位及职务">
+              <label class="form-label">职务</label>
+              <input type="text" class="form-input" id="companyTitle" placeholder="请输入职务">
             </div>
             <div class="form-group">
-              <label class="form-label">担任职务（代表/理事/负责人）</label>
+              <label class="form-label">在本会担任职务</label>
               <input type="text" class="form-input" id="duty" placeholder="如：会长、副会长、秘书长、理事、常务理事">
             </div>
           </div>
@@ -296,21 +296,21 @@
               <input type="text" class="form-input" id="address" placeholder="请输入通讯地址">
             </div>
             <div class="form-group">
-              <label class="form-label">邮政编码</label>
+              <label class="form-label">邮编</label>
               <input type="text" class="form-input" id="zipcode" placeholder="请输入邮政编码">
             </div>
             <div class="form-group">
-              <label class="form-label">固定电话 / 传真</label>
+              <label class="form-label">联系电话/传真</label>
               <input type="text" class="form-input" id="phone" placeholder="请输入固定电话/传真">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">手机号码 <span class="required">*</span></label>
+              <label class="form-label">手机号 <span class="required">*</span></label>
               <input type="text" class="form-input" id="mobile" value="138****1234" disabled>
             </div>
             <div class="form-group">
-              <label class="form-label">电子信箱 </label>
+              <label class="form-label">电子邮箱</label>
               <input type="email" class="form-input" id="email" value="zhang****@example.com" disabled>
             </div>
             <div class="form-group">
@@ -349,21 +349,25 @@
               </select>
             </div>
             <div class="form-group">
-              <label class="form-label">专业 / 专业领域</label>
-              <input type="text" class="form-input" id="major" placeholder="请输入专业或专业领域">
+              <label class="form-label">所学专业</label>
+              <input type="text" class="form-input" id="major" placeholder="请输入所学专业">
+            </div>
+            <div class="form-group">
+              <label class="form-label">研究领域</label>
+              <input type="text" class="form-input" id="researchField" placeholder="请输入研究领域（最多三项）">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">技术职称 </label>
+              <label class="form-label">职称</label>
               <input type="text" class="form-input" id="title" value="教授" disabled>
             </div>
             <div class="form-group">
-              <label class="form-label">省级学会职务</label>
+              <label class="form-label">省级学会任职</label>
               <input type="text" class="form-input" id="provinceDuty" placeholder="请输入省级学会职务">
             </div>
             <div class="form-group">
-              <label class="form-label">其他社会职务 / 社会组织兼职</label>
+              <label class="form-label">具体任职情况</label>
               <input type="text" class="form-input" id="otherDuty" placeholder="请输入其他社会职务或国际科技组织任职">
             </div>
           </div>
@@ -380,7 +384,7 @@
               </div>
             </div>
             <div class="form-group">
-              <label class="form-label">人大代表</label>
+              <label class="form-label">人大代表信息</label>
               <select class="form-select" id="npcRep">
                 <option value="无">无</option>
                 <option value="全国">全国</option>
@@ -388,7 +392,7 @@
               </select>
             </div>
             <div class="form-group">
-              <label class="form-label">政协委员</label>
+              <label class="form-label">政协委员信息</label>
               <select class="form-select" id="cppccMember">
                 <option value="无">无</option>
                 <option value="全国">全国</option>
@@ -398,21 +402,21 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">中央委员</label>
+              <label class="form-label">是否中央委员</label>
               <div class="radio-group">
                 <label class="radio-option"><input type="radio" name="centralCommittee" value="是">是</label>
                 <label class="radio-option"><input type="radio" name="centralCommittee" value="否" checked>否</label>
               </div>
             </div>
             <div class="form-group">
-              <label class="form-label">院士</label>
+              <label class="form-label">是否院士</label>
               <div class="radio-group">
                 <label class="radio-option"><input type="radio" name="academician" value="是">是</label>
                 <label class="radio-option"><input type="radio" name="academician" value="否" checked>否</label>
               </div>
             </div>
             <div class="form-group">
-              <label class="form-label">国家级突出贡献专家</label>
+              <label class="form-label">是否突出贡献专家</label>
               <div class="radio-group">
                 <label class="radio-option"><input type="radio" name="expert" value="是">是</label>
                 <label class="radio-option"><input type="radio" name="expert" value="否" checked>否</label>
@@ -421,7 +425,7 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">享受政府特殊津贴</label>
+              <label class="form-label">是否政府特贴专家</label>
               <div class="radio-group">
                 <label class="radio-option"><input type="radio" name="allowance" value="是">是</label>
                 <label class="radio-option"><input type="radio" name="allowance" value="否" checked>否</label>
@@ -454,7 +458,7 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">是否为军队人员</label>
+              <label class="form-label">是否军人</label>
               <div class="radio-group">
                 <label class="radio-option"><input type="radio" name="military" value="是">是</label>
                 <label class="radio-option"><input type="radio" name="military" value="否" checked>否</label>
@@ -476,10 +480,6 @@
             </div>
           </div>
           <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">分支机构名称</label>
-              <input type="text" class="form-input" id="branchName" placeholder="如：作物学专业委员会">
-            </div>
             <div class="form-group">
               <label class="form-label">是否超龄</label>
               <div class="radio-group">
@@ -503,7 +503,7 @@
             <label class="form-label">科技成就和业绩贡献</label>
             <textarea class="form-textarea" id="resume" placeholder="请填写科技成就和业绩贡献"></textarea>
           </div>
-          <label class="form-label">本人主要工作简历（逐条填写）</label>
+          <label class="form-label">工作经历（逐条填写）</label>
           <table class="resume-table" id="workResumeTable">
             <thead>
               <tr>
@@ -563,8 +563,17 @@
           <div class="form-section-title">推荐信息</div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">推荐单位</label>
+              <label class="form-label">推荐人单位</label>
               <input type="text" class="form-input" id="recommendUnit" placeholder="请输入推荐单位">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">备注</div>
+          <div class="form-row single">
+            <div class="form-group">
+              <textarea class="form-textarea" id="remark" placeholder="请输入备注"></textarea>
             </div>
           </div>
         </div>
@@ -645,6 +654,7 @@
         education: document.getElementById('education').value,
         degree: document.getElementById('degree').value,
         major: document.getElementById('major').value,
+        researchField: document.getElementById('researchField').value,
         title: document.getElementById('title').value,
         provinceDuty: document.getElementById('provinceDuty').value,
         otherDuty: document.getElementById('otherDuty').value,
@@ -661,12 +671,11 @@
         military: getRadio('military'),
         retiredLeader: getRadio('retiredLeader'),
         veteran: getRadio('veteran'),
-        branchName: document.getElementById('branchName').value,
         overAge: getRadio('overAge'),
         overTerm: getRadio('overTerm'),
         resume: document.getElementById('resume').value,
         recommendUnit: document.getElementById('recommendUnit').value,
-        fillDate: document.getElementById('fillDate').value
+        remark: document.getElementById('remark').value
       };
     }
 
