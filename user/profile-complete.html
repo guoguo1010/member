@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>补全资料 - 中国农学会</title>
+  <link rel="stylesheet" href="../css/web.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%); min-height: 100vh; }
+
+    .navbar {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 0 40px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .navbar-logo { display: flex; align-items: center; gap: 12px; color: white; font-size: 20px; font-weight: 600; }
+    .navbar-logo-icon { font-size: 32px; }
+    .navbar-menu { display: flex; gap: 4px; }
+    .navbar-item { padding: 10px 20px; color: rgba(255, 255, 255, 0.9); text-decoration: none; border-radius: 8px; transition: all 0.3s; font-size: 15px; }
+    .navbar-item:hover { background: rgba(255, 255, 255, 0.2); color: white; }
+    .navbar-item.active { background: rgba(255, 255, 255, 0.3); color: white; }
+    .navbar-user { display: flex; align-items: center; gap: 16px; color: white; }
+    .navbar-avatar { width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; transition: all 0.3s; }
+    .navbar-avatar:hover { transform: scale(1.1); }
+    .user-dropdown { position: relative; cursor: pointer; }
+    .dropdown-menu {
+      position: absolute; top: 100%; right: 0; margin-top: 8px;
+      background: white; border-radius: 12px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      min-width: 180px; padding: 8px 0; display: none; z-index: 1001;
+    }
+    .dropdown-menu.show { display: block; }
+    .dropdown-item { padding: 12px 20px; display: flex; align-items: center; gap: 10px; color: #666; font-size: 14px; transition: all 0.3s; text-decoration: none; }
+    .dropdown-item:hover { background: #f5f7fa; color: #667eea; }
+    .dropdown-divider { height: 1px; background: #f0f0f0; margin: 8px 0; }
+
+    .register-container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+
+    .notice-banner {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 16px;
+      padding: 28px 32px;
+      color: white;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .notice-icon { font-size: 40px; }
+    .notice-title { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+    .notice-desc { font-size: 14px; opacity: 0.92; }
+
+    .form-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .form-section { margin-bottom: 28px; }
+    .form-section:last-child { margin-bottom: 0; }
+
+    .form-section-title {
+      font-size: 15px; font-weight: 600; color: #333;
+      margin-bottom: 16px; padding-bottom: 10px;
+      border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .form-section-title::before {
+      content: ''; width: 4px; height: 18px;
+      background: linear-gradient(180deg, #667eea, #764ba2);
+      border-radius: 2px;
+    }
+
+    .form-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
+    .form-row.two { grid-template-columns: repeat(2, 1fr); }
+    .form-row.single { grid-template-columns: 1fr; }
+    .form-row:last-child { margin-bottom: 0; }
+
+    .form-group { margin-bottom: 0; }
+
+    .form-label { display: block; font-size: 13px; color: #666; margin-bottom: 6px; font-weight: 500; }
+    .form-label .required { color: #ff4d4f; margin-left: 2px; }
+    .form-label .imported {
+      display: inline-block; margin-left: 6px; padding: 1px 6px;
+      background: #e6f7ff; color: #1890ff; border-radius: 4px; font-size: 11px; font-weight: 400;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%; padding: 10px 14px;
+      border: 1px solid #e4e7ed; border-radius: 8px;
+      font-size: 14px; color: #333; background: #fff;
+      transition: all 0.3s; font-family: inherit;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); outline: none;
+    }
+    .form-input:disabled { background: #f5f7fa; color: #999; cursor: not-allowed; }
+    .form-input::placeholder { color: #c0c4cc; }
+    .form-textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+
+    .radio-group { display: flex; gap: 24px; align-items: center; height: 40px; }
+    .radio-option { display: flex; align-items: center; gap: 6px; font-size: 14px; color: #333; cursor: pointer; }
+    .radio-option input { accent-color: #667eea; width: 16px; height: 16px; cursor: pointer; }
+
+    .hint { font-size: 12px; color: #999; margin-top: 6px; }
+
+    .resume-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+    .resume-table th, .resume-table td { border: 1px solid #e4e7ed; padding: 8px; font-size: 13px; color: #333; }
+    .resume-table th { background: #f8f9fc; font-weight: 500; color: #666; text-align: left; }
+    .resume-table input {
+      width: 100%; border: none; outline: none; font-size: 13px; color: #333; background: transparent;
+    }
+    .add-row-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border: 1px dashed #667eea; border-radius: 8px;
+      color: #667eea; font-size: 13px; cursor: pointer; background: rgba(102, 126, 234, 0.04);
+      transition: all 0.3s;
+    }
+    .add-row-btn:hover { background: rgba(102, 126, 234, 0.1); }
+    .del-row-btn { cursor: pointer; color: #ff4d4f; font-size: 16px; border: none; background: none; }
+
+    .form-actions {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 24px; border-top: 1px solid #f0f0f0; margin-top: 8px;
+    }
+
+    .btn {
+      padding: 12px 28px; border-radius: 10px; font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: all 0.3s; border: none;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4); }
+    .btn-default { background: #f5f7fa; color: #666; border: 1px solid #e4e7ed; }
+    .btn-default:hover { background: #e4e7ed; }
+    .btn-lg { padding: 14px 32px; font-size: 15px; }
+
+    @media (max-width: 768px) {
+      .navbar { padding: 0 20px; }
+      .navbar-menu { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+      .form-row.two { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <span class="navbar-logo-icon">🌾</span>
+        <span>中国农学会</span>
+      </div>
+      <div class="navbar-menu">
+        <a href="personal-center.html" class="navbar-item">首页</a>
+        <a href="personal-info.html" class="navbar-item">会员信息</a>
+        <a href="payment.html" class="navbar-item">缴费订单</a>
+        <a href="messages.html" class="navbar-item">我的消息</a>
+        <a href="growth-trajectory.html" class="navbar-item">成长轨迹</a>
+      </div>
+      <div class="navbar-user">
+        <div class="navbar-avatar" style="cursor: pointer;" onclick="location.href='messages.html'">🔔</div>
+        <div class="user-dropdown" onclick="this.querySelector('.dropdown-menu').classList.toggle('show')">
+          <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <div class="navbar-avatar">张</div>
+            <span>张三</span>
+            <span style="font-size: 12px;">▼</span>
+          </div>
+          <div class="dropdown-menu">
+            <a href="identity-switch.html" class="dropdown-item">
+              <span>🔄</span><span>切换身份</span>
+            </a>
+            <a href="javascript:void(0)" class="dropdown-item" onclick="alert('跳转中台账号设置页')">
+              <span>⚙️</span><span>账号设置</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="login.html" class="dropdown-item">
+              <span>🚪</span><span>退出登录</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="register-container">
+      <div class="notice-banner">
+        <div class="notice-icon">📝</div>
+        <div>
+          <div class="notice-title">请补充会员代表 / 理事候选人资料</div>
+          <div class="notice-desc">您已被推荐为会员代表、理事候选人，请补充以下信息。带 <span style="color:#ffe58f;">灰色</span> 底纹的字段已从您的会员信息自动带入，无需修改。提交后将生成登记表供您下载、盖章并回传。</div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-section">
+          <div class="form-section-title">基本信息</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">姓名 <span class="required">*</span></label>
+              <input type="text" class="form-input" id="name" value="张三" disabled>
+            </div>
+            <div class="form-group">
+              <label class="form-label">性别 <span class="required">*</span></label>
+              <select class="form-select" id="gender">
+                <option value="男">男</option>
+                <option value="女">女</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">民族</label>
+              <select class="form-select" id="ethnicity">
+                <option value="汉族">汉族</option>
+                <option value="蒙古族">蒙古族</option>
+                <option value="回族">回族</option>
+                <option value="藏族">藏族</option>
+                <option value="维吾尔族">维吾尔族</option>
+                <option value="其他">其他</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">出生日期 <span class="required">*</span></label>
+              <input type="date" class="form-input" id="birthDate">
+            </div>
+            <div class="form-group">
+              <label class="form-label">政治面貌</label>
+              <select class="form-select" id="politicalStatus">
+                <option value="群众">群众</option>
+                <option value="中共党员">中共党员</option>
+                <option value="共青团员">共青团员</option>
+                <option value="民主党派">民主党派</option>
+                <option value="无党派人士">无党派人士</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">国籍</label>
+              <select class="form-select" id="nationality">
+                <option value="中国">中国</option>
+                <option value="其他">其他</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">证件类型</label>
+              <select class="form-select" id="idType">
+                <option value="居民身份证">居民身份证</option>
+                <option value="护照">护照</option>
+                <option value="军官证">军官证</option>
+                <option value="港澳居民来往内地通行证">港澳居民来往内地通行证</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">证件号码 <span class="required">*</span></label>
+              <input type="text" class="form-input" id="idNumber" placeholder="请输入证件号码">
+            </div>
+            <div class="form-group">
+              <label class="form-label">会员登记证号</label>
+              <input type="text" class="form-input" id="memberCertNo" value="M20240100001" disabled>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">工作与联系</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">工作单位 <span class="required">*</span></label>
+              <input type="text" class="form-input" id="company" value="中国农业大学" disabled>
+            </div>
+            <div class="form-group">
+              <label class="form-label">工作单位及职务</label>
+              <input type="text" class="form-input" id="companyTitle" placeholder="请输入单位及职务">
+            </div>
+            <div class="form-group">
+              <label class="form-label">担任职务（代表/理事/负责人）</label>
+              <input type="text" class="form-input" id="duty" placeholder="如：会长、副会长、秘书长、理事、常务理事">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">通讯地址</label>
+              <input type="text" class="form-input" id="address" placeholder="请输入通讯地址">
+            </div>
+            <div class="form-group">
+              <label class="form-label">邮政编码</label>
+              <input type="text" class="form-input" id="zipcode" placeholder="请输入邮政编码">
+            </div>
+            <div class="form-group">
+              <label class="form-label">固定电话 / 传真</label>
+              <input type="text" class="form-input" id="phone" placeholder="请输入固定电话/传真">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">手机号码 <span class="required">*</span></label>
+              <input type="text" class="form-input" id="mobile" value="138****1234" disabled>
+            </div>
+            <div class="form-group">
+              <label class="form-label">电子信箱 </label>
+              <input type="email" class="form-input" id="email" value="zhang****@example.com" disabled>
+            </div>
+            <div class="form-group">
+              <label class="form-label">工作单位所属区域</label>
+              <input type="text" class="form-input" id="companyRegion" placeholder="如：北京市海淀区">
+            </div>
+          </div>
+          <div class="form-row single">
+            <div class="form-group">
+              <label class="form-label">工作单位统一社会信用代码</label>
+              <input type="text" class="form-input" id="creditCode" placeholder="请输入工作单位统一社会信用代码">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">学历与专业</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">最高学历 </label>
+              <select class="form-select" id="education">
+                <option value="博士研究生" selected>博士研究生</option>
+                <option value="硕士研究生">硕士研究生</option>
+                <option value="大学本科">大学本科</option>
+                <option value="大学专科">大学专科</option>
+                <option value="中等学校">中等学校</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">最高学位</label>
+              <select class="form-select" id="degree">
+                <option value="博士">博士</option>
+                <option value="硕士">硕士</option>
+                <option value="学士">学士</option>
+                <option value="无">无</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">专业 / 专业领域</label>
+              <input type="text" class="form-input" id="major" placeholder="请输入专业或专业领域">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">技术职称 </label>
+              <input type="text" class="form-input" id="title" value="教授" disabled>
+            </div>
+            <div class="form-group">
+              <label class="form-label">省级学会职务</label>
+              <input type="text" class="form-input" id="provinceDuty" placeholder="请输入省级学会职务">
+            </div>
+            <div class="form-group">
+              <label class="form-label">其他社会职务 / 社会组织兼职</label>
+              <input type="text" class="form-input" id="otherDuty" placeholder="请输入其他社会职务或国际科技组织任职">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">代表 / 理事身份与荣誉</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">是否推荐为理事候选人 <span class="required">*</span></label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="councilCandidate" value="是">是</label>
+                <label class="radio-option"><input type="radio" name="councilCandidate" value="否" checked>否</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">人大代表</label>
+              <select class="form-select" id="npcRep">
+                <option value="无">无</option>
+                <option value="全国">全国</option>
+                <option value="省级">省级</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">政协委员</label>
+              <select class="form-select" id="cppccMember">
+                <option value="无">无</option>
+                <option value="全国">全国</option>
+                <option value="省级">省级</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">中央委员</label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="centralCommittee" value="是">是</label>
+                <label class="radio-option"><input type="radio" name="centralCommittee" value="否" checked>否</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">院士</label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="academician" value="是">是</label>
+                <label class="radio-option"><input type="radio" name="academician" value="否" checked>否</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">国家级突出贡献专家</label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="expert" value="是">是</label>
+                <label class="radio-option"><input type="radio" name="expert" value="否" checked>否</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">享受政府特殊津贴</label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="allowance" value="是">是</label>
+                <label class="radio-option"><input type="radio" name="allowance" value="否" checked>否</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">社会团体负责人信息</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">社会团体名称</label>
+              <input type="text" class="form-input" id="societyName" value="中国农学会" disabled>
+            </div>
+            <div class="form-group">
+              <label class="form-label">专职化程度</label>
+              <select class="form-select" id="fulltime">
+                <option value="专职">专职</option>
+                <option value="兼职">兼职</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">是否为现职领导干部</label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="incumbentLeader" value="是">是</label>
+                <label class="radio-option"><input type="radio" name="incumbentLeader" value="否" checked>否</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">是否为军队人员</label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="military" value="是">是</label>
+                <label class="radio-option"><input type="radio" name="military" value="否" checked>否</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">是否为退(离)休领导干部</label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="retiredLeader" value="是">是</label>
+                <label class="radio-option"><input type="radio" name="retiredLeader" value="否" checked>否</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">是否为退役军人</label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="veteran" value="是">是</label>
+                <label class="radio-option"><input type="radio" name="veteran" value="否" checked>否</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">分支机构名称</label>
+              <input type="text" class="form-input" id="branchName" placeholder="如：作物学专业委员会">
+            </div>
+            <div class="form-group">
+              <label class="form-label">是否超龄</label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="overAge" value="是">是</label>
+                <label class="radio-option"><input type="radio" name="overAge" value="否" checked>否</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">是否超届</label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="overTerm" value="是">是</label>
+                <label class="radio-option"><input type="radio" name="overTerm" value="否" checked>否</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">主要简历</div>
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label">科技成就和业绩贡献</label>
+            <textarea class="form-textarea" id="resume" placeholder="请填写科技成就和业绩贡献"></textarea>
+          </div>
+          <label class="form-label">本人主要工作简历（逐条填写）</label>
+          <table class="resume-table" id="workResumeTable">
+            <thead>
+              <tr>
+                <th style="width:14%;">开始日期</th>
+                <th style="width:22%;">结束日期（可选择至今）</th>
+                <th style="width:16%;">工作单位</th>
+                <th style="width:14%;">所属区域</th>
+                <th style="width:12%;">部门</th>
+                <th style="width:12%;">职务</th>
+                <th style="width:10%;">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="date" placeholder="开始日期"></td>
+                <td style="display:flex; align-items:center; gap:4px;">
+                  <input type="date" placeholder="结束日期" style="flex:1; min-width:0;">
+                  <label style="display:flex; align-items:center; white-space:nowrap; font-size:12px; color:#666;">
+                    <input type="checkbox" onclick="toggleEndDate(this)" style="width:auto; margin-right:3px;">至今
+                  </label>
+                </td>
+                <td><input type="text" placeholder="工作单位"></td>
+                <td><input type="text" placeholder="所属区域"></td>
+                <td><input type="text" placeholder="部门"></td>
+                <td><input type="text" placeholder="职务"></td>
+                <td style="text-align:center;"><button class="del-row-btn" onclick="delRow(this)" title="删除">✕</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="add-row-btn" onclick="addResumeRow()">＋ 添加一行简历</button>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">在本社会团体担任负责人简历</div>
+          <table class="resume-table" id="dutyResumeTable">
+            <thead>
+              <tr>
+                <th style="width:22%;">自何年月至何年月</th>
+                <th style="width:26%;">任职届次</th>
+                <th style="width:26%;">职务</th>
+                <th style="width:10%;">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="text" placeholder="如：2018.06-2023.06"></td>
+                <td><input type="text" placeholder="如：第十一届"></td>
+                <td><input type="text" placeholder="职务"></td>
+                <td style="text-align:center;"><button class="del-row-btn" onclick="delRow(this)" title="删除">✕</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="add-row-btn" onclick="addDutyRow()">＋ 添加一行</button>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">推荐信息</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">推荐单位</label>
+              <input type="text" class="form-input" id="recommendUnit" placeholder="请输入推荐单位">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-default btn-lg" onclick="saveOnly()">暂存</button>
+          <div style="display: flex; gap: 12px;">
+            <button class="btn btn-default btn-lg" onclick="history.back()">取消</button>
+            <button class="btn btn-primary btn-lg" onclick="submitForm()">提交并生成表格 →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function getRadio(name) {
+      var el = document.querySelector('input[name="' + name + '"]:checked');
+      return el ? el.value : '';
+    }
+
+    function addResumeRow() {
+      var tbody = document.querySelector('#workResumeTable tbody');
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td><input type="date" placeholder="开始日期"></td>' +
+        '<td style="display:flex; align-items:center; gap:4px;">' +
+        '<input type="date" placeholder="结束日期" style="flex:1; min-width:0;">' +
+        '<label style="display:flex; align-items:center; white-space:nowrap; font-size:12px; color:#666;">' +
+        '<input type="checkbox" onclick="toggleEndDate(this)" style="width:auto; margin-right:3px;">至今</label></td>' +
+        '<td><input type="text" placeholder="工作单位"></td>' +
+        '<td><input type="text" placeholder="所属区域"></td>' +
+        '<td><input type="text" placeholder="部门"></td>' +
+        '<td><input type="text" placeholder="职务"></td>' +
+        '<td style="text-align:center;"><button class="del-row-btn" onclick="delRow(this)" title="删除">✕</button></td>';
+      tbody.appendChild(tr);
+    }
+
+    function toggleEndDate(cb) {
+      var dateInput = cb.closest('td').querySelector('input[type="date"]');
+      if (dateInput) dateInput.disabled = cb.checked;
+    }
+
+    function addDutyRow() {
+      var tbody = document.querySelector('#dutyResumeTable tbody');
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td><input type="text" placeholder="如：2018.06-2023.06"></td>' +
+        '<td><input type="text" placeholder="如：第十一届"></td>' +
+        '<td><input type="text" placeholder="职务"></td>' +
+        '<td style="text-align:center;"><button class="del-row-btn" onclick="delRow(this)" title="删除">✕</button></td>';
+      tbody.appendChild(tr);
+    }
+
+    function delRow(btn) {
+      btn.closest('tr').remove();
+    }
+
+    function collectData() {
+      return {
+        name: document.getElementById('name').value,
+        gender: document.getElementById('gender').value,
+        ethnicity: document.getElementById('ethnicity').value,
+        birthDate: document.getElementById('birthDate').value,
+        politicalStatus: document.getElementById('politicalStatus').value,
+        nationality: document.getElementById('nationality').value,
+        idType: document.getElementById('idType').value,
+        idNumber: document.getElementById('idNumber').value,
+        memberCertNo: document.getElementById('memberCertNo').value,
+        company: document.getElementById('company').value,
+        companyTitle: document.getElementById('companyTitle').value,
+        duty: document.getElementById('duty').value,
+        address: document.getElementById('address').value,
+        zipcode: document.getElementById('zipcode').value,
+        phone: document.getElementById('phone').value,
+        mobile: document.getElementById('mobile').value,
+        email: document.getElementById('email').value,
+        companyRegion: document.getElementById('companyRegion').value,
+        creditCode: document.getElementById('creditCode').value,
+        education: document.getElementById('education').value,
+        degree: document.getElementById('degree').value,
+        major: document.getElementById('major').value,
+        title: document.getElementById('title').value,
+        provinceDuty: document.getElementById('provinceDuty').value,
+        otherDuty: document.getElementById('otherDuty').value,
+        councilCandidate: getRadio('councilCandidate'),
+        npcRep: document.getElementById('npcRep').value,
+        cppccMember: document.getElementById('cppccMember').value,
+        centralCommittee: getRadio('centralCommittee'),
+        academician: getRadio('academician'),
+        expert: getRadio('expert'),
+        allowance: getRadio('allowance'),
+        societyName: document.getElementById('societyName').value,
+        fulltime: document.getElementById('fulltime').value,
+        incumbentLeader: getRadio('incumbentLeader'),
+        military: getRadio('military'),
+        retiredLeader: getRadio('retiredLeader'),
+        veteran: getRadio('veteran'),
+        branchName: document.getElementById('branchName').value,
+        overAge: getRadio('overAge'),
+        overTerm: getRadio('overTerm'),
+        resume: document.getElementById('resume').value,
+        recommendUnit: document.getElementById('recommendUnit').value,
+        fillDate: document.getElementById('fillDate').value
+      };
+    }
+
+    function saveOnly() {
+      localStorage.setItem('profile_complete_data', JSON.stringify(collectData()));
+      alert('已暂存，下次进入可继续填写');
+    }
+
+    function submitForm() {
+      var data = collectData();
+      localStorage.setItem('profile_complete_data', JSON.stringify(data));
+      location.href = 'profile-download.html';
+    }
+  </script>
+</body>
+</html>
