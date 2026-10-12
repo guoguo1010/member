@@ -178,7 +178,7 @@
               </div>
               <div class="stat-label">待处理事项</div>
               <div class="stat-value" style="color: #ff4d4f;">338</div>
-              <div class="stat-sub">审核 8 · 到期 328 · 消息 2</div>
+              <div class="stat-sub">待审核 8 · 消息 2</div>
             </div>
           </div>
 
@@ -190,19 +190,19 @@
             </div>
           </div>
 
-          <!-- 第二行：会员类型构成 + 缴费方式分布 + 会员有效期分布 -->
+          <!-- 第二行：会员类型构成 + 会员状态分布 + 感兴趣分支机构统计 -->
           <div class="chart-grid-3 gap-row">
             <div class="chart-card">
-              <h4>🍩 会员类型构成<span class="subtitle">按会员大类</span></h4>
+              <h4>🍩 个人会员类型<span class="subtitle">按会员大类</span></h4>
               <div class="chart-container" id="typePieChart"></div>
             </div>
             <div class="chart-card">
-              <h4>💳 缴费方式分布<span class="subtitle">全部会员</span></h4>
-              <div class="chart-container" id="payMethodChart"></div>
+              <h4>📋 会员状态分布<span class="subtitle">全部会员</span></h4>
+              <div class="chart-container" id="statusChart"></div>
             </div>
             <div class="chart-card">
-              <h4>📅 会员有效期分布<span class="subtitle">个人会员</span></h4>
-              <div class="chart-container" id="validityChart"></div>
+              <h4>🌾 感兴趣分支机构统计<span class="subtitle">个人会员</span></h4>
+              <div class="chart-container" id="branchChart"></div>
             </div>
           </div>
 
@@ -243,11 +243,11 @@
           <div class="section-title">单位会员分析</div>
           <div class="chart-grid-3 gap-row">
             <div class="chart-card">
-              <h4>🏭 单位会员类型分布<span class="subtitle">按单位类别</span></h4>
+              <h4>🏭 单位类别分布<span class="subtitle">按单位类别</span></h4>
               <div class="chart-container" id="companyTypeChart"></div>
             </div>
             <div class="chart-card">
-              <h4>🌾 所属行业分布<span class="subtitle">单位会员</span></h4>
+              <h4>🌾 单位会员类型分布<span class="subtitle">单位会员</span></h4>
               <div class="chart-container" id="industryChart"></div>
             </div>
             <div class="chart-card">
@@ -502,7 +502,7 @@
     industryChart.setOption({
       tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
       grid: { top: 10, right: 10, bottom: 24, left: 10 },
-      xAxis: { type: 'category', data: ['农业科技', '农业生产', '农业服务', '农资农机', '农产品加工', '其他'], axisLabel: { fontSize: 11, color: '#666', rotate: 0 }, axisLine: { lineStyle: { color: '#e8e8e8' } } },
+      xAxis: { type: 'category', data: ['常务理事单位会员', '理事单位会员', '普通单位会员', '测试'], axisLabel: { fontSize: 11, color: '#666', rotate: 0 }, axisLine: { lineStyle: { color: '#e8e8e8' } } },
       yAxis: { type: 'value', axisLabel: { fontSize: 11, color: '#666' }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
       series: [{
         type: 'bar',
@@ -510,9 +510,7 @@
           { value: 4280, itemStyle: { color: '#1890ff' } },
           { value: 3650, itemStyle: { color: '#52c41a' } },
           { value: 2890, itemStyle: { color: '#fa8c16' } },
-          { value: 1860, itemStyle: { color: '#722ed1' } },
-          { value: 1206, itemStyle: { color: '#13c2c2' } },
-          { value: 500, itemStyle: { color: '#d9d9d9' } }
+          { value: 1860, itemStyle: { color: '#722ed1' } }
         ],
         barWidth: 32,
         itemStyle: { borderRadius: [4, 4, 0, 0] }
@@ -541,9 +539,9 @@
       }]
     });
 
-    // 13. 缴费方式分布（饼图）
-    const payMethodChart = echarts.init(document.getElementById('payMethodChart'));
-    payMethodChart.setOption({
+    // 13. 会员状态分布（饼图）
+    const statusChart = echarts.init(document.getElementById('statusChart'));
+    statusChart.setOption({
       tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
       legend: { orient: 'vertical', right: 10, top: 'center', textStyle: { fontSize: 12 }, itemWidth: 10, itemHeight: 10 },
       series: [{
@@ -553,39 +551,46 @@
         itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
         label: { show: false },
         data: [
-          { value: 42800, name: '终生会员', itemStyle: { color: '#ff4d4f' } },
-          { value: 24600, name: '1年缴费', itemStyle: { color: '#1890ff' } },
-          { value: 14200, name: '2年缴费', itemStyle: { color: '#52c41a' } },
-          { value: 4942, name: '未缴费', itemStyle: { color: '#d9d9d9' } }
+          { value: 84660, name: '正常', itemStyle: { color: '#52c41a' } },
+          { value: 1328, name: '已过期', itemStyle: { color: '#ff4d4f' } },
+          { value: 396, name: '已退会', itemStyle: { color: '#bfbfbf' } },
+          { value: 150, name: '黑名单', itemStyle: { color: '#fa8c16' } },
+          { value: 8, name: '待审核', itemStyle: { color: '#faad14' } }
         ]
       }]
     });
 
-    // 14. 会员有效期分布（柱状图）
-    const validityChart = echarts.init(document.getElementById('validityChart'));
-    validityChart.setOption({
+    // 14. 感兴趣分支机构统计（横向条形图）
+    const branchChart = echarts.init(document.getElementById('branchChart'));
+    branchChart.setOption({
       tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-      grid: { top: 10, right: 10, bottom: 24, left: 10 },
-      xAxis: { type: 'category', data: ['已到期', '7天内到期', '30天内到期', '90天内到期', '6个月内到期', '6个月以上'], axisLabel: { fontSize: 10, color: '#666' }, axisLine: { lineStyle: { color: '#e8e8e8' } } },
-      yAxis: { type: 'value', axisLabel: { fontSize: 11, color: '#666' }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+      grid: { top: 5, right: 60, bottom: 5, left: 110 },
+      xAxis: { type: 'value', axisLabel: { fontSize: 10, color: '#999' }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+      yAxis: {
+        type: 'category',
+        data: ['会员服务部', '学术交流部', '农业工程专业委员会', '土壤学专业委员会', '植物保护专业委员会', '园艺学专业委员会', '作物学专业委员会'],
+        axisLabel: { fontSize: 11, color: '#333' },
+        axisLine: { lineStyle: { color: '#e8e8e8' } }
+      },
       series: [{
         type: 'bar',
         data: [
-          { value: 272, itemStyle: { color: '#ff4d4f' } },
-          { value: 56, itemStyle: { color: '#fa8c16' } },
-          { value: 124, itemStyle: { color: '#faad14' } },
-          { value: 380, itemStyle: { color: '#a0d911' } },
-          { value: 620, itemStyle: { color: '#52c41a' } },
-          { value: 69704, itemStyle: { color: '#1890ff' } }
+          { value: 2480, itemStyle: { color: '#eb2f96' } },
+          { value: 3860, itemStyle: { color: '#13c2c2' } },
+          { value: 6120, itemStyle: { color: '#a0d911' } },
+          { value: 8260, itemStyle: { color: '#722ed1' } },
+          { value: 10840, itemStyle: { color: '#fa8c16' } },
+          { value: 14520, itemStyle: { color: '#52c41a' } },
+          { value: 18260, itemStyle: { color: '#1890ff' } }
         ],
-        barWidth: 32,
-        itemStyle: { borderRadius: [4, 4, 0, 0] }
+        barWidth: 16,
+        label: { show: true, position: 'right', fontSize: 11, color: '#333', formatter: '{c}' }
       }]
     });
 
     // 响应式
     window.addEventListener('resize', () => {
-      [growthChart, typePieChart, genderChart, ageChart, eduChart, titleChart, regionChart, sourceChart, companyTypeChart, industryChart, capitalChart, payMethodChart, validityChart].forEach(c => c.resize());
+      [growthChart, typePieChart, genderChart, ageChart, eduChart, titleChart, regionChart, sourceChart, companyTypeChart, industryChart, capitalChart, statusChart, branchChart].forEach(c => c.resize());
     });
   </script>
   <script src="sidebar.js"></script>
