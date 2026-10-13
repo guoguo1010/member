@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数据看板 - 学会会员管理系统</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <style>
+    .dashboard-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .gap-row {
+      margin-top: 0;
+    }
+
+    .chart-grid,
+    .chart-grid-3 {
+      display: grid;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .chart-grid {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    }
+
+    .chart-grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .full-span {
+      grid-column: 1 / -1;
+    }
+
+    .chart-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      padding: 20px;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .chart-card h4 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-color);
+      line-height: 1.4;
+      flex-wrap: wrap;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-color);
+      padding-left: 14px;
+      position: relative;
+      margin: 8px 0 -4px;
+    }
+
+    .section-title::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 4px;
+      bottom: 4px;
+      width: 4px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--primary-color), var(--success-color));
+    }
+
+    .chart-card .chart-container {
+      height: 320px;
+      min-height: 320px;
+      padding: 8px;
+    }
+
+    .rank-table {
+      height: 320px;
+      min-height: 320px;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    .rank-tbl {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .rank-tbl th,
+    .rank-tbl td {
+      padding: 6px 8px;
+      text-align: left;
+      border-bottom: 1px solid #f0f0f0;
+      white-space: nowrap;
+    }
+
+    .rank-tbl thead th {
+      position: sticky;
+      top: 0;
+      background: #f7f8fa;
+      color: #666;
+      font-weight: 600;
+      z-index: 1;
+    }
+
+    .rank-tbl th:nth-child(3),
+    .rank-tbl td:nth-child(3),
+    .rank-tbl th:nth-child(4),
+    .rank-tbl td:nth-child(4) {
+      text-align: right;
+    }
+
+    .rank-tbl td:nth-child(4) {
+      color: #999;
+    }
+
+    .rank-tbl tbody tr:hover td {
+      background: #f5f8ff;
+    }
+
+    @media (max-width: 1400px) {
+      .chart-grid,
+      .chart-grid-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .chart-grid,
+      .chart-grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-card h4 {
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sidebar-container"></div>
+
+    <div class="main">
+      <div class="header">
+        <div class="header-left">
+          <div class="page-title">数据看板</div>
+          <div class="breadcrumb"><a href="#">首页</a> / <span>数据看板</span></div>
+        </div>
+        <div class="header-right">
+          <div class="icon-btn" title="消息">🔔<span class="count">8</span></div>
+          <div class="icon-btn" title="刷新">🔄</div>
+          <div class="user-info"><div class="avatar">李</div><span class="username">李管理员</span><span>▼</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="dashboard-wrapper">
+
+          <!-- 核心指标卡片 -->
+          <div class="stat-cards">
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon blue">👥</div>
+                <span class="stat-change up">↑ 12.5%</span>
+              </div>
+              <div class="stat-label">会员总量</div>
+              <div class="stat-value">86,542</div>
+              <div class="stat-sub">较上月新增 1,234</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon green">👤</div>
+                <span class="stat-change up">↑ 8.3%</span>
+              </div>
+              <div class="stat-label">个人会员</div>
+              <div class="stat-value">72,156</div>
+              <div class="stat-sub">较上月新增 986</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon orange">🏛️</div>
+                <span class="stat-change up">↑ 15.2%</span>
+              </div>
+              <div class="stat-label">单位会员</div>
+              <div class="stat-value">14,386</div>
+              <div class="stat-sub">较上月新增 248</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon red">⏰</div>
+                <span class="stat-change down">↓ 5.1%</span>
+              </div>
+              <div class="stat-label">本月到期</div>
+              <div class="stat-value">328</div>
+              <div class="stat-sub">待续费会员</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #fff1f0, #fff); border: 1px solid #ffccc7;">
+              <div class="stat-header">
+                <div class="stat-icon" style="background: #fff1f0;">⚡</div>
+                <span class="stat-change down">待处理</span>
+              </div>
+              <div class="stat-label">待处理事项</div>
+              <div class="stat-value" style="color: #ff4d4f;">338</div>
+              <div class="stat-sub">待审核 8 · 消息 2</div>
+            </div>
+          </div>
+
+          <!-- 第一行：会员增长趋势 -->
+          <div class="chart-grid gap-row">
+            <div class="chart-card full-span">
+              <h4>📈 会员增长趋势（近12个月）<span class="subtitle">单位：人</span></h4>
+              <div class="chart-container" id="growthChart"></div>
+            </div>
+          </div>
+
+          <!-- 个人会员画像分析 -->
+          <div class="section-title">个人会员画像分析</div>
+            <div class="chart-grid-3 gap-row">
+              <div class="chart-card">
+                <h4>🍩 会员类型<span class="subtitle">按会员大类</span></h4>
+                <div class="chart-container" id="typePieChart"></div>
+              </div>
+              <div class="chart-card">
+                <h4>📋 会员状态分布<span class="subtitle">全部会员</span></h4>
+                <div class="chart-container" id="statusChart"></div>
+              </div>
+              <div class="chart-card">
+                <h4>🌱 发展来源统计<span class="subtitle">个人会员</span></h4>
+                <div class="rank-table" id="branchTable"></div>
+              </div>
+            </div>
+
+            <!-- 性别分布 + 年龄分布 + 学历分布 -->
+            <div class="chart-grid-3 gap-row">
+              <div class="chart-card">
+                <h4>♂️♀️ 性别分布<span class="subtitle">个人会员</span></h4>
+                <div class="chart-container" id="genderChart"></div>
+              </div>
+              <div class="chart-card">
+                <h4>🎂 年龄分布<span class="subtitle">个人会员</span></h4>
+                <div class="chart-container" id="ageChart"></div>
+              </div>
+              <div class="chart-card">
+                <h4>🎓 学历分布<span class="subtitle">个人会员</span></h4>
+                <div class="chart-container" id="eduChart"></div>
+              </div>
+            </div>
+
+            <!-- 职称分布 + 所在地区TOP10 + 政治面貌分布 -->
+            <div class="chart-grid-3 gap-row">
+              <div class="chart-card">
+                <h4>💼 职称/身份分布<span class="subtitle">个人会员</span></h4>
+                <div class="chart-container" id="titleChart"></div>
+              </div>
+              <div class="chart-card">
+                <h4>📍 地域分布<span class="subtitle">全部省市</span></h4>
+                <div class="rank-table" id="regionTable"></div>
+              </div>
+              <div class="chart-card">
+                <h4>🚩 政治面貌分布<span class="subtitle">个人会员</span></h4>
+                <div class="chart-container" id="politicsChart"></div>
+              </div>
+            </div>
+
+          <!-- 单位会员分析 -->
+          <div class="section-title">单位会员分析</div>
+            <div class="chart-grid-3 gap-row">
+              <div class="chart-card">
+                <h4>🌾 会员类型<span class="subtitle">单位会员</span></h4>
+                <div class="chart-container" id="industryChart"></div>
+              </div>
+              <div class="chart-card">
+                <h4>📋 会员状态<span class="subtitle">单位会员</span></h4>
+                <div class="chart-container" id="companyStatusChart"></div>
+              </div>
+              <div class="chart-card">
+                <h4>🌱 发展来源统计<span class="subtitle">单位会员</span></h4>
+                <div class="rank-table" id="companySourceTable"></div>
+              </div>
+            </div>
+
+            <!-- 单位类别分布 + 注册资金区间 + 单位地区分布 -->
+            <div class="chart-grid-3 gap-row">
+              <div class="chart-card">
+                <h4>🏭 单位类别分布<span class="subtitle">按单位类别</span></h4>
+                <div class="chart-container" id="companyTypeChart"></div>
+              </div>
+              <div class="chart-card">
+                <h4>📊 注册资金区间<span class="subtitle">单位会员</span></h4>
+                <div class="chart-container" id="capitalChart"></div>
+              </div>
+              <div class="chart-card">
+                <h4>📍 地域分布<span class="subtitle">全部省市</span></h4>
+                <div class="rank-table" id="companyRegionTable"></div>
+              </div>
+            </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    // 通用主题配置
+    const chartTheme = {
+      color: ['#1890ff', '#52c41a', '#fa8c16', '#ff4d4f', '#722ed1', '#13c2c2', '#faad14', '#eb2f96'],
+      textStyle: { fontFamily: 'PingFang SC, Microsoft YaHei, sans-serif' }
+    };
+
+    // 1. 会员增长趋势（折线图）
+    const growthChart = echarts.init(document.getElementById('growthChart'));
+    growthChart.setOption({
+      tooltip: { trigger: 'axis' },
+      legend: { bottom: 0, textStyle: { fontSize: 12 } },
+      grid: { top: 10, right: 20, bottom: 40, left: 50 },
+      xAxis: {
+        type: 'category',
+        data: ['6月','7月','8月','9月','10月','11月','12月','1月','2月','3月','4月','5月'],
+        axisLabel: { fontSize: 11, color: '#666' },
+        axisLine: { lineStyle: { color: '#e8e8e8' } }
+      },
+      yAxis: {
+        type: 'value',
+        axisLabel: { fontSize: 11, color: '#666' },
+        splitLine: { lineStyle: { color: '#f0f0f0' } }
+      },
+      series: [
+        {
+          name: '个人会员',
+          type: 'line',
+          smooth: true,
+          data: [5820, 6100, 5950, 6300, 6480, 6620, 6800, 6400, 6580, 6900, 7100, 7216],
+          areaStyle: { color: 'rgba(24,144,255,0.1)' },
+          lineStyle: { width: 2 },
+          itemStyle: { color: '#1890ff' }
+        },
+        {
+          name: '单位会员',
+          type: 'line',
+          smooth: true,
+          data: [1120, 1180, 1200, 1150, 1250, 1300, 1350, 1280, 1320, 1380, 1410, 1438],
+          areaStyle: { color: 'rgba(82,196,26,0.1)' },
+          lineStyle: { width: 2 },
+          itemStyle: { color: '#52c41a' }
+        }
+      ]
+    });
+
+    // 2. 会员类型构成（饼图）
+    const typePieChart = echarts.init(document.getElementById('typePieChart'));
+    typePieChart.setOption({
+      tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+      legend: { orient: 'vertical', right: 20, top: 'center', textStyle: { fontSize: 12 } },
+      series: [{
+        type: 'pie',
+        radius: ['40%', '70%'],
+        center: ['35%', '50%'],
+        avoidLabelOverlap: false,
+        itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
+        label: { show: false },
+        data: [
+          { value: 62456, name: '普通个人会员', itemStyle: { color: '#1890ff' } },
+          { value: 5600, name: '学生个人会员', itemStyle: { color: '#52c41a' } },
+          { value: 4100, name: '外籍会员', itemStyle: { color: '#722ed1' } },
+          { value: 10820, name: '高级会员', itemStyle: { color: '#fa8c16' } }
+        ]
+      }]
+    });
+
+    // 3. 性别分布（堆叠百分比条形图）
+    const genderChart = echarts.init(document.getElementById('genderChart'));
+    genderChart.setOption({
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+      grid: { top: 20, right: 20, bottom: 30, left: 10 },
+      legend: { bottom: 0, textStyle: { fontSize: 11 } },
+      xAxis: { type: 'value', max: 100, axisLabel: { fontSize: 11, color: '#666', formatter: '{value}%' }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+      yAxis: { type: 'category', data: ['性别'], axisLabel: { fontSize: 12, color: '#333' }, axisLine: { lineStyle: { color: '#e8e8e8' } } },
+      series: [
+        { name: '男', type: 'bar', stack: 'total', barWidth: 44, data: [51.9], itemStyle: { color: '#1890ff' }, label: { show: true, position: 'inside', formatter: '{c}%', color: '#fff' } },
+        { name: '女', type: 'bar', stack: 'total', data: [43.2], itemStyle: { color: '#ff4d4f' }, label: { show: true, position: 'inside', formatter: '{c}%', color: '#fff' } },
+        { name: '其他', type: 'bar', stack: 'total', data: [4.9], itemStyle: { color: '#d9d9d9' } }
+      ]
+    });
+
+    // 4. 年龄分布（柱状图）
+    const ageChart = echarts.init(document.getElementById('ageChart'));
+    ageChart.setOption({
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+      grid: { top: 10, right: 10, bottom: 24, left: 10 },
+      xAxis: { type: 'category', data: ['≤25', '26-35', '36-45', '46-55', '56-65', '>65'], axisLabel: { fontSize: 11, color: '#666' }, axisLine: { lineStyle: { color: '#e8e8e8' } } },
+      yAxis: { type: 'value', axisLabel: { fontSize: 11, color: '#666' }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+      series: [{
+        type: 'bar',
+        data: [
+          { value: 8200, itemStyle: { color: '#52c41a' } },
+          { value: 18600, itemStyle: { color: '#1890ff' } },
+          { value: 22400, itemStyle: { color: '#722ed1' } },
+          { value: 15800, itemStyle: { color: '#fa8c16' } },
+          { value: 5400, itemStyle: { color: '#ff4d4f' } },
+          { value: 1756, itemStyle: { color: '#d9d9d9' } }
+        ],
+        barWidth: 28,
+        itemStyle: { borderRadius: [4, 4, 0, 0] }
+      }]
+    });
+
+    // 5. 学历分布（矩形树图）
+    const eduChart = echarts.init(document.getElementById('eduChart'));
+    eduChart.setOption({
+      tooltip: { formatter: (info) => `${info.name}<br>人数：${info.value}` },
+      series: [{
+        type: 'treemap',
+        roam: false,
+        nodeClick: false,
+        breadcrumb: { show: false },
+        label: { show: true, fontSize: 11, formatter: '{b}\n{c}' },
+        itemStyle: { borderColor: '#fff', borderWidth: 2, gapWidth: 2 },
+        data: [
+          { value: 18560, name: '博士研究生', itemStyle: { color: '#1890ff' } },
+          { value: 24800, name: '硕士研究生', itemStyle: { color: '#52c41a' } },
+          { value: 18200, name: '本科', itemStyle: { color: '#fa8c16' } },
+          { value: 6800, name: '大专', itemStyle: { color: '#722ed1' } },
+          { value: 3796, name: '其他', itemStyle: { color: '#d9d9d9' } }
+        ]
+      }]
+    });
+
+    // 6. 职称/身份分布（条形图）
+    const titleChart = echarts.init(document.getElementById('titleChart'));
+    titleChart.setOption({
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+      grid: { top: 10, right: 60, bottom: 10, left: 90 },
+      xAxis: { type: 'value', axisLabel: { fontSize: 11, color: '#666' }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+      yAxis: { type: 'category', data: ['研究员', '副研究员', '教授', '副教授', '讲师', '学生', '其他'], axisLabel: { fontSize: 11, color: '#333' }, axisLine: { lineStyle: { color: '#e8e8e8' } } },
+      series: [{
+        type: 'bar',
+        data: [
+          { value: 12600, itemStyle: { color: '#1890ff' } },
+          { value: 9800, itemStyle: { color: '#52c41a' } },
+          { value: 8400, itemStyle: { color: '#fa8c16' } },
+          { value: 6200, itemStyle: { color: '#722ed1' } },
+          { value: 4800, itemStyle: { color: '#13c2c2' } },
+          { value: 5600, itemStyle: { color: '#faad14' } },
+          { value: 24756, itemStyle: { color: '#d9d9d9' } }
+        ],
+        barWidth: 18,
+        label: { show: true, position: 'right', fontSize: 11, color: '#333', formatter: '{c}' }
+      }]
+    });
+
+    // 9. 单位类别分布（玫瑰图）
+    const companyTypeChart = echarts.init(document.getElementById('companyTypeChart'));
+    companyTypeChart.setOption({
+      tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+      legend: { orient: 'vertical', right: 10, top: 'center', textStyle: { fontSize: 11 }, itemWidth: 10, itemHeight: 10 },
+      series: [{
+        type: 'pie',
+        roseType: 'radius',
+        radius: ['15%', '70%'],
+        center: ['35%', '50%'],
+        itemStyle: { borderRadius: 4, borderColor: '#fff', borderWidth: 2 },
+        label: { show: false },
+        data: [
+          { value: 4856, name: '私营企业', itemStyle: { color: '#1890ff' } },
+          { value: 3240, name: '国有企业', itemStyle: { color: '#52c41a' } },
+          { value: 2680, name: '事业单位', itemStyle: { color: '#fa8c16' } },
+          { value: 1860, name: '社会组织', itemStyle: { color: '#722ed1' } },
+          { value: 980, name: '外资企业', itemStyle: { color: '#13c2c2' } },
+          { value: 770, name: '合资企业', itemStyle: { color: '#ff4d4f' } }
+        ]
+      }]
+    });
+
+    // 11. 单位会员类型分布（环形图）
+    const industryChart = echarts.init(document.getElementById('industryChart'));
+    industryChart.setOption({
+      tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+      legend: { orient: 'vertical', right: 10, top: 'center', textStyle: { fontSize: 11 }, itemWidth: 10, itemHeight: 10 },
+      series: [{
+        type: 'pie',
+        radius: ['45%', '70%'],
+        center: ['35%', '50%'],
+        itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
+        label: { show: false },
+        data: [
+          { value: 4280, name: '常务理事单位会员', itemStyle: { color: '#1890ff' } },
+          { value: 3650, name: '理事单位会员', itemStyle: { color: '#52c41a' } },
+          { value: 2890, name: '普通单位会员', itemStyle: { color: '#fa8c16' } },
+          { value: 1860, name: '测试', itemStyle: { color: '#722ed1' } }
+        ]
+      }]
+    });
+
+    // 12. 注册资金区间（面积图）
+    const capitalChart = echarts.init(document.getElementById('capitalChart'));
+    capitalChart.setOption({
+      tooltip: { trigger: 'axis' },
+      grid: { top: 10, right: 20, bottom: 30, left: 40 },
+      xAxis: { type: 'category', boundaryGap: false, data: ['<100万', '100-500万', '500-1000万', '1000-5000万', '5000万-1亿', '>1亿'], axisLabel: { fontSize: 10, color: '#666' }, axisLine: { lineStyle: { color: '#e8e8e8' } } },
+      yAxis: { type: 'value', axisLabel: { fontSize: 11, color: '#666' }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+      series: [{
+        type: 'line',
+        smooth: true,
+        symbol: 'circle',
+        symbolSize: 6,
+        lineStyle: { width: 2, color: '#1890ff' },
+        itemStyle: { color: '#1890ff' },
+        areaStyle: { color: 'rgba(24,144,255,0.15)' },
+        data: [1860, 3680, 2960, 3420, 1260, 1206]
+      }]
+    });
+
+    // 13. 会员状态分布（玫瑰图）
+    const statusChart = echarts.init(document.getElementById('statusChart'));
+    statusChart.setOption({
+      tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+      legend: { orient: 'vertical', right: 10, top: 'center', textStyle: { fontSize: 12 }, itemWidth: 10, itemHeight: 10 },
+      series: [{
+        type: 'pie',
+        roseType: 'radius',
+        radius: ['15%', '70%'],
+        center: ['35%', '50%'],
+        itemStyle: { borderRadius: 4, borderColor: '#fff', borderWidth: 2 },
+        label: { show: false },
+        data: [
+          { value: 84660, name: '正常', itemStyle: { color: '#52c41a' } },
+          { value: 1328, name: '已过期', itemStyle: { color: '#ff4d4f' } },
+          { value: 396, name: '已退会', itemStyle: { color: '#bfbfbf' } },
+          { value: 150, name: '黑名单', itemStyle: { color: '#fa8c16' } },
+          { value: 8, name: '待审核', itemStyle: { color: '#faad14' } }
+        ]
+      }]
+    });
+
+    // 15. 政治面貌分布（饼图）
+    const politicsChart = echarts.init(document.getElementById('politicsChart'));
+    politicsChart.setOption({
+      tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+      legend: { orient: 'vertical', right: 10, top: 'center', textStyle: { fontSize: 12 }, itemWidth: 10, itemHeight: 10 },
+      series: [{
+        type: 'pie',
+        radius: ['35%', '65%'],
+        center: ['35%', '50%'],
+        itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
+        label: { show: false },
+        data: [
+          { value: 34200, name: '群众', itemStyle: { color: '#1890ff' } },
+          { value: 22800, name: '党员', itemStyle: { color: '#ff4d4f' } },
+          { value: 8900, name: '无党派人士', itemStyle: { color: '#52c41a' } },
+          { value: 4300, name: '民主党派', itemStyle: { color: '#fa8c16' } },
+          { value: 1956, name: '共青团员', itemStyle: { color: '#722ed1' } }
+        ]
+      }]
+    });
+
+    // 17. 单位状态分布（饼图）
+    const companyStatusChart = echarts.init(document.getElementById('companyStatusChart'));
+    companyStatusChart.setOption({
+      tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+      legend: { orient: 'vertical', right: 10, top: 'center', textStyle: { fontSize: 12 }, itemWidth: 10, itemHeight: 10 },
+      series: [{
+        type: 'pie',
+        radius: ['35%', '65%'],
+        center: ['35%', '50%'],
+        itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
+        label: { show: false },
+        data: [
+          { value: 13652, name: '正常', itemStyle: { color: '#52c41a' } },
+          { value: 486, name: '已过期', itemStyle: { color: '#ff4d4f' } },
+          { value: 152, name: '待审核', itemStyle: { color: '#faad14' } },
+          { value: 96, name: '已退会', itemStyle: { color: '#bfbfbf' } }
+        ]
+      }]
+    });
+
+    // 全量数据（占位）：发展来源与地区分布，按会员数降序
+    const personalRegion = [
+      ['北京市', 12456], ['山东省', 9872], ['江苏省', 8654], ['河南省', 7231], ['河北省', 6892], ['四川省', 5430], ['广东省', 4876], ['浙江省', 4230], ['湖南省', 3890], ['湖北省', 3450],
+      ['安徽省', 2876], ['福建省', 2543], ['陕西省', 2210], ['辽宁省', 1987], ['江西省', 1754], ['山西省', 1520], ['黑龙江省', 1312], ['吉林省', 1156], ['云南省', 980], ['广西', 867],
+      ['内蒙古', 745], ['甘肃省', 634], ['贵州省', 556], ['新疆', 478], ['天津市', 402], ['重庆市', 365], ['上海市', 312], ['海南省', 208], ['宁夏', 156], ['青海', 98], ['西藏', 45]
+    ];
+    const personalSource = [
+      ['作物学专业委员会', 18260], ['园艺学专业委员会', 14520], ['植物保护专业委员会', 10840], ['土壤学专业委员会', 8260], ['农业工程专业委员会', 6120], ['学术交流部', 3860], ['个人注册', 2480],
+      ['畜牧兽医专业委员会', 2160], ['农业经济专业委员会', 1840], ['北京市农学会', 1620], ['山东省农学会', 1480], ['江苏省农学会', 1320], ['食品加工专业委员会', 1180], ['广东省农学会', 1060],
+      ['浙江省农学会', 940], ['河南省农学会', 820], ['农业资源与环境专业委员会', 760], ['河北省农学会', 680], ['四川省农学会', 610], ['农业信息专业委员会', 540], ['湖南省农学会', 470],
+      ['湖北省农学会', 410], ['安徽省农学会', 360], ['福建省农学会', 310], ['理事单位推荐', 260], ['在线申请', 220], ['官网申请', 180], ['活动推广', 140]
+    ];
+    const companyRegion = [
+      ['北京市', 2486], ['山东省', 1872], ['江苏省', 1654], ['河南省', 1431], ['河北省', 1289], ['广东省', 1243], ['四川省', 1087], ['浙江省', 986], ['湖南省', 782], ['湖北省', 556],
+      ['安徽省', 489], ['福建省', 432], ['陕西省', 376], ['辽宁省', 321], ['江西省', 287], ['山西省', 254], ['黑龙江省', 219], ['吉林省', 196], ['云南省', 168], ['广西', 147],
+      ['内蒙古', 128], ['甘肃省', 112], ['贵州省', 98], ['新疆', 86], ['天津市', 74], ['重庆市', 66], ['上海市', 58], ['海南省', 39], ['宁夏', 27], ['青海', 18], ['西藏', 9]
+    ];
+    const companySource = [
+      ['北京市农学会', 1860], ['山东省农学会', 1520], ['江苏省农学会', 1350], ['广东省农学会', 1180], ['中国农业大学', 960], ['作物学专业委员会', 780], ['园艺学专业委员会', 620],
+      ['浙江省农学会', 540], ['河南省农学会', 470], ['植物保护专业委员会', 410], ['河北省农学会', 380], ['四川省农学会', 350], ['南京农业大学', 320], ['华中农业大学', 290],
+      ['中国农业科学院', 260], ['土壤学专业委员会', 240], ['湖南省农学会', 220], ['湖北省农学会', 200], ['安徽省农学会', 180], ['农业工程专业委员会', 160], ['福建省农学会', 140],
+      ['西北农林科技大学', 120], ['畜牧兽医专业委员会', 110], ['农业经济专业委员会', 95], ['理事单位推荐', 80], ['在线申请', 65], ['官网申请', 50], ['其他', 40]
+    ];
+
+    function renderRankTable(id, items) {
+      const sum = items.reduce((s, it) => s + it[1], 0);
+      let rows = '';
+      items.forEach((it, i) => {
+        rows += `<tr><td>${i + 1}</td><td>${it[0]}</td><td>${it[1].toLocaleString()}</td><td>${((it[1] / sum) * 100).toFixed(1)}%</td></tr>`;
+      });
+      document.getElementById(id).innerHTML = `<table class="rank-tbl"><thead><tr><th>#</th><th>名称</th><th>会员数</th><th>占比</th></tr></thead><tbody>${rows}</tbody></table>`;
+    }
+
+    renderRankTable('regionTable', personalRegion);
+    renderRankTable('branchTable', personalSource);
+    renderRankTable('companyRegionTable', companyRegion);
+    renderRankTable('companySourceTable', companySource);
+
+    // 全部图表，用于响应式 resize
+    const allCharts = [growthChart, typePieChart, statusChart, genderChart, ageChart, eduChart, titleChart, politicsChart, companyTypeChart, industryChart, capitalChart, companyStatusChart];
+
+    // 响应式
+    window.addEventListener('resize', () => {
+      allCharts.forEach(c => c.resize());
+    });
+  </script>
+  <script src="sidebar.js"></script>
+</body>
+</html>
