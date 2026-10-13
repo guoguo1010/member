@@ -18,7 +18,8 @@
     }
 
     .chart-grid,
-    .chart-grid-3 {
+    .chart-grid-3,
+    .chart-grid-4 {
       display: grid;
       gap: 24px;
       align-items: stretch;
@@ -30,6 +31,10 @@
 
     .chart-grid-3 {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .chart-grid-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
     .full-span {
@@ -160,14 +165,16 @@
 
     @media (max-width: 1400px) {
       .chart-grid,
-      .chart-grid-3 {
+      .chart-grid-3,
+      .chart-grid-4 {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
     @media (max-width: 900px) {
       .chart-grid,
-      .chart-grid-3 {
+      .chart-grid-3,
+      .chart-grid-4 {
         grid-template-columns: 1fr;
       }
 
@@ -272,8 +279,8 @@
                 <div class="chart-container" id="statusChart"></div>
               </div>
               <div class="chart-card">
-                <h4>🌱 发展来源统计<span class="subtitle">个人会员</span></h4>
-                <div class="rank-table" id="branchTable"></div>
+                <h4>🌏 民族分布<span class="subtitle">个人会员</span></h4>
+                <div class="chart-container" id="nationChart"></div>
               </div>
             </div>
 
@@ -293,26 +300,58 @@
               </div>
             </div>
 
-            <!-- 职称分布 + 所在地区TOP10 + 政治面貌分布 -->
+            <!-- 职称分布 + 政治面貌 + 发展来源统计 -->
             <div class="chart-grid-3 gap-row">
               <div class="chart-card">
                 <h4>💼 职称/身份分布<span class="subtitle">个人会员</span></h4>
                 <div class="chart-container" id="titleChart"></div>
               </div>
               <div class="chart-card">
+                <h4>🚩 政治面貌分布<span class="subtitle">个人会员</span></h4>
+                <div class="chart-container" id="politicsChart"></div>
+              </div>
+              <div class="chart-card">
+                <h4>🌱 发展来源统计<span class="subtitle">个人会员</span></h4>
+                <div class="rank-table" id="branchTable"></div>
+              </div>
+            </div>
+
+            <!-- 研究领域（一级 + 二级联动）+ 地域分布 -->
+            <div class="chart-grid-3 gap-row">
+              <div class="chart-card">
+                <h4>🔬 研究领域·一级<span class="subtitle">点击联动二级</span></h4>
+                <div class="chart-container" id="researchFieldChart"></div>
+              </div>
+              <div class="chart-card">
+                <h4>🔬 研究领域·二级<span class="subtitle" id="researchSubTitle">农学</span></h4>
+                <div class="chart-container" id="researchFieldSubChart"></div>
+              </div>
+              <div class="chart-card">
                 <h4>📍 地域分布<span class="subtitle">全部省市</span></h4>
                 <div class="rank-table" id="regionTable"></div>
               </div>
+            </div>
+
+            <!-- 从事产业（一级 + 二级联动）+ 感兴趣的分支机构 -->
+            <div class="chart-grid-3 gap-row">
               <div class="chart-card">
-                <h4>🚩 政治面貌分布<span class="subtitle">个人会员</span></h4>
-                <div class="chart-container" id="politicsChart"></div>
+                <h4>🚜 从事产业·一级<span class="subtitle">点击联动二级</span></h4>
+                <div class="chart-container" id="industryFieldChart"></div>
+              </div>
+              <div class="chart-card">
+                <h4>🚜 从事产业·二级<span class="subtitle" id="industryFieldSubTitle">种植业生产</span></h4>
+                <div class="chart-container" id="industryFieldSubChart"></div>
+              </div>
+              <div class="chart-card">
+                <h4>🌿 感兴趣的分支机构<span class="subtitle">个人会员</span></h4>
+                <div class="rank-table" id="interestBranchTable"></div>
               </div>
             </div>
           </div>
 
           <!-- 单位会员分析 -->
           <div id="companyPanel" class="dash-tab-content">
-            <div class="chart-grid-3 gap-row">
+            <div class="chart-grid-4 gap-row">
               <div class="chart-card">
                 <h4>🌾 会员类型<span class="subtitle">单位会员</span></h4>
                 <div class="chart-container" id="industryChart"></div>
@@ -322,14 +361,6 @@
                 <div class="chart-container" id="companyStatusChart"></div>
               </div>
               <div class="chart-card">
-                <h4>🌱 发展来源统计<span class="subtitle">单位会员</span></h4>
-                <div class="rank-table" id="companySourceTable"></div>
-              </div>
-            </div>
-
-            <!-- 单位类别分布 + 注册资金区间 + 单位地区分布 -->
-            <div class="chart-grid-3 gap-row">
-              <div class="chart-card">
                 <h4>🏭 单位类别分布<span class="subtitle">按单位类别</span></h4>
                 <div class="chart-container" id="companyTypeChart"></div>
               </div>
@@ -337,9 +368,21 @@
                 <h4>📊 注册资金区间<span class="subtitle">单位会员</span></h4>
                 <div class="chart-container" id="capitalChart"></div>
               </div>
+            </div>
+
+            <!-- 发展来源统计 + 地域分布 + 感兴趣的分支机构 -->
+            <div class="chart-grid-3 gap-row">
+              <div class="chart-card">
+                <h4>🌱 发展来源统计<span class="subtitle">单位会员</span></h4>
+                <div class="rank-table" id="companySourceTable"></div>
+              </div>
               <div class="chart-card">
                 <h4>📍 地域分布<span class="subtitle">全部省市</span></h4>
                 <div class="rank-table" id="companyRegionTable"></div>
+              </div>
+              <div class="chart-card">
+                <h4>🌿 感兴趣的分支机构<span class="subtitle">单位会员</span></h4>
+                <div class="rank-table" id="companyInterestBranchTable"></div>
               </div>
             </div>
           </div>
@@ -653,6 +696,107 @@
       ['西北农林科技大学', 120], ['畜牧兽医专业委员会', 110], ['农业经济专业委员会', 95], ['理事单位推荐', 80], ['在线申请', 65], ['官网申请', 50], ['其他', 40]
     ];
 
+    // 通用饼图渲染（data 为 [名称, 数值] 元组数组）
+    const pieColors = ['#1890ff', '#52c41a', '#fa8c16', '#ff4d4f', '#722ed1', '#13c2c2', '#faad14', '#eb2f96', '#a0d911', '#2f54eb', '#f5222d', '#13a8a8', '#fa541c', '#faad14'];
+    function buildPieData(data) {
+      return data.map((it, i) => ({ value: it[1], name: it[0], itemStyle: { color: pieColors[i % pieColors.length] } }));
+    }
+    function renderPie(chart, data) {
+      chart.setOption({
+        tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+        legend: { orient: 'vertical', right: 10, top: 'center', textStyle: { fontSize: 11 }, itemWidth: 10, itemHeight: 10 },
+        series: [{
+          type: 'pie',
+          radius: ['38%', '68%'],
+          center: ['35%', '50%'],
+          itemStyle: { borderRadius: 4, borderColor: '#fff', borderWidth: 2 },
+          label: { show: false },
+          data: buildPieData(data)
+        }]
+      });
+    }
+
+    // 民族分布（环形图，占位）
+    const nationData = [
+      ['汉族', 66320], ['蒙古族', 1240], ['回族', 980], ['藏族', 860], ['维吾尔族', 720],
+      ['苗族', 620], ['壮族', 540], ['满族', 480], ['其他', 396]
+    ];
+    const nationChart = echarts.init(document.getElementById('nationChart'));
+    renderPie(nationChart, nationData);
+
+    // 研究领域：一级 + 二级（点击联动，占位数据，实际一级共 58 个）
+    const researchFieldLevel1 = [
+      ['农学', 12480], ['畜牧、兽医科学', 8960], ['水产学', 6240], ['林学', 5420], ['食品科学技术', 4980],
+      ['生物学', 4560], ['环境科学技术', 4120], ['基础医学', 3650], ['地球科学', 3280], ['临床医学', 2960],
+      ['预防医学与卫生学', 2540], ['药学', 2180], ['中医学与中药学', 1860], ['管理学', 1520]
+    ];
+    const researchFieldLevel2 = {
+      '农学': [['作物学', 4860], ['园艺学', 3420], ['植物保护', 2460], ['农业资源与环境', 1740]],
+      '畜牧、兽医科学': [['畜牧学', 3860], ['兽医学', 3120], ['动物营养与饲料科学', 1980]],
+      '水产学': [['水产养殖学', 2980], ['渔业资源学', 1860], ['水产品加工', 1400]],
+      '林学': [['森林培育', 2280], ['森林保护', 1620], ['园林植物与观赏园艺', 1520]],
+      '食品科学技术': [['食品科学', 2060], ['食品加工技术', 1780], ['食品安全', 1140]],
+      '生物学': [['植物学', 1420], ['动物学', 1180], ['微生物学', 980], ['生物化学与分子生物学', 980]],
+      '环境科学技术': [['环境科学', 1560], ['环境工程', 1420], ['生态学', 1140]],
+      '基础医学': [['免疫学', 1180], ['病理学', 960], ['病原生物学', 1510]],
+      '地球科学': [['地理学', 1120], ['地质学', 1080], ['大气科学', 1080]],
+      '临床医学': [['内科学', 1280], ['外科学', 980], ['影像医学', 700]],
+      '预防医学与卫生学': [['流行病学', 980], ['卫生统计学', 760], ['营养与食品卫生', 800]],
+      '药学': [['药物化学', 860], ['药剂学', 720], ['药理学', 600]],
+      '中医学与中药学': [['中医学', 780], ['中药学', 620], ['针灸推拿学', 460]],
+      '管理学': [['农业经济管理', 680], ['公共管理', 480], ['企业管理', 360]]
+    };
+    const researchFieldChart = echarts.init(document.getElementById('researchFieldChart'));
+    const researchFieldSubChart = echarts.init(document.getElementById('researchFieldSubChart'));
+    renderPie(researchFieldChart, researchFieldLevel1);
+    renderPie(researchFieldSubChart, researchFieldLevel2['农学']);
+    researchFieldChart.on('click', (params) => {
+      if (researchFieldLevel2[params.name]) {
+        renderPie(researchFieldSubChart, researchFieldLevel2[params.name]);
+        document.getElementById('researchSubTitle').textContent = params.name;
+      }
+    });
+
+    // 从事产业：一级 + 二级（点击联动，占位数据）
+    const industryFieldLevel1 = [
+      ['种植业生产', 18620], ['畜牧业生产', 14280], ['渔业生产', 6860], ['林业生产', 5240], ['农产品加工', 6980], ['农业生产资料', 4820],
+      ['农业工程', 3980], ['技术推广、知识普及与人力资源服务', 4360], ['生态保护和环境治理', 3120], ['农业农村管理服务与农业经济', 2860], ['农业生产、信息与金融服务', 1840], ['其他', 980]
+    ];
+    const industryFieldLevel2 = {
+      '种植业生产': [['粮食作物', 9860], ['经济作物', 5240], ['蔬菜园艺', 3520]],
+      '畜牧业生产': [['家畜养殖', 7680], ['家禽养殖', 4280], ['特种养殖', 2320]],
+      '渔业生产': [['淡水养殖', 3680], ['海水养殖', 2180], ['捕捞', 1000]],
+      '林业生产': [['林木培育', 2480], ['经济林', 1680], ['木材加工', 1080]],
+      '农产品加工': [['粮油加工', 2860], ['果蔬加工', 2240], ['畜产品加工', 1880]],
+      '农业生产资料': [['种子', 2180], ['化肥农药', 1640], ['农机具', 1000]],
+      '农业工程': [['农田水利', 1560], ['设施农业', 1420], ['农业机械', 1000]],
+      '技术推广、知识普及与人力资源服务': [['农技推广', 1860], ['培训服务', 1420], ['科普', 1080]],
+      '生态保护和环境治理': [['生态修复', 1280], ['环境监测', 980], ['污染治理', 860]],
+      '农业农村管理服务与农业经济': [['行政管理', 1180], ['农村经济研究', 920], ['社会化服务', 760]],
+      '农业生产、信息与金融服务': [['农业信息化', 860], ['金融服务', 580], ['保险', 400]],
+      '其他': [['其他', 980]]
+    };
+    const industryFieldChart = echarts.init(document.getElementById('industryFieldChart'));
+    const industryFieldSubChart = echarts.init(document.getElementById('industryFieldSubChart'));
+    renderPie(industryFieldChart, industryFieldLevel1);
+    renderPie(industryFieldSubChart, industryFieldLevel2['种植业生产']);
+    industryFieldChart.on('click', (params) => {
+      if (industryFieldLevel2[params.name]) {
+        renderPie(industryFieldSubChart, industryFieldLevel2[params.name]);
+        document.getElementById('industryFieldSubTitle').textContent = params.name;
+      }
+    });
+
+    // 感兴趣的分支机构（个人 / 单位，占位）
+    const interestBranchData = [
+      ['作物学专业委员会', 18260], ['园艺学专业委员会', 14520], ['植物保护专业委员会', 10840], ['土壤学专业委员会', 8260], ['农业工程专业委员会', 6120],
+      ['畜牧兽医专业委员会', 2860], ['农业经济专业委员会', 1980], ['学术交流部', 1480], ['会员服务部', 1120], ['秘书处', 860]
+    ];
+    const companyInterestBranchData = [
+      ['作物学专业委员会', 2860], ['园艺学专业委员会', 2240], ['植物保护专业委员会', 1680], ['土壤学专业委员会', 1240], ['农业工程专业委员会', 980],
+      ['畜牧兽医专业委员会', 460], ['农业经济专业委员会', 320], ['学术交流部', 240], ['会员服务部', 180], ['秘书处', 120]
+    ];
+
     function renderRankTable(id, items) {
       const sum = items.reduce((s, it) => s + it[1], 0);
       let rows = '';
@@ -666,9 +810,11 @@
     renderRankTable('branchTable', personalSource);
     renderRankTable('companyRegionTable', companyRegion);
     renderRankTable('companySourceTable', companySource);
+    renderRankTable('interestBranchTable', interestBranchData);
+    renderRankTable('companyInterestBranchTable', companyInterestBranchData);
 
     // 按 tab 分组，便于切换时批量 resize
-    const personalCharts = [typePieChart, statusChart, genderChart, ageChart, eduChart, titleChart, politicsChart];
+    const personalCharts = [typePieChart, statusChart, genderChart, ageChart, eduChart, titleChart, politicsChart, nationChart, researchFieldChart, researchFieldSubChart, industryFieldChart, industryFieldSubChart];
     const companyCharts = [companyTypeChart, industryChart, capitalChart, companyStatusChart];
     const allCharts = [growthChart, ...personalCharts, ...companyCharts];
 
